@@ -1,15 +1,13 @@
 import React from 'react';
 import {Text, Button} from 'react-native';
-import {StackParams} from '../../navigation';
 import {Container} from '../../components';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-type NavigationProps = StackNavigationProp<StackParams, 'Home'>;
+import {useNavigation, navigate} from '../../navigation';
 
 export function Home() {
-  const {navigate} = useNavigation<NavigationProps>();
+  // @ts-ignore
+  const navigation = useNavigation();
   return (
     <Container>
       <Text>Home Screen</Text>
@@ -19,7 +17,9 @@ export function Home() {
       <Button
         testID="details"
         title="Go to Details"
-        onPress={() => navigate('Details', {data: '🤪'})}
+        onPress={() => {
+          navigate(navigation, 'Details');
+        }}
       />
     </Container>
   );

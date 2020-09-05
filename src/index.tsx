@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import {AppRegistry, Platform} from 'react-native';
-import {Navigation} from './navigation';
+import {Routes} from './routes';
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
 import Entypo from 'react-native-vector-icons/Fonts/Entypo.ttf';
 import EvilIcons from 'react-native-vector-icons/Fonts/EvilIcons.ttf';
@@ -34,7 +34,7 @@ const fonts = [
 const antDesignIconFontStyles = [];
 
 export function App() {
-  return <Navigation />;
+  return <Routes />;
 }
 
 AppRegistry.registerComponent('example', () => App);
