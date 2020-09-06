@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import {AppRegistry, Platform} from 'react-native';
+
 import {Routes} from './routes';
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
 import Entypo from 'react-native-vector-icons/Fonts/Entypo.ttf';
@@ -41,7 +42,7 @@ AppRegistry.registerComponent('example', () => App);
 if (Platform.OS === 'web') {
   for (var i = 0; i < fonts.length; i++) {
     const iconFontStyles = `@font-face {
-    src: url(${fonts[i].url});
+    src: url(${fonts[i].url}) format('truetype');
     font-family: ${fonts[i].fontFamilyName};
   }`;
     const style = document.createElement('style');

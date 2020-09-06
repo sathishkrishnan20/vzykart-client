@@ -14,7 +14,7 @@ export function Details() {
       <Button
         testID="again"
         title="Go to Details... again"
-        onPress={() => {}}
+        onPress={() => navigate(navigation, 'DetailsScreen')}
       />
       <Button
         testID="home"
