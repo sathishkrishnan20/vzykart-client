@@ -8,7 +8,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Home, Details} from '../screens';
+import {Home, Details, ShopDetails} from '../screens';
 import {Text, View, Platform} from 'react-native';
 
 export type StackParams = {
@@ -46,6 +46,7 @@ const StackNavigator = () => {
         component={TabNavigator}
       />
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="ShopDetails" component={ShopDetails} />
       <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
     </Stack.Navigator>
   );
@@ -88,6 +89,7 @@ export function Routes() {
       <Route exact path="/" component={Home} />
       <Route exact path="/Home" component={Home} />
       <Route exact path="/Details" component={Details} />
+      <Route exact path="/ShopDetails" component={ShopDetails} />
     </Router>
   ) : (
     <NavigationContainer>
