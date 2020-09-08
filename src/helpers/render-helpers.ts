@@ -17,4 +17,13 @@ const getNoOfColumns = () => {
   }
   return 6;
 };
-export {getNoOfColumns};
+const keyExtractor = (
+  item: any,
+  index: number = Number(Math.random().toPrecision(3)),
+) => {
+  if (item.key) {
+    return String(item.key);
+  }
+  return String(index);
+};
+export {getNoOfColumns, keyExtractor};

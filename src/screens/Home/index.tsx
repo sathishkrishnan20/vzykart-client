@@ -3,8 +3,8 @@ import {Container} from '../../components';
 import {useNavigation, navigate} from '../../navigation';
 import {HeaderSearchBar} from './SearchBar';
 import {Shops} from './Shops';
-import {FlatList} from 'react-native';
-import {getNoOfColumns} from '../../helpers/render-helpers';
+import {FlatList} from 'react-native-gesture-handler';
+import {getNoOfColumns, keyExtractor} from '../../helpers/render-helpers';
 import ShopService from '../../services/services';
 import {IShop} from '../../interfaces/shop';
 const shopService = new ShopService();
@@ -27,17 +27,20 @@ export function Home() {
   return (
     <Container>
       <HeaderSearchBar onChangeText={setSearch} value={search} />
-      <FlatList
-        data={shopList}
-        horizontal={false}
-        numColumns={getNoOfColumns()}
-        renderItem={({item}) => (
-          <Shops
-            data={item}
-            onClick={() => navigate(navigation, 'ShopDetails')}
-          />
-        )}
-      />
+      {shopList?.length === 0 ? null : (
+        <FlatList
+          data={shopList}
+          horizontal={false}
+          numColumns={getNoOfColumns()}
+          keyExtractor={keyExtractor}
+          renderItem={({item}) => (
+            <Shops
+              data={item}
+              onClick={() => navigate(navigation, 'ShopDetails')}
+            />
+          )}
+        />
+      )}
     </Container>
   );
 }
