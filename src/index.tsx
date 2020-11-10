@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import {AppRegistry, Platform} from 'react-native';
+import {ThemeProvider} from 'react-native-elements';
 
 import {Routes} from './routes';
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
@@ -33,9 +34,20 @@ const fonts = [
   {url: Fontisto, fontFamilyName: 'Fontisto'},
 ];
 const antDesignIconFontStyles = [];
+const commonTheme = {
+  Text: {
+    style: {
+      fontFamily: 'Helvetica-Light',
+    },
+  },
+};
 
 export function App() {
-  return <Routes />;
+  return (
+    <ThemeProvider theme={commonTheme}>
+      <Routes />
+    </ThemeProvider>
+  );
 }
 
 AppRegistry.registerComponent('example', () => App);

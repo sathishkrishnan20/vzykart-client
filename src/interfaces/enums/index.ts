@@ -1,0 +1,4 @@
+export enum CART_INC_DEC {
+  INCREMENT = 'INCREMENT',
+  DECREMENT = 'DECREMENT',
+}

@@ -10,7 +10,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Home, Details, ShopDetails} from '../screens';
 import {Text, View, Platform} from 'react-native';
-
+import Cart from '../screens/Cart';
+import ProductDetail from '../screens/ProductDetails';
+import Header from '../components/Header';
+import SellerAddProducts from '../screens/_seller/products/add';
+const HEADER_HEIGHT = 70;
 export type StackParams = {
   Home: undefined;
   Details: {data: string} | undefined;
@@ -58,7 +62,7 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
-          let iconName = '';
+          let iconName = 'home-circle-outline';
           if (route.name === 'Home') {
             iconName = focused ? 'home-circle-outline' : 'home-circle';
           } else if (route.name === 'Details') {
@@ -77,8 +81,9 @@ const TabNavigator = () => {
         keyboardHidesTabBar: true,
       }}>
       <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="product-details" component={SellerAddProducts} />
       <Tab.Screen name="Details" component={Details} />
-      <Tab.Screen name="Cart" component={Details} />
+      <Tab.Screen name="Cart" component={Cart} />
       <Tab.Screen name="Account" component={Details} />
     </Tab.Navigator>
   );
@@ -86,10 +91,53 @@ const TabNavigator = () => {
 export function Routes() {
   return Platform.OS === 'web' ? (
     <Router>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/Home" component={Home} />
-      <Route exact path="/Details" component={Details} />
-      <Route exact path="/ShopDetails" component={ShopDetails} />
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          left: 0,
+          bottom: 0,
+          height: HEADER_HEIGHT,
+          zIndex: 99,
+        }}>
+        <Header
+          title="V-Cart"
+          menus={[
+            {
+              title: 'Home',
+              navigationLink: 'home',
+            },
+            {
+              title: 'Filters',
+              navigationLink: 'filter',
+            },
+            {
+              title: 'About',
+              navigationLink: 'about',
+            },
+            {
+              title: 'Notifications',
+              navigationLink: 'about',
+            },
+            {
+              title: 'Profile',
+              navigationLink: 'profile',
+            },
+          ]}
+          notificationCount={'99+'}
+        />
+      </div>
+      <View style={{marginTop: HEADER_HEIGHT}}>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/home" component={Home} />
+        <Route exact path="/product-details" component={ProductDetail} />
+        <Route exact path="/Details" component={Details} />
+        <Route exact path="/ShopDetails" component={ShopDetails} />
+        <Route exact path="/seller/add-product" component={SellerAddProducts} />
+
+        <Route exact path="/cart" component={Cart} />
+      </View>
     </Router>
   ) : (
     <NavigationContainer>
