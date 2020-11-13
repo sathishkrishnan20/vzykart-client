@@ -40,6 +40,17 @@ const commonTheme = {
       fontFamily: 'Helvetica-Light',
     },
   },
+  Button: {
+    buttonStyle: {
+      fontFamily: 'Helvetica-Light',
+      backgroundColor: '#F34742',
+      borderWidth: 1,
+      borderRadius: 10,
+    },
+    containerStyle: {
+      margin: 4,
+    },
+  },
 };
 
 export function App() {
@@ -62,6 +73,13 @@ if (Platform.OS === 'web') {
     style.appendChild(document.createTextNode(iconFontStyles));
     document.head.appendChild(style);
   }
+  var head = document.getElementsByTagName('head')[0];
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = 'style.css';
+  head.appendChild(link);
+
   // const style = document.createElement('style');
   // style.type = 'text/css';
   // style.appendChild(document.createTextNode(antDesignIconFontStyles));

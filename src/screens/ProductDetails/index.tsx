@@ -15,7 +15,7 @@ import {IProduct} from '../../interfaces/products';
 interface IState {
   visibleDialog: boolean;
   content: string;
-  product: IProduct;
+  product: any;
 }
 class ProductDetail extends Component<any, IState> {
   constructor(props: any) {
@@ -54,7 +54,7 @@ class ProductDetail extends Component<any, IState> {
             height: 200,
           }}
           autoplay>
-          {product.imageUrls?.map((item, index) => (
+          {product.imageUrls?.map((item: any, index: number) => (
             <ImageBackground
               key={index}
               source={{uri: item}}

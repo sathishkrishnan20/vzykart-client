@@ -15,13 +15,7 @@ import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {navigate} from '../../navigation';
 const {width} = Dimensions.get('window');
 // import {IS_WEB} from '../../config';
-export const Product = ({
-  data,
-  navigation,
-}: {
-  data: IProduct;
-  navigation: any;
-}) => {
+export const Product = ({data, navigation}: {data: any; navigation: any}) => {
   console.log(data);
   return (
     <>
