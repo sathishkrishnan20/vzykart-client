@@ -9,3 +9,10 @@ export enum INPUT_COMPONENT {
   MULTI_SELECT = 'MULTI_SELECT',
   DATE_PICKER = 'DATE_PICKER',
 }
+
+export enum CRUD {
+  CREATE = 'CREATE',
+  VIEW = 'VIEW',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+}

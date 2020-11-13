@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React from 'react';
-import {AppRegistry, Platform} from 'react-native';
-import {ThemeProvider} from 'react-native-elements';
-
+import {AppRegistry, Platform, View, StyleSheet} from 'react-native';
+import {ThemeProvider, Text} from 'react-native-elements';
+import Toast from 'react-native-toast-message';
 import {Routes} from './routes';
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
 import Entypo from 'react-native-vector-icons/Fonts/Entypo.ttf';
@@ -52,11 +52,70 @@ const commonTheme = {
     },
   },
 };
+const colors = {
+  white: '#FFF',
+  blazeOrange: '#FE6301',
+  mantis: '#69C779',
+  alto: '#D8D8D8',
+  dustyGray: '#979797',
+  lightSkyBlue: '#87CEFA',
+};
+const HEIGHT = 60;
+const styles = StyleSheet.create({
+  base: {
+    flexDirection: 'row',
+    height: HEIGHT,
+    width: '90%',
+    borderRadius: 6,
+    backgroundColor: colors.white,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  borderLeft: {
+    borderLeftWidth: 5,
+    borderLeftColor: colors.alto,
+  },
+  iconContainer: {
+    paddingHorizontal: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 20,
+    height: 20,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  closeButtonContainer: {
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeIcon: {
+    width: 9,
+    height: 9,
+  },
+  text1: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 3,
+    color: colors.white,
+  },
+  text2: {
+    fontSize: 10,
+    color: colors.dustyGray,
+  },
+});
 
 export function App() {
   return (
     <ThemeProvider theme={commonTheme}>
       <Routes />
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </ThemeProvider>
   );
 }

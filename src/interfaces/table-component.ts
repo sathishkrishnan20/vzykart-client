@@ -1,4 +1,4 @@
-import {INPUT_COMPONENT} from './enums';
+import {INPUT_COMPONENT, CRUD} from './enums';
 import {Item} from 'react-native-picker-select';
 
 export interface IAddUpdate {
@@ -18,4 +18,21 @@ export interface ITableAddUpdate {
     key: string,
     value: string | Date | boolean | string[] | Item[],
   ) => void;
+}
+
+export interface TableHeader {
+  label: string;
+  node: string;
+}
+[];
+
+export interface IViewTableComponentProp {
+  headerData: TableHeader[];
+  valueData: any[];
+  uniqueIdKeyName: string;
+  showActions: boolean;
+  actionButtons?: CRUD[];
+  viewAction?: (id: string) => void;
+  editAction?: (id: string) => void;
+  deleteAction?: (id: string) => void;
 }

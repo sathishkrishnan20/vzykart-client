@@ -1,7 +1,7 @@
-import React, {useEffect, Component} from 'react';
+import React, {Component} from 'react';
 
 import {StyleSheet, View} from 'react-native';
-import {Text, Button, Overlay} from 'react-native-elements';
+import {Text, Button} from 'react-native-elements';
 
 import TableWriteComponent from '../../../components/Table/add-update';
 import {IAddUpdate} from '../../../interfaces/table-component';
@@ -12,6 +12,13 @@ import ProductAction from '../../../actions/products';
 import {getShopId} from '../../../services/storage-service';
 import {IResponse} from '../../../interfaces/request-response';
 import {Item} from 'react-native-picker-select';
+import {SuccessToast, WarningToast} from '../../../components/Toast';
+import {IS_WEB} from '../../../config';
+import {ScrollView} from 'react-native-gesture-handler';
+import {getMultiSelectValues} from '../../../helpers';
+import {getParamsByProp} from '../../../navigation';
+import FileUpload from '../../../components/FileUpload/upload';
+
 class SellerAddProducts extends Component<any, SellerAddProductsState> {
   multiSelect: any;
   productAction: ProductAction;
@@ -21,11 +28,11 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       productPrefix: '',
       productName: '',
       productDescription: '',
-      mrp: 0,
-      tradePrice: 0,
-      sellingPrice: 0,
-      discount: 0,
-      gst: 0,
+      mrp: '',
+      tradePrice: '',
+      sellingPrice: '',
+      discount: '',
+      gst: '',
       shopId: '',
       uom: '',
       unit: '',
@@ -37,6 +44,10 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       alertVisible: false,
     };
     this.productAction = new ProductAction();
+    console.log(this.props);
+  }
+  componentDidMount() {
+    const params = getParamsByProp(this.props);
   }
   changeState(key: string, value: string | Date | boolean | string[] | Item[]) {
     // @ts-ignore
@@ -61,29 +72,32 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
         discount,
       } = this.state;
       const createProductRequest: ICreateProduct = {
-        shopId: '5fa90fa1207f370732e06674', //await getShopId(),
+        shopId: await getShopId(),
         productName,
         productDescription,
         mrp: Number(mrp),
         tradePrice: Number(tradePrice),
         sellingPrice: Number(sellingPrice),
         discount: Number(discount),
-        gst,
+        gst: Number(gst),
         uom,
         unit,
-        categories: categories.map((item) => item.label),
+        categories: getMultiSelectValues(categories),
       };
       const response: IResponse = await this.productAction.createProduct(
         createProductRequest,
       );
-      console.log(response);
       if (response.success) {
-        this.toggleOverlay();
+        SuccessToast({
+          title: 'Success',
+          message: 'Product Created Successfully',
+        });
         this.resetState();
-
-        alert(response.message);
       } else {
-        alert(response.message);
+        WarningToast({
+          title: 'Warning',
+          message: response.message,
+        });
       }
       this.setState({isLoading: false});
     } catch (error) {
@@ -94,11 +108,11 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
     this.setState({
       productName: '',
       productDescription: '',
-      mrp: 0,
-      tradePrice: 0,
-      sellingPrice: 0,
-      discount: 0,
-      gst: 0,
+      mrp: '',
+      tradePrice: '',
+      sellingPrice: '',
+      discount: '',
+      gst: '',
       shopId: '',
       uom: '',
       unit: '',
@@ -106,8 +120,16 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       selectedItems: [],
     });
   }
-  toggleOverlay = () => {
-    this.setState({alertVisible: !this.state.alertVisible});
+  convertObjectToArray = (array: IAddUpdate[][]) => {
+    const finalArray = [];
+    for (let index = 0; index < array.length; index++) {
+      const rowElement = array[index];
+      for (let index = 0; index < rowElement.length; index++) {
+        const colElement = rowElement[index];
+        finalArray.push([colElement]);
+      }
+    }
+    return finalArray;
   };
 
   render() {
@@ -125,6 +147,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       date,
       showDatePicker,
       alertVisible,
+      isLoading,
     } = this.state;
     const items = [
       {
@@ -225,28 +248,32 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       ],
     ];
     return (
-      <View style={styles.container}>
-        <Text
-          h4
-          style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
-          Add Product
-        </Text>
-        <TableWriteComponent
-          changeState={(
-            key: string,
-            value: string | Date | boolean | string[] | Item[],
-          ) => this.changeState(key, value)}
-          componentData={data}
-        />
-        <Button
-          title="Submit"
-          onPress={() => this.createProduct()}
-          loading={false}
-        />
-        <Overlay isVisible={alertVisible} onBackdropPress={this.toggleOverlay}>
-          <Text>Hello from Overlay!</Text>
-        </Overlay>
-      </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text
+            h4
+            style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
+            Add Product
+          </Text>
+          <FileUpload
+            type="image"
+            onResult={(result: IResponse) => console.log(result)}
+          />
+          <TableWriteComponent
+            changeState={(
+              key: string,
+              value: string | Date | boolean | string[] | Item[],
+            ) => this.changeState(key, value)}
+            componentData={IS_WEB ? data : this.convertObjectToArray(data)}
+          />
+
+          <Button
+            title="Submit"
+            onPress={() => this.createProduct()}
+            loading={isLoading}
+          />
+        </View>
+      </ScrollView>
     );
   }
 }

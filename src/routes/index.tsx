@@ -14,6 +14,7 @@ import Cart from '../screens/Cart';
 import ProductDetail from '../screens/ProductDetails';
 import Header from '../components/Header';
 import SellerAddProducts from '../screens/_seller/products/add';
+import SellerViewProducts from '../screens/_seller/products/view';
 const HEADER_HEIGHT = 70;
 export type StackParams = {
   Home: undefined;
@@ -52,6 +53,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="ShopDetails" component={ShopDetails} />
       <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+      <Stack.Screen name="/seller/product/add" component={SellerAddProducts} />
     </Stack.Navigator>
   );
 };
@@ -81,7 +83,7 @@ const TabNavigator = () => {
         keyboardHidesTabBar: true,
       }}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="product-details" component={SellerAddProducts} />
+      <Tab.Screen name="product-details" component={SellerViewProducts} />
       <Tab.Screen name="Details" component={Details} />
       <Tab.Screen name="Cart" component={Cart} />
       <Tab.Screen name="Account" component={Details} />
@@ -134,9 +136,19 @@ export function Routes() {
         <Route exact path="/product-details" component={ProductDetail} />
         <Route exact path="/Details" component={Details} />
         <Route exact path="/ShopDetails" component={ShopDetails} />
-        <Route exact path="/seller/add-product" component={SellerAddProducts} />
-
         <Route exact path="/cart" component={Cart} />
+
+        <Route exact path="/seller/product/add" component={SellerAddProducts} />
+        <Route
+          exact
+          path="/seller/product/:crudType/:productId"
+          component={SellerAddProducts}
+        />
+        <Route
+          exact
+          path="/seller/product/view"
+          component={SellerViewProducts}
+        />
       </View>
     </Router>
   ) : (

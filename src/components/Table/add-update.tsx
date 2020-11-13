@@ -16,12 +16,12 @@ export default function TableWriteComponent({
 }: ITableAddUpdate) {
   return (
     <>
-      {componentData.map((itemData) => {
+      {componentData.map((itemData, index: number) => {
         return (
-          <Row style={{marginBottom: 4}}>
-            {itemData.map((componentItem) => {
+          <Row key={'' + index} style={{marginBottom: 4}}>
+            {itemData.map((componentItem, componentIndex: number) => {
               return (
-                <Col>
+                <Col key={`${index}${componentIndex}`}>
                   {componentItem.component === INPUT_COMPONENT.TEXT ? (
                     <Input
                       style={{padding: 4}}

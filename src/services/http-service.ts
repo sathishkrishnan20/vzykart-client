@@ -29,9 +29,11 @@ export const uploadMultiPart = async (endPoint: string, formData: any) => {
       url: API_URL + endPoint,
       data: formData,
       headers: {
-        'content-type': `multipart/form-data; boundary=${formData._boundary}`,
+        'content-type': 'multipart/form-data',
+        accept: 'application/json',
       },
     };
+    console.log(req);
     // @ts-ignore
     const response = await axios(req);
     return response;

@@ -11,5 +11,26 @@ const navigate = (navigation: any, routeName: string, params: any = {}) => {
     ? navigation.push(routeName)
     : navigation.navigate(routeName, params);
 };
+const navigateByProp = (
+  props: any,
+  routeName: string,
+  params: any = {},
+  customRouteMobile?: string,
+) => {
+  Platform.OS === 'web'
+    ? props.history.push(routeName)
+    : props.navigation.navigate(customRouteMobile || routeName, params);
+};
 
-export {useNavigation, navigate};
+const getParamsByProp = (props: any) => {
+  if (Platform.OS === 'web') {
+    const {
+      match: {params},
+    } = props;
+    return params;
+  } else {
+    return props.navigation.state && props.navigation.state.params;
+  }
+};
+
+export {useNavigation, navigate, navigateByProp, getParamsByProp};

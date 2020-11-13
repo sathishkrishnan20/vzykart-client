@@ -5,6 +5,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import Select from 'react-select';
 import {Text} from 'react-native-elements';
 import {Item} from 'react-native-picker-select';
+import {View} from 'react-native';
 interface IMultiSelect {
   items: Item[];
   onSelectedItemsChange: (key: string, value: Item[]) => void;
@@ -45,21 +46,20 @@ const MultiSelect = ({
           }
         />
       ) : (
-        // @ts-ignore
-        <SectionedMultiSelect
-          items={items}
-          IconRenderer={Icons as any}
-          uniqueKey="value"
-          displayKey={'label'}
-          subKey="children"
-          selectText="Choose some things..."
-          showDropDowns={true}
-          readOnlyHeadings={true}
-          onSelectedItemsChange={(items: unknown[]) =>
-            onSelectedItemsChange(stateKey, items as Item[])
-          }
-          selectedItems={selectedItems}
-        />
+        <View>
+          <SectionedMultiSelect
+            items={items}
+            IconRenderer={Icons as any}
+            uniqueKey="value"
+            displayKey={'label'}
+            selectText={label}
+            onSelectedItemsChange={(items: unknown[]) => {
+              console.log(items);
+              onSelectedItemsChange(stateKey, items as Item[]);
+            }}
+            selectedItems={selectedItems}
+          />
+        </View>
       )}
     </>
   );
