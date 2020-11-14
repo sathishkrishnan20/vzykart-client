@@ -9,8 +9,15 @@ import {
     ErrorToast,
     WarningToast
 } from '../Toast';
+import {
+    ImageViewer
+} from './image-viewer';
 /* Props 
-    type: would define the Upload fileType Name
+    type: would define the Upload fileType Name,
+    images: {
+        destinationPath: string
+        optimizedDestinationPath: string
+    }[]
 */
 class FileUpload extends Component {
     constructor(props) {
@@ -55,7 +62,7 @@ class FileUpload extends Component {
     }
     onClickHandler = (files) => {
         const {
-            type
+            type, images
         } = this.props;
         const data = new FormData()
         for (var x = 0; x < files.length; x++) {
@@ -64,16 +71,25 @@ class FileUpload extends Component {
 
         axios.put(IMAGE_UPLOAD_API_URL, data, {})
             .then(res => { // then print response status
-                this.props.onResult(res.data);
+                if (res.data.success) {
+                    const updatedImages = [...res.data.data, ...images, ]
+                    this.props.onResult(updatedImages);
+                }
             })
     }
     render() {
-        return ( < input type = "file"
-            class = "form-control"
-            multiple onChange = {
-                this.onChangeHandler
-            }
-            />
+        const {
+            images,
+            onDeleteImage
+        } = this.props;
+        return (<>
+             <input type = "file" className= "form-control" multiple onChange={this.onChangeHandler}/>
+           
+             <ImageViewer 
+            onDeleteImage={onDeleteImage}
+            images={images}/> 
+           
+            </>
         )
     }
 }

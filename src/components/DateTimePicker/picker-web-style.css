@@ -1,7 +1,11 @@
 .red-border {
-    border-color: grey;
-    height: 2.5em;
-    border-radius: 8px;
-    border-width: 1px;
-    width: 100%;
+  border-color: grey;
+  height: 2.5em;
+  border-radius: 8px;
+  border-width: 1px;
+  width: 100%;
+}
+
+.Select.is-open {
+  z-index: 1000 !important;
 }

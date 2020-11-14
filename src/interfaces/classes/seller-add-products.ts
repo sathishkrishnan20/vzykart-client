@@ -1,4 +1,5 @@
 import {Item} from 'react-native-picker-select';
+import {IProductImage} from '../products';
 
 export interface SellerAddProductsState {
   productPrefix: string;
@@ -18,9 +19,18 @@ export interface SellerAddProductsState {
   showDatePicker: boolean;
   isLoading: boolean;
   alertVisible: boolean;
+  images: IProductImage[];
 }
 
 export interface SellerViewProductsState {
   productData: SellerAddProductsState[];
   isLoading: boolean;
 }
+
+export type IProductChangeStateTypes =
+  | string
+  | Date
+  | boolean
+  | string[]
+  | Item[]
+  | IProductImage[];

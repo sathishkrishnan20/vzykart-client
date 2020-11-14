@@ -28,24 +28,30 @@ const Header = ({title, menus, notificationCount}: any) => {
             </Text>
           </View>
           <View style={styles.headerRight}>
-            {menus.map((menuItem: {title: string; navigationLink: string}) => (
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/Home"
-                style={{textDecoration: 'none'}}>
-                <Text
-                  style={{
-                    marginLeft: 20,
-                    fontSize: 16,
-                    fontFamily: 'OpenSans',
-                    fontWeight: '500',
-                    color: '#fff',
-                  }}>
-                  {menuItem.title}
-                </Text>
-              </NavLink>
-            ))}
+            {menus.map(
+              (
+                menuItem: {title: string; navigationLink: string},
+                index: number,
+              ) => (
+                <NavLink
+                  key={'' + index}
+                  exact
+                  activeClassName="active"
+                  to="/Home"
+                  style={{textDecoration: 'none'}}>
+                  <Text
+                    style={{
+                      marginLeft: 20,
+                      fontSize: 16,
+                      fontFamily: 'OpenSans',
+                      fontWeight: '500',
+                      color: '#fff',
+                    }}>
+                    {menuItem.title}
+                  </Text>
+                </NavLink>
+              ),
+            )}
 
             {isAuthenticated ? null : (
               <NavLink

@@ -22,6 +22,9 @@ import {
   IS_IOS
 } from '../../config';
 import { uploadMultiPart } from '../../services/http-service';
+import {
+  ImageViewer
+} from './image-viewer';
 const screenWidth = Dimensions.get('screen').width;
 const overLayWidth = screenWidth * 0.80;
 const PICKER_TYPES = {
@@ -76,7 +79,7 @@ class FileUpload extends Component {
      const {
        type
      } = this.props;
-     const { images } = this.state;
+     const { images } = this.props;
       const formData = new FormData();
       for (let index = 0; index < imageData.length; index++) {
         const image = imageData[index];
@@ -86,14 +89,12 @@ class FileUpload extends Component {
            name: String(image.path.split('/').pop()).toLowerCase()
          });
       }
-       var res = await uploadMultiPart('/image/upload', formData);
-       const response = res.data;
-       console.log(response);
-       const updatedImages = [...response.data, ...images, ]
-      this.setState({
-        images: updatedImages
-      })
-      
+        var res = await uploadMultiPart('/image/upload', formData);
+        const response = res.data;
+        if (response.success) {
+          const updatedImages = [...response.data, ...images, ]
+          this.props.onResult(updatedImages);
+        }
   }
 
 
@@ -101,7 +102,8 @@ class FileUpload extends Component {
 
 
   render() {
-    const { openOptionModal, images }  = this.state;
+    const { openOptionModal }  = this.state;
+    const { images, onDeleteImage } = this.props;
     
     return (
       <View style={{alignItems: 'center', marginTop: 20}}>
@@ -114,31 +116,14 @@ class FileUpload extends Component {
           }}
           title = "Image Upload"/>
           
-          <FlatList
-            numColumns={3}
-            data={images}
-            renderItem={({item}) => (
-             <Image
-                  source={{ uri: SERVER_URL + item.optimizedDestinationPath }}
-                  style={{ width: 200, height: 200 }}
-                  PlaceholderContent={<ActivityIndicator />}
-                />
-          )}/>
-         {
-           /*<View style={{ flexDirection : 'row', flexWrap: "wrap"}}> 
-          { images.map(item => {
-           return (
-            <Image
-              source={{ uri: SERVER_URL + item.optimizedDestinationPath }}
-              style={{ width: 200, height: 200 }}
-              PlaceholderContent={<ActivityIndicator />}
-          />
-           )
-         }) } 
-         < /View>*/
-         }
-        
-        
+          <View>
+            < ImageViewer onDeleteImage={onDeleteImage} images = {
+              images
+            }
+            />
+          </View>
+          
+
           <Overlay isVisible={openOptionModal} onBackdropPress={() => this.setOptionModalState()}>
             <View style={{ width: overLayWidth }}>
               <View style={{alignItems: 'flex-end', flexDirection: 'row'}}>

@@ -9,6 +9,8 @@ import {INPUT_COMPONENT} from '../../interfaces/enums';
 import {IS_ANDROID, IS_WEB} from '../../config';
 import MultiSelect from '../MultiSelect';
 import DateTimePicker from '../DateTimePicker/picker';
+import FileUpload from '../FileUpload/upload';
+import {IProductImage} from '../../interfaces/products';
 
 export default function TableWriteComponent({
   componentData,
@@ -113,6 +115,18 @@ export default function TableWriteComponent({
                       changeState={changeState}
                       showDatePickerStateKey={
                         componentItem.showDatePickerStateKey || ''
+                      }
+                    />
+                  ) : null}
+                  {componentItem.component === INPUT_COMPONENT.FILE_UPLOAD ? (
+                    <FileUpload
+                      type={componentItem.label || 'image'}
+                      images={componentItem.value}
+                      onDeleteImage={(images: IProductImage[]) =>
+                        changeState(componentItem.stateKey, images)
+                      }
+                      onResult={(images: IProductImage[]) =>
+                        changeState(componentItem.stateKey, images)
                       }
                     />
                   ) : null}

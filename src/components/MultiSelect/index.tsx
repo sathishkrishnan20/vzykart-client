@@ -6,6 +6,7 @@ import Select from 'react-select';
 import {Text} from 'react-native-elements';
 import {Item} from 'react-native-picker-select';
 import {View} from 'react-native';
+import '../DateTimePicker/picker-web-style.css';
 interface IMultiSelect {
   items: Item[];
   onSelectedItemsChange: (key: string, value: Item[]) => void;
@@ -20,6 +21,7 @@ const MultiSelect = ({
   stateKey,
   label = 'Select Items',
 }: IMultiSelect) => {
+  const selectStyles = {};
   return (
     <>
       <Text
@@ -34,13 +36,18 @@ const MultiSelect = ({
       </Text>
       {IS_WEB ? (
         <Select
-          defaultValue={[items[2], items[3]]}
+          styles={{
+            menuPortal: (base) => ({...base, zIndex: 9999}),
+            menu: (provided) => ({...provided, zIndex: 999}),
+          }}
+          menuPortalTarget={document.querySelector('body')}
+          defaultValue={[items[0]]}
           isMulti
           value={selectedItems}
           name="colors"
           options={items}
           className="basic-multi-select"
-          classNamePrefix="select"
+          classNamePrefix="Select"
           onChange={(selectedItems) =>
             onSelectedItemsChange(stateKey, selectedItems as Item[])
           }
@@ -54,7 +61,6 @@ const MultiSelect = ({
             displayKey={'label'}
             selectText={label}
             onSelectedItemsChange={(items: unknown[]) => {
-              console.log(items);
               onSelectedItemsChange(stateKey, items as Item[]);
             }}
             selectedItems={selectedItems}

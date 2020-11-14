@@ -37,17 +37,5 @@ const DateTimePicker = ({
     </View>
   );
 };
-const CustomContainer = ({
-    children
-   }) => {
-   return ( <div style={{  color: "#000" }}>
-        <CalendarContainer>
-          <div style={{ background: "#f0f0f0" }}>
-            Select Date 
-          </div>
-          <div style={{ position: "relative" }}>{children}</div>
-        </CalendarContainer>
-      </div>
-   )
-}
+
 export default DateTimePicker;

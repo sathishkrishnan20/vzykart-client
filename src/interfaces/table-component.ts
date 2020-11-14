@@ -1,5 +1,7 @@
 import {INPUT_COMPONENT, CRUD} from './enums';
 import {Item} from 'react-native-picker-select';
+import {IProductImage} from './products';
+import {IProductChangeStateTypes} from './classes/seller-add-products';
 
 export interface IAddUpdate {
   component: INPUT_COMPONENT;
@@ -14,10 +16,7 @@ export interface IAddUpdate {
 
 export interface ITableAddUpdate {
   componentData: IAddUpdate[][];
-  changeState: (
-    key: string,
-    value: string | Date | boolean | string[] | Item[],
-  ) => void;
+  changeState: (key: string, value: IProductChangeStateTypes) => void;
 }
 
 export interface TableHeader {

@@ -1,13 +1,20 @@
 import React, {Component} from 'react';
 
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Dimensions, SafeAreaView} from 'react-native';
 import {Text, Button} from 'react-native-elements';
 
 import TableWriteComponent from '../../../components/Table/add-update';
 import {IAddUpdate} from '../../../interfaces/table-component';
 import {INPUT_COMPONENT} from '../../../interfaces/enums';
-import {SellerAddProductsState} from '../../../interfaces/classes/seller-add-products';
-import {ICreateProduct} from '../../../interfaces/products';
+import {
+  SellerAddProductsState,
+  IProductChangeStateTypes,
+} from '../../../interfaces/classes/seller-add-products';
+import {
+  ICreateProduct,
+  IProduct,
+  IProductImage,
+} from '../../../interfaces/products';
 import ProductAction from '../../../actions/products';
 import {getShopId} from '../../../services/storage-service';
 import {IResponse} from '../../../interfaces/request-response';
@@ -18,6 +25,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {getMultiSelectValues} from '../../../helpers';
 import {getParamsByProp} from '../../../navigation';
 import FileUpload from '../../../components/FileUpload/upload';
+import MultiSelect from '../../../components/MultiSelect';
 
 class SellerAddProducts extends Component<any, SellerAddProductsState> {
   multiSelect: any;
@@ -37,6 +45,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       uom: '',
       unit: '',
       categories: [],
+      images: [],
       selectedItems: [],
       date: new Date(),
       showDatePicker: false,
@@ -49,7 +58,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
   componentDidMount() {
     const params = getParamsByProp(this.props);
   }
-  changeState(key: string, value: string | Date | boolean | string[] | Item[]) {
+  changeState(key: string, value: IProductChangeStateTypes) {
     // @ts-ignore
     this.setState({[key]: value});
   }
@@ -70,6 +79,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
         unit,
         categories,
         discount,
+        images,
       } = this.state;
       const createProductRequest: ICreateProduct = {
         shopId: await getShopId(),
@@ -83,10 +93,13 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
         uom,
         unit,
         categories: getMultiSelectValues(categories),
+        images,
       };
+
       const response: IResponse = await this.productAction.createProduct(
         createProductRequest,
       );
+      console.log(response);
       if (response.success) {
         SuccessToast({
           title: 'Success',
@@ -118,6 +131,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       unit: '',
       categories: [],
       selectedItems: [],
+      images: [],
     });
   }
   convertObjectToArray = (array: IAddUpdate[][]) => {
@@ -142,6 +156,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       unit,
       uom,
       categories,
+      images,
 
       selectedItems,
       date,
@@ -246,40 +261,45 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
           value: unit,
         },
       ],
+      [
+        {
+          component: INPUT_COMPONENT.FILE_UPLOAD,
+          label: 'image',
+          stateKey: 'images',
+          value: images,
+        },
+      ],
     ];
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Text
-            h4
-            style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
-            Add Product
-          </Text>
-          <FileUpload
-            type="image"
-            onResult={(result: IResponse) => console.log(result)}
-          />
-          <TableWriteComponent
-            changeState={(
-              key: string,
-              value: string | Date | boolean | string[] | Item[],
-            ) => this.changeState(key, value)}
-            componentData={IS_WEB ? data : this.convertObjectToArray(data)}
-          />
+      <SafeAreaView style={{flex: 1}}>
+        <ScrollView>
+          <View style={styles.container}>
+            <Text
+              h4
+              style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
+              Add Product
+            </Text>
 
-          <Button
-            title="Submit"
-            onPress={() => this.createProduct()}
-            loading={isLoading}
-          />
-        </View>
-      </ScrollView>
+            <TableWriteComponent
+              changeState={(key: string, value: IProductChangeStateTypes) =>
+                this.changeState(key, value)
+              }
+              componentData={IS_WEB ? data : this.convertObjectToArray(data)}
+            />
+
+            <Button
+              title="Submit"
+              onPress={() => this.createProduct()}
+              loading={isLoading}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
     paddingTop: 30,
     fontFamily: 'OpenSans',
