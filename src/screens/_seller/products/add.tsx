@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {StyleSheet, View, Dimensions, SafeAreaView} from 'react-native';
+import {StyleSheet, View, SafeAreaView} from 'react-native';
 import {Text, Button} from 'react-native-elements';
 
 import TableWriteComponent from '../../../components/Table/add-update';
@@ -10,22 +10,15 @@ import {
   SellerAddProductsState,
   IProductChangeStateTypes,
 } from '../../../interfaces/classes/seller-add-products';
-import {
-  ICreateProduct,
-  IProduct,
-  IProductImage,
-} from '../../../interfaces/products';
+import {ICreateProduct} from '../../../interfaces/products';
 import ProductAction from '../../../actions/products';
-import {getShopId} from '../../../services/storage-service';
+import {getSellerId} from '../../../services/storage-service';
 import {IResponse} from '../../../interfaces/request-response';
-import {Item} from 'react-native-picker-select';
 import {SuccessToast, WarningToast} from '../../../components/Toast';
 import {IS_WEB} from '../../../config';
 import {ScrollView} from 'react-native-gesture-handler';
 import {getMultiSelectValues} from '../../../helpers';
-import {getParamsByProp} from '../../../navigation';
-import FileUpload from '../../../components/FileUpload/upload';
-import MultiSelect from '../../../components/MultiSelect';
+//import {getParamsByProp} from '../../../navigation';
 
 class SellerAddProducts extends Component<any, SellerAddProductsState> {
   multiSelect: any;
@@ -41,7 +34,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       sellingPrice: '',
       discount: '',
       gst: '',
-      shopId: '',
+      sellerId: '',
       uom: '',
       unit: '',
       categories: [],
@@ -56,7 +49,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
     console.log(this.props);
   }
   componentDidMount() {
-    const params = getParamsByProp(this.props);
+    // const params = getParamsByProp(this.props);
   }
   changeState(key: string, value: IProductChangeStateTypes) {
     // @ts-ignore
@@ -82,7 +75,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
         images,
       } = this.state;
       const createProductRequest: ICreateProduct = {
-        shopId: await getShopId(),
+        sellerId: await getSellerId(),
         productName,
         productDescription,
         mrp: Number(mrp),
@@ -126,7 +119,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       sellingPrice: '',
       discount: '',
       gst: '',
-      shopId: '',
+      sellerId: '',
       uom: '',
       unit: '',
       categories: [],
@@ -158,10 +151,6 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       categories,
       images,
 
-      selectedItems,
-      date,
-      showDatePicker,
-      alertVisible,
       isLoading,
     } = this.state;
     const items = [

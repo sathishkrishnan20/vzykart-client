@@ -2,7 +2,6 @@ import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
 import {Row} from 'react-native-easy-grid';
-import {IProduct} from '../../interfaces/products';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {CART_INC_DEC} from '../../interfaces/enums';
 import {IS_WEB} from '../../config';

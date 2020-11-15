@@ -1,12 +1,6 @@
-import React, {Component, useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  View,
-  SafeAreaView,
-  StyleSheet,
-} from 'react-native';
-import {Icon, Text, Button, Overlay, Image} from 'react-native-elements';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, FlatList, View} from 'react-native';
+import {Icon, Image} from 'react-native-elements';
 import ZoomImageViewer from 'react-native-image-zoom-viewer';
 import {BackHandler, Modal} from 'react-native';
 
@@ -65,12 +59,7 @@ export const ImageViewer = ({images, onDeleteImage}: IImageViewer) => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  cover: {
-    flex: 1,
-    borderRadius: 5,
-  },
-});
+
 export function ZoomView({images}: IImageViewer) {
   const [isModalVisible, setModalVisible] = useState(false);
   const closeModal = () => {

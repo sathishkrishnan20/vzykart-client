@@ -1,7 +1,7 @@
-import {shopList} from './mocks/shop';
-class ShopService {
-  getShopList() {
-    return shopList;
+import {sellerList} from './mocks/seller';
+class SellerService {
+  getSellerList() {
+    return sellerList;
   }
 }
-export default ShopService;
+export default SellerService;

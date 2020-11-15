@@ -2,12 +2,9 @@ import React, {Component} from 'react';
 import {Container} from '../../components';
 import {FlatList} from 'react-native-gesture-handler';
 import {keyExtractor} from '../../helpers/render-helpers';
-import {Text} from 'react-native-elements';
-import {StyleSheet} from 'react-native';
 import {Product} from './product';
 import {IS_WEB} from '../../config';
 import {IProduct, IProductListState} from '../../interfaces/products';
-import {SellerViewProductsState} from '../../interfaces/classes/seller-add-products';
 export default class ProductList extends Component<any, IProductListState> {
   constructor(props: any) {
     super(props);
@@ -28,7 +25,7 @@ export default class ProductList extends Component<any, IProductListState> {
         rupeeSymbol: 'RS',
         reviews: [],
         ratings: 5,
-        shopId: '123',
+        sellerId: '123',
         discount: 12,
         categories: [],
         gst: 1,
@@ -54,7 +51,7 @@ export default class ProductList extends Component<any, IProductListState> {
         rupeeSymbol: 'RS',
         reviews: [],
         ratings: 5,
-        shopId: '123',
+        sellerId: '123',
         discount: 12,
         categories: [],
         gst: 1,
@@ -93,9 +90,3 @@ export default class ProductList extends Component<any, IProductListState> {
     );
   }
 }
-const styles = StyleSheet.create({
-  headerText: {
-    margin: 4,
-    fontSize: 24,
-  },
-});

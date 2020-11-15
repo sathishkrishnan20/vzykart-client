@@ -10,9 +10,6 @@ import colors from '../../colors';
 import {IS_WEB} from '../../config';
 
 class TableComponent extends Component<IViewTableComponentProp, {}> {
-  constructor(props: any) {
-    super(props);
-  }
   renderValues = (valueObject: any, valueIndex: number) => {
     const {headerData} = this.props;
     return headerData.map((headerItem, headerIndex: number) => {

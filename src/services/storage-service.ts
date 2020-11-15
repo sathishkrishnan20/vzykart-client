@@ -1,16 +1,16 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import {IS_WEB} from '../config';
 
-const SHOP_ID_KEY = 'shopId';
+const SELLER_ID_KEY = 'sellerId';
 
-export const setShopId = async (shopId: string) => {
+export const setSellerId = async (sellerId: string) => {
   IS_WEB
-    ? localStorage.setItem(SHOP_ID_KEY, shopId)
-    : await AsyncStorage.setItem(SHOP_ID_KEY, shopId);
+    ? localStorage.setItem(SELLER_ID_KEY, sellerId)
+    : await AsyncStorage.setItem(SELLER_ID_KEY, sellerId);
 };
 
-export const getShopId = async () => {
+export const getSellerId = async () => {
   return IS_WEB
-    ? localStorage.getItem(SHOP_ID_KEY) || '5fa90fa1207f370732e06674'
-    : (await AsyncStorage.getItem(SHOP_ID_KEY)) || '5fa90fa1207f370732e06674';
+    ? localStorage.getItem(SELLER_ID_KEY) || '5fa90fa1207f370732e06674'
+    : (await AsyncStorage.getItem(SELLER_ID_KEY)) || '5fa90fa1207f370732e06674';
 };

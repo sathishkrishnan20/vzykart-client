@@ -1,5 +1,5 @@
 export interface ICreateProduct {
-  shopId: string;
+  sellerId: string;
   productName: string;
   productDescription: string;
   mrp: number;
@@ -27,7 +27,7 @@ export interface IProduct extends ICreateProduct {
     comment: string;
   }[];
   ratings?: number;
-  shop?: {
+  seller?: {
     name: string;
     location: string;
   };

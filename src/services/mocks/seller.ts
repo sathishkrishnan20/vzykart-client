@@ -1,6 +1,6 @@
-import {IShop} from '../../interfaces/shop';
+import {ISeller} from '../../interfaces/seller';
 
-const shopList: IShop[] = [
+const sellerList: ISeller[] = [
   {
     name: 'CSK Stores',
     short_description: 'Grocery Shops',
@@ -70,4 +70,4 @@ const shopList: IShop[] = [
       'https://content3.jdmagicbox.com/comp/tirunelveli/m9/0462px462.x462.170204151848.s5m9/catalogue/sakunthaladevi-fancy-store-tirunelveli-town-tirunelveli-fancy-item-dealers-1t53sbz.jpg',
   },
 ];
-export {shopList};
+export {sellerList};

@@ -1,7 +1,9 @@
 // @ts-nocheck
 import React from 'react';
-import {AppRegistry, Platform, View, StyleSheet} from 'react-native';
-import {ThemeProvider, Text} from 'react-native-elements';
+import {AppRegistry, Platform} from 'react-native';
+import {Provider} from 'react-redux';
+import {store} from './routes/store';
+import {ThemeProvider} from 'react-native-elements';
 import Toast from 'react-native-toast-message';
 import {Routes} from './routes';
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
@@ -17,6 +19,7 @@ import SimpleLineIcons from 'react-native-vector-icons/Fonts/SimpleLineIcons.ttf
 import Octicons from 'react-native-vector-icons/Fonts/Octicons.ttf';
 import Zocial from 'react-native-vector-icons/Fonts/Zocial.ttf';
 import Fontisto from 'react-native-vector-icons/Fonts/Fontisto.ttf';
+import Helvetica from './assets/fonts/Helvetica-Light.ttf';
 
 const fonts = [
   {url: AntDesign, fontFamilyName: 'AntDesign'},
@@ -32,8 +35,8 @@ const fonts = [
   {url: Octicons, fontFamilyName: 'Octicons'},
   {url: Zocial, fontFamilyName: 'Zocial'},
   {url: Fontisto, fontFamilyName: 'Fontisto'},
+  {url: Helvetica, fontFamilyName: 'Helvetica'},
 ];
-const antDesignIconFontStyles = [];
 const colors = {
   white: '#FFF',
   primary: '#F34C42',
@@ -43,7 +46,7 @@ const colors = {
   dustyGray: '#979797',
   lightSkyBlue: '#87CEFA',
 };
-const HEIGHT = 60;
+
 const commonTheme = {
   colors: {
     primary: colors.primary,
@@ -68,10 +71,12 @@ const commonTheme = {
 
 export function App() {
   return (
-    <ThemeProvider theme={commonTheme}>
-      <Routes />
-      <Toast ref={(ref) => Toast.setRef(ref)} />
-    </ThemeProvider>
+    <Provider store={store} key="provider">
+      <ThemeProvider theme={commonTheme}>
+        <Routes />
+        <Toast ref={(ref) => Toast.setRef(ref)} />
+      </ThemeProvider>
+    </Provider>
   );
 }
 

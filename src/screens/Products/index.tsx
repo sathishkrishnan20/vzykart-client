@@ -5,13 +5,10 @@ import {
   Dimensions,
   ImageBackground,
   View,
-  StyleSheet,
-  TextInput,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
-import {Card, Rating, Button} from 'react-native-elements';
+import {Card, Button} from 'react-native-elements';
 import styles from './style';
-import {IProduct} from '../../interfaces/products';
 interface IState {
   visibleDialog: boolean;
   content: string;
@@ -36,7 +33,7 @@ class ProductDetail extends Component<any, IState> {
           'https://images-na.ssl-images-amazon.com/images/I/61okxRIYtsL._SL1000_.jpg',
           'https://images-na.ssl-images-amazon.com/images/I/61GAvR5vBgL._SL1000_.jpg',
         ],
-        shop: {
+        seller: {
           name: 'Selvaraj Stores, KoodanKulam',
           location: 'Koodankulam',
         },
@@ -87,8 +84,8 @@ class ProductDetail extends Component<any, IState> {
             </View>
           </Card>
           <Card containerStyle={[styles.cardMargin, styles.marginBottom]}>
-            <Text>Location: {product.shop?.location}</Text>
-            <Text>Shop Name: {product.shop && product.shop.name}</Text>
+            <Text>Location: {product.seller?.location}</Text>
+            <Text>Seller Name: {product.seller && product.seller.name}</Text>
           </Card>
           {/* <Card
             containerStyle={[styles.cardMargin, styles.marginBottom]}
@@ -117,26 +114,4 @@ class ProductDetail extends Component<any, IState> {
     );
   }
 }
-const style = StyleSheet.create({
-  textAreaContainer: {
-    borderColor: 'red',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 30,
-    borderBottomWidth: 1,
-    width: 250,
-    height: 45,
-    marginBottom: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  textArea: {
-    height: 45,
-    marginLeft: 16,
-    borderBottomColor: '#FFFFFF',
-    flex: 1,
-  },
-  closeBtn: {
-    marginTop: 10,
-  },
-});
 export default ProductDetail;

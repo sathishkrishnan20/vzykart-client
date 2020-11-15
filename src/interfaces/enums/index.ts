@@ -5,7 +5,7 @@ export enum CART_INC_DEC {
 
 export enum USER_TYPE {
   USER = 'USER',
-  SELLER = 'SELLER',
+  SALES_USER = 'SALES_USER',
 }
 
 export enum INPUT_COMPONENT {

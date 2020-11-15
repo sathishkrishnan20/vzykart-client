@@ -7,8 +7,8 @@ class ProductAction {
     );
     return result.data;
   }
-  async getProductsByShopId(shopId: string): Promise<IResponse> {
-    const result = await getService('/products/shop/' + shopId).catch(
+  async getProductsBySellerId(sellerId: string): Promise<IResponse> {
+    const result = await getService('/products/seller/' + sellerId).catch(
       (ex) => ex.response,
     );
     return result.data;

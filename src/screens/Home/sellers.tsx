@@ -3,12 +3,12 @@ import {Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 import {Row, Col} from 'react-native-easy-grid';
 import {IS_WEB} from '../../config';
-import {IShop} from '../../interfaces/shop';
-interface IShopsProp {
-  data: IShop;
+import {ISeller} from '../../interfaces/seller';
+interface ISellerProp {
+  data: ISeller;
   onClick: () => void;
 }
-export function Shops({data, onClick}: IShopsProp) {
+export function Seller({data, onClick}: ISellerProp) {
   return (
     <Row size={12} style={{margin: 4}}>
       <Col size={12}>

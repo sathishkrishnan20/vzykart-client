@@ -1,8 +1,5 @@
 import React from 'react';
-import {IS_WEB} from '../../config';
-import {View, TouchableOpacity} from 'react-native';
-import {Text} from 'react-native-elements';
-import RNDateTimePicker, {Event} from '@react-native-community/datetimepicker';
+import {View} from 'react-native';
 import ReactDatePicker, { CalendarContainer } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './picker-web-style.css'

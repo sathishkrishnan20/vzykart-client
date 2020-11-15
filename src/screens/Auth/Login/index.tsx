@@ -17,30 +17,66 @@ import {LoginState} from '../../../interfaces/classes/auth';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
 import {IS_WEB, BACKGROUND_IMAGE_URL} from '../../../config';
-import {navigateByProp} from '../../../navigation';
-
+import {navigateByProp, getParamsByProp} from '../../../navigation';
+import AuthAction from '../../../actions/auth';
+import {ILoginAPI} from '../../../interfaces/actions/auth';
+import {showToastByResponse} from '../../../components/Toast';
 export default class Login extends React.Component<any, LoginState> {
   screenHeight: number;
   otpInput?: any;
+  authAction: AuthAction;
   constructor(props: any) {
     super(props);
     this.state = {
-      userName: '',
+      userEntry: '',
       password: '',
       userType: USER_TYPE.USER,
       isLoading: false,
       showPassword: false,
       enableForgotPassword: false,
       otpCode: '',
+      userId: '',
     };
+    this.authAction = new AuthAction();
     this.screenHeight = Dimensions.get('window').height - 60;
   }
-  doForgotPassword() {
-    this.setState({enableForgotPassword: true});
+  componentDidMount() {
+    const params = getParamsByProp(this.props);
+    if (params.userType === 'seller') {
+      this.setState({userType: USER_TYPE.SALES_USER});
+    }
+    console.log(params);
   }
-  setPasswordByOtp() {}
+  async doForgotPassword() {
+    const {userEntry, userType} = this.state;
+    const response = await this.authAction.generateOTP(userType, {
+      userEntry: userEntry,
+    });
+    showToastByResponse(response);
+    if (response.success) {
+      this.setState({enableForgotPassword: true, userId: response.data.userId});
+    }
+  }
+  async setPasswordByOtp() {
+    const {otpCode, userType, userId, password} = this.state;
+    const response = await this.authAction.forgotPassword(userType, {
+      issuerId: userId,
+      otpCode,
+      password,
+    });
+    if (response.success) {
+      this.doLogin();
+    } else {
+      showToastByResponse(response);
+    }
+  }
   doLogin() {
-    navigateByProp(this.props, 'home');
+    const {userEntry, password, userType} = this.state;
+    const loginAPIRequest: ILoginAPI = {
+      userEntry,
+      password,
+    };
+    this.authAction.login(userType, loginAPIRequest, this.props);
   }
 
   renderTitle() {
@@ -53,8 +89,9 @@ export default class Login extends React.Component<any, LoginState> {
 
   renderInputs() {
     const {
-      userName,
+      userEntry,
       password,
+      userType,
       isLoading,
       showPassword,
       enableForgotPassword,
@@ -67,8 +104,8 @@ export default class Login extends React.Component<any, LoginState> {
             : 'Sign in to your account'}
         </Card.Title>
         <Input
-          value={userName}
-          onChangeText={(userName: string) => this.setState({userName})}
+          value={userEntry}
+          onChangeText={(userEntry: string) => this.setState({userEntry})}
           returnKeyType={'next'}
           autoCapitalize="none"
           placeholder="Email/Mobile Number"
@@ -114,12 +151,14 @@ export default class Login extends React.Component<any, LoginState> {
           loading={isLoading}
           title={enableForgotPassword ? 'Set Password' : 'Login'}
         />
-        <TouchableOpacity
-          onPress={() => navigateByProp(this.props, 'register')}>
-          <Card.FeaturedTitle style={styles.newUserRegisterText}>
-            New User? Register Here
-          </Card.FeaturedTitle>
-        </TouchableOpacity>
+        {userType === USER_TYPE.USER ? (
+          <TouchableOpacity
+            onPress={() => navigateByProp(this.props, 'register')}>
+            <Card.FeaturedTitle style={styles.newUserRegisterText}>
+              New User? Register Here
+            </Card.FeaturedTitle>
+          </TouchableOpacity>
+        ) : null}
       </Card>
     );
   }

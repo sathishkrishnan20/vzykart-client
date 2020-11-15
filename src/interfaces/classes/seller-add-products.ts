@@ -10,7 +10,7 @@ export interface SellerAddProductsState {
   sellingPrice: string;
   discount: string;
   gst: string;
-  shopId: string;
+  sellerId: string;
   uom: string;
   unit: string;
   categories: string[] | Item[];

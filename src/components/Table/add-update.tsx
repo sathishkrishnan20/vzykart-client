@@ -2,7 +2,7 @@ import React from 'react';
 
 import {StyleSheet, View} from 'react-native';
 import {Text, Input} from 'react-native-elements';
-import {Row, Col, Grid} from 'react-native-easy-grid';
+import {Row, Col} from 'react-native-easy-grid';
 import RNPickerSelect, {Item} from 'react-native-picker-select';
 import {ITableAddUpdate} from '../../interfaces/table-component';
 import {INPUT_COMPONENT} from '../../interfaces/enums';

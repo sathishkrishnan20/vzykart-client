@@ -1,22 +1,12 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Text, StyleSheet, View} from 'react-native';
 
-import {Image, Card, Button} from 'react-native-elements';
+import {Image, Button} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IProduct} from '../../interfaces/products';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {navigateByProp} from '../../navigation';
 import {IS_WEB} from '../../config';
-const {width} = Dimensions.get('window');
-// import {IS_WEB} from '../../config';
 export const Product = ({
   data,
   navigationProp,
@@ -90,7 +80,9 @@ const renderProductInfo = (productInfo: IProduct, navigationProp: any) => {
         MRP: Rs: {productInfo.mrp}
       </Text>
       <Text style={styles.textName}>Offer:Rs: {productInfo.sellingPrice}</Text>
-      <Text style={styles.textName}>{'Seller Name' || productInfo.shopId}</Text>
+      <Text style={styles.textName}>
+        {'Seller Name' || productInfo.sellerId}
+      </Text>
       <Text style={styles.textName}>
         {productInfo.unit + ' ' + productInfo.unit}
       </Text>
@@ -186,20 +178,3 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-
-const getImageColSize = () => {
-  if (width > 0 && width <= 300) {
-    return 4;
-  } else if (width > 300 && width <= 600) {
-    return 4;
-  } else if (width > 600 && width <= 900) {
-    return 2;
-  } else if (width > 900 && width <= 1600) {
-    return 2;
-  } else if (width > 1600 && width <= 2000) {
-    return 2;
-  } else if (width < 2000) {
-    return 2;
-  }
-  return 4;
-};

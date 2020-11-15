@@ -19,12 +19,8 @@ import {SignUpState} from '../../../interfaces/classes/auth';
 import {navigateByProp} from '../../../navigation';
 import {Radio} from '../../../components/Radio';
 import AuthAction from '../../../actions/auth';
-import {IRegisterAPI} from '../../../interfaces/actions/auth';
-import {
-  SuccessToast,
-  showToastByResponse,
-  ErrorToast,
-} from '../../../components/Toast';
+import {IRegisterAPI, ILoginAPI} from '../../../interfaces/actions/auth';
+import {showToastByResponse, ErrorToast} from '../../../components/Toast';
 export default class SignUp extends React.Component<any, SignUpState> {
   screenHeight: number;
   authAction: AuthAction;
@@ -46,7 +42,6 @@ export default class SignUp extends React.Component<any, SignUpState> {
     try {
       const {email, mobileNumber, userType, password, useEmail} = this.state;
       const registerItem: IRegisterAPI = {
-        type: userType,
         password: password,
       };
       if (useEmail) {
@@ -54,8 +49,15 @@ export default class SignUp extends React.Component<any, SignUpState> {
       } else {
         registerItem.mobileNumber = Number(mobileNumber);
       }
-      const response = await this.authAction.register(registerItem);
+      const response = await this.authAction.register(userType, registerItem);
       showToastByResponse(response);
+      if (response.success) {
+        const loginAPIRequest: ILoginAPI = {
+          userEntry: useEmail ? email : mobileNumber,
+          password,
+        };
+        this.authAction.login(userType, loginAPIRequest, this.props);
+      }
     } catch (error) {
       ErrorToast({title: 'Failed', message: error.message || error});
     }

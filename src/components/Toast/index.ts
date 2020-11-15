@@ -7,7 +7,7 @@ interface IToastOptional {
   autoHide?: boolean;
 }
 interface IToast extends IToastOptional {
-  title: string;
+  title?: string;
   message: string;
 }
 interface IResponseToast extends IResponse, IToastOptional {}
@@ -37,7 +37,7 @@ export const showToastByResponse = ({
   );
 };
 export const SuccessToast = ({
-  title,
+  title = 'Success',
   message,
   duration = 3000,
   autoHide = true,
@@ -46,7 +46,7 @@ export const SuccessToast = ({
 };
 
 export const WarningToast = ({
-  title,
+  title = 'Warning',
   message,
   duration = 3000,
   autoHide = true,
@@ -55,7 +55,7 @@ export const WarningToast = ({
 };
 
 export const ErrorToast = ({
-  title,
+  title = 'Failed',
   message,
   duration = 3000,
   autoHide = true,
@@ -64,7 +64,7 @@ export const ErrorToast = ({
 };
 
 export const InfoToast = ({
-  title,
+  title = 'Info',
   message,
   duration = 3000,
   autoHide = true,

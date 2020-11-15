@@ -21,7 +21,6 @@ const MultiSelect = ({
   stateKey,
   label = 'Select Items',
 }: IMultiSelect) => {
-  const selectStyles = {};
   return (
     <>
       <Text

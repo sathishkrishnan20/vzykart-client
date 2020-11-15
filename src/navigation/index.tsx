@@ -18,7 +18,7 @@ const navigateByProp = (
   customRouteMobile?: string,
 ) => {
   Platform.OS === 'web'
-    ? props.history.push(routeName)
+    ? props.history.replace(routeName)
     : props.navigation.navigate(customRouteMobile || routeName, params);
 };
 

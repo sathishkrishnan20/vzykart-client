@@ -20,9 +20,7 @@ import {
     }[]
 */
 class FileUpload extends Component {
-    constructor(props) {
-        super(props);
-    }
+   
     onChangeHandler = event => {
         this.setState({
             selectedFile: event.target.files,
@@ -40,7 +38,7 @@ class FileUpload extends Component {
         const types = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
 
         let size = 120000; // 15MegaByte 
-        for (var x = 0; x < files.length; x++) {
+        for (let x = 0; x < files.length; x++) {
             if (files[x].size > size) {
                 ErrorToast({
                     title: 'File Too Large',
@@ -83,7 +81,9 @@ class FileUpload extends Component {
             onDeleteImage
         } = this.props;
         return (<>
-             <input type = "file" className= "form-control" multiple onChange={this.onChangeHandler}/>
+             <input type = "file" className= "form-control" multiple onChange={this.onChangeHandler
+}
+            />
            
              <ImageViewer 
             onDeleteImage={onDeleteImage}

@@ -1,4 +1,4 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet} from 'react-native';
 import colors from '../../colors';
 import {IS_WEB} from '../../config';
 

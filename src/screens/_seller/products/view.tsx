@@ -5,12 +5,11 @@ import {Text} from 'react-native-elements';
 
 import {SellerViewProductsState} from '../../../interfaces/classes/seller-add-products';
 import ProductAction from '../../../actions/products';
-import {getShopId} from '../../../services/storage-service';
+import {getSellerId} from '../../../services/storage-service';
 import {ScrollView} from 'react-native-gesture-handler';
 import TableComponent from '../../../components/Table/view';
 import {TableHeader} from '../../../interfaces/table-component';
 import {CRUD} from '../../../interfaces/enums';
-import {withRouter} from 'react-router-dom';
 import {navigateByProp} from '../../../navigation';
 class SellerViewProducts extends Component<any, SellerViewProductsState> {
   productAction: ProductAction;
@@ -73,8 +72,8 @@ class SellerViewProducts extends Component<any, SellerViewProductsState> {
   async getProducts() {
     try {
       this.setState({isLoading: true});
-      const shopId = await getShopId();
-      const result = await this.productAction.getProductsByShopId(shopId);
+      const sellerId = await getSellerId();
+      const result = await this.productAction.getProductsBySellerId(sellerId);
       if (result.success) {
         console.log(result.data);
         this.setState({isLoading: false, productData: result.data});

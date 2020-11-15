@@ -1,3 +1,3 @@
 export * from './Details';
 export * from './Home';
-export * from './ShopDetails';
+export * from './Seller';

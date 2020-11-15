@@ -1,23 +1,17 @@
 import React, {useEffect} from 'react';
 import {Container} from '../../components';
-import {useNavigation} from '../../navigation';
 
-import {ShopHeader} from './shop-header';
-import {Product} from '../Products/product';
-import {FlatList} from 'react-native-gesture-handler';
-import {keyExtractor} from '../../helpers/render-helpers';
-import {Text} from 'react-native-elements';
-import {StyleSheet} from 'react-native';
-export function ShopDetails() {
+import {SellerHeader} from './shop-header';
+
+export function SellerDetails() {
   // @ts-ignore
-  const navigation = useNavigation();
   useEffect(() => {}, []);
 
   useEffect(() => {}, []);
 
   return (
     <Container>
-      <ShopHeader />
+      <SellerHeader />
       {/* <FlatList
         data={[
           {
@@ -52,9 +46,3 @@ export function ShopDetails() {
     </Container>
   );
 }
-const styles = StyleSheet.create({
-  headerText: {
-    margin: 4,
-    fontSize: 24,
-  },
-});

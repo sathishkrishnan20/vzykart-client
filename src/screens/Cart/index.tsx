@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   StyleSheet,
-  Button,
   Text,
   View,
   TouchableOpacity,
@@ -11,8 +10,6 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
@@ -85,19 +82,18 @@ export default class Cart extends React.Component<any, any> {
 
   selectHandler = (index: number, value: number) => {
     const newItems = [...this.state.cartItems]; // clone the array
-    newItems[index]['checked'] = value == 1 ? 0 : 1; // set the new value
+    newItems[index]['checked'] = value === 1 ? 0 : 1; // set the new value
     this.setState({cartItems: newItems}); // set new state
   };
 
   selectHandlerAll = (value: boolean) => {
     const newItems = [...this.state.cartItems]; // clone the array
-    newItems.map((item, index) => {
-      console.log(item);
-      newItems[index]['checked'] = value == true ? 0 : 1; // set the new value
+    newItems.map((_item, index) => {
+      return (newItems[index]['checked'] = value === true ? 0 : 1); // set the new value
     });
     this.setState({
       cartItems: newItems,
-      selectAll: value == true ? false : true,
+      selectAll: value === true ? false : true,
     }); // set new state
   };
 
@@ -132,9 +128,9 @@ export default class Cart extends React.Component<any, any> {
 
     let currentQty = newItems[index]['qty'];
 
-    if (action == CART_INC_DEC.INCREMENT) {
+    if (action === CART_INC_DEC.INCREMENT) {
       newItems[index]['qty'] = currentQty + 1;
-    } else if (action == CART_INC_DEC.DECREMENT) {
+    } else if (action === CART_INC_DEC.DECREMENT) {
       newItems[index]['qty'] = currentQty > 1 ? currentQty - 1 : 1;
     }
 
@@ -146,7 +142,7 @@ export default class Cart extends React.Component<any, any> {
     if (cartItems) {
       return cartItems.reduce(
         (sum: number, item: any) =>
-          sum + (item.checked == 1 ? item.qty * item.salePrice : 0),
+          sum + (item.checked === 1 ? item.qty * item.salePrice : 0),
         0,
       );
     }
@@ -198,12 +194,12 @@ export default class Cart extends React.Component<any, any> {
                       onPress={() => this.selectHandler(i, item.checked)}>
                       <Ionicons
                         name={
-                          item.checked == 1
+                          item.checked === 1
                             ? 'ios-checkmark-circle'
                             : 'ios-checkmark-circle-outline'
                         }
                         size={25}
-                        color={item.checked == 1 ? '#0faf9a' : '#aaaaaa'}
+                        color={item.checked === 1 ? '#0faf9a' : '#aaaaaa'}
                       />
                     </TouchableOpacity>
                   </View>
@@ -309,12 +305,12 @@ export default class Cart extends React.Component<any, any> {
                   onPress={() => this.selectHandlerAll(selectAll)}>
                   <Ionicons
                     name={
-                      selectAll == true
+                      selectAll === true
                         ? 'ios-checkmark-circle'
                         : 'ios-checkmark-circle-outline'
                     }
                     size={25}
-                    color={selectAll == true ? '#0faf9a' : '#aaaaaa'}
+                    color={selectAll === true ? '#0faf9a' : '#aaaaaa'}
                   />
                 </TouchableOpacity>
               </View>

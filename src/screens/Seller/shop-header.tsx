@@ -4,7 +4,7 @@ import {ActivityIndicator, Text, StyleSheet} from 'react-native';
 import {Image, Card} from 'react-native-elements';
 import {Row, Col} from 'react-native-easy-grid';
 import {IS_WEB} from '../../config';
-export const ShopHeader = () => {
+export const SellerHeader = () => {
   return (
     <Card>
       <Row size={IS_WEB ? 12 : 0} style={{height: 160}}>

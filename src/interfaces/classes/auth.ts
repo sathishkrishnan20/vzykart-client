@@ -1,12 +1,13 @@
 import {USER_TYPE} from '../enums';
 export interface LoginState {
-  userName: string;
+  userEntry: string;
   password: string;
   userType: USER_TYPE;
   isLoading: boolean;
   showPassword: boolean;
   enableForgotPassword: boolean;
   otpCode: string;
+  userId: string;
 }
 
 export interface SignUpState {
