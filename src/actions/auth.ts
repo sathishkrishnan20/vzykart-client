@@ -9,6 +9,8 @@ import {
 import {navigateByProp} from '../navigation';
 import {ErrorToast, showToastByResponse} from '../components/Toast';
 import {USER_TYPE} from '../interfaces/enums';
+import {store} from '../routes/store';
+import {AUTH_USER_LOGIN, AUTH_SELLER_LOGIN} from '../providers/constants';
 class AuthAction {
   async login(
     userType: USER_TYPE = USER_TYPE.USER,
@@ -28,6 +30,20 @@ class AuthAction {
       ).catch((ex) => ex.response);
       const response: IResponse = result.data;
       if (response.success) {
+        if (response.data.type === USER_TYPE.USER) {
+          store.dispatch({
+            type: AUTH_USER_LOGIN,
+            userId: response.data.id,
+            token: response.data.token,
+          } as never);
+        } else if (response.data.type === USER_TYPE.SALES_USER) {
+          store.dispatch({
+            type: AUTH_SELLER_LOGIN,
+            userId: response.data.id,
+            sellerId: response.data.sellerId,
+            token: response.data.token,
+          } as never);
+        }
         navigateByProp(props, navigateRouteName, navigateParams);
       } else {
         showToastByResponse(response);

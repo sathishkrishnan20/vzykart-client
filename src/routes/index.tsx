@@ -1,5 +1,5 @@
 import './GestureHandler';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -9,7 +9,7 @@ import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Home, Details} from '../screens';
-import {Text, View, Platform} from 'react-native';
+import {View, Platform} from 'react-native';
 import Cart from '../screens/Cart';
 import ProductDetail from '../screens/Products';
 import Header from '../components/Header';
@@ -18,17 +18,14 @@ import SellerViewProducts from '../screens/_seller/products/view';
 import Login from '../screens/Auth/Login';
 import SignUp from '../screens/Auth/Signup';
 import ProductList from '../screens/Products/list';
+import {store} from './store';
+import {getUserId, getToken} from '../services/storage-service';
 const HEADER_HEIGHT = 70;
 export type StackParams = {
   Home: undefined;
   Details: {data: string} | undefined;
 };
 
-const DetailsScreen = () => (
-  <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-    <Text>DetailsScreen</Text>
-  </View>
-);
 function getHeaderTitle(route: any) {
   const routeName = route.state
     ? route.state.routes[route.state.index].name
@@ -57,7 +54,6 @@ const StackNavigator = () => {
       <Stack.Screen name="register" component={Login} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="ProductList" component={ProductList} />
-      <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
       <Stack.Screen name="/seller/product/add" component={SellerAddProducts} />
     </Stack.Navigator>
   );
@@ -149,12 +145,7 @@ export function Routes() {
         <Route exact path="/Details" component={Details} />
         <Route exact path="/cart" component={Cart} />
 
-        <Route
-          exact
-          path="/seller/product/add"
-          authenticated={true}
-          component={SellerAddProducts}
-        />
+        <Route exact path="/seller/product/add" component={SellerAddProducts} />
         <Route
           exact
           path="/seller/product/:crudType/:productId"
