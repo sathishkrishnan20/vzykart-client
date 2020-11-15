@@ -3,7 +3,7 @@ import {Container} from '../../components';
 import {useNavigation} from '../../navigation';
 
 import {ShopHeader} from './shop-header';
-import {Product} from './product';
+import {Product} from '../Products/product';
 import {FlatList} from 'react-native-gesture-handler';
 import {keyExtractor} from '../../helpers/render-helpers';
 import {Text} from 'react-native-elements';
@@ -18,7 +18,7 @@ export function ShopDetails() {
   return (
     <Container>
       <ShopHeader />
-      <FlatList
+      {/* <FlatList
         data={[
           {
             productName: 'Hamam Soap',
@@ -48,7 +48,7 @@ export function ShopDetails() {
         )}
         keyExtractor={keyExtractor}
         renderItem={({item}) => <Product navigation={navigation} data={item} />}
-      />
+      /> */}
     </Container>
   );
 }

@@ -1,12 +1,16 @@
 // @ts-ignore
 import Toast from 'react-native-toast-message';
 import {IS_WEB} from '../../config';
-interface IToast {
-  title: string;
-  message: string;
+import {IResponse} from '../../interfaces/request-response';
+interface IToastOptional {
   duration?: number;
   autoHide?: boolean;
 }
+interface IToast extends IToastOptional {
+  title: string;
+  message: string;
+}
+interface IResponseToast extends IResponse, IToastOptional {}
 enum ToastType {
   SUCCESS = 'success',
   WARNING = 'warning',
@@ -17,6 +21,20 @@ const commonConfig = {
   position: IS_WEB ? 'top' : 'bottom',
   topOffset: IS_WEB ? 150 : 0,
   bottomOffset: IS_WEB ? 0 : 60,
+};
+export const showToastByResponse = ({
+  success,
+  message,
+  duration = 3000,
+  autoHide = true,
+}: IResponseToast) => {
+  baseToast(
+    success ? ToastType.SUCCESS : ToastType.ERROR,
+    success ? 'Success' : 'Failed',
+    message,
+    autoHide,
+    duration,
+  );
 };
 export const SuccessToast = ({
   title,

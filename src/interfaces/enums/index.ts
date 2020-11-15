@@ -3,6 +3,11 @@ export enum CART_INC_DEC {
   DECREMENT = 'DECREMENT',
 }
 
+export enum USER_TYPE {
+  USER = 'USER',
+  SELLER = 'SELLER',
+}
+
 export enum INPUT_COMPONENT {
   TEXT = 'TEXT',
   SINGLE_SELECT = 'SINGLE_SELECT',

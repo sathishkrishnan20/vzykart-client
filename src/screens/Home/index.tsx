@@ -36,7 +36,7 @@ export function Home() {
           renderItem={({item}) => (
             <Shops
               data={item}
-              onClick={() => navigate(navigation, 'ShopDetails')}
+              onClick={() => navigate(navigation, 'ProductList')}
             />
           )}
         />

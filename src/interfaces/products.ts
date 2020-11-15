@@ -16,8 +16,7 @@ export interface ICreateProduct {
 }
 
 export interface IProduct extends ICreateProduct {
-  productId: number;
-  imageUrl?: string;
+  productId: string;
   specifications?: {
     specificationKey: string;
     value: string;
@@ -38,4 +37,9 @@ export interface IProductImage {
   destinationPath: string;
   optimizedDestinationPath: string;
   active: boolean;
+}
+
+export interface IProductListState {
+  productData: IProduct[];
+  isLoading: boolean;
 }

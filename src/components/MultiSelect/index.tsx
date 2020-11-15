@@ -6,7 +6,7 @@ import Select from 'react-select';
 import {Text} from 'react-native-elements';
 import {Item} from 'react-native-picker-select';
 import {View} from 'react-native';
-import '../DateTimePicker/picker-web-style.css';
+
 interface IMultiSelect {
   items: Item[];
   onSelectedItemsChange: (key: string, value: Item[]) => void;
