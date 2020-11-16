@@ -11,7 +11,11 @@ import TableComponent from '../../../components/Table/view';
 import {TableHeader} from '../../../interfaces/table-component';
 import {CRUD} from '../../../interfaces/enums';
 import {navigateByProp} from '../../../navigation';
-class SellerViewProducts extends Component<any, SellerViewProductsState> {
+import {ComponentProp} from '../../../interfaces';
+class SellerViewProducts extends Component<
+  ComponentProp,
+  SellerViewProductsState
+> {
   productAction: ProductAction;
   headerData: TableHeader[] = [
     {

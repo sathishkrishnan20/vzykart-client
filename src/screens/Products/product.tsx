@@ -5,15 +5,19 @@ import {Image, Button} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IProduct} from '../../interfaces/products';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
-import {navigateByProp} from '../../navigation';
 import {IS_WEB} from '../../config';
+import {ICartItem} from '../../interfaces/classes/cart';
+interface IProductCard {
+  cartProducts: ICartItem[];
+  productInfo: IProduct;
+  onClickProduct: (productId: string) => void;
+}
+
 export const Product = ({
-  data,
-  navigationProp,
-}: {
-  data: IProduct;
-  navigationProp: any;
-}) => {
+  productInfo,
+  onClickProduct,
+  cartProducts,
+}: IProductCard) => {
   const leftSideSize = 5;
   return (
     <>
@@ -26,13 +30,14 @@ export const Product = ({
           <Grid>
             <Col size={leftSideSize}>
               {renderImage(
-                data.images && data.images[0]?.optimizedDestinationPath,
+                productInfo.images &&
+                  productInfo.images[0]?.optimizedDestinationPath,
               )}
             </Col>
             <Col
               size={12 - leftSideSize}
               style={{justifyContent: 'flex-start'}}>
-              {renderProductInfo(data, navigationProp)}
+              {renderProductInfo({productInfo, onClickProduct, cartProducts})}
               {renderCartBuyButtons()}
             </Col>
           </Grid>
@@ -41,13 +46,14 @@ export const Product = ({
             <Row size={9}>
               <Col size={leftSideSize}>
                 {renderImage(
-                  data.images && data.images[0]?.optimizedDestinationPath,
+                  productInfo.images &&
+                    productInfo.images[0]?.optimizedDestinationPath,
                 )}
               </Col>
               <Col
                 size={12 - leftSideSize}
                 style={{justifyContent: 'flex-start'}}>
-                {renderProductInfo(data, navigationProp)}
+                {renderProductInfo({productInfo, onClickProduct, cartProducts})}
               </Col>
             </Row>
             <Row size={3}>{renderCartBuyButtons()}</Row>
@@ -72,9 +78,13 @@ const renderImage = (
     />
   );
 };
-const renderProductInfo = (productInfo: IProduct, navigationProp: any) => {
+const renderProductInfo = ({
+  productInfo,
+  onClickProduct,
+  cartProducts,
+}: IProductCard) => {
   return (
-    <View onMagicTap={() => navigateByProp(navigationProp, 'ProductDetails')}>
+    <View onMagicTap={() => onClickProduct(productInfo.productId)}>
       <Text style={styles.textName}>{productInfo.productName}</Text>
       <Text style={[styles.textName, {textDecorationLine: 'line-through'}]}>
         MRP: Rs: {productInfo.mrp}
@@ -88,6 +98,8 @@ const renderProductInfo = (productInfo: IProduct, navigationProp: any) => {
       </Text>
       <Text style={styles.textName}>{productInfo.categories[0]}</Text>
       <CardQtyIncDec
+        cartProducts={cartProducts}
+        productId={productInfo._id}
         qty={2}
         quantityHandler={(incOrDec: string) => {
           return incOrDec;

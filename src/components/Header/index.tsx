@@ -1,12 +1,27 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import {withBadge} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import {TouchableOpacity} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {NavLink} from 'react-router-dom';
+import ROUTE_NAMES from '../../routes/name';
 
-const Header = ({title, menus, notificationCount}: any) => {
-  const isAuthenticated = localStorage.getItem('token');
+const Header = ({
+  hasLoggedIn,
+  title,
+  menus,
+  notificationCount,
+  onLogout,
+  cartLength,
+}: any) => {
+  const CartIcon: any = withBadge(cartLength)(Icon);
+  const NotificationIcon: any = withBadge(notificationCount)(Icon);
 
   return (
     <SafeAreaView>
@@ -17,9 +32,6 @@ const Header = ({title, menus, notificationCount}: any) => {
         style={styles.headerContainer}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            {/* <Text aria-level = '2' >MatrimonyIn</Text> */}
-          </View>
-          <View style={styles.headerCenter}>
             <Text
               accessibilityRole="header"
               aria-level="3"
@@ -27,6 +39,7 @@ const Header = ({title, menus, notificationCount}: any) => {
               {title}
             </Text>
           </View>
+
           <View style={styles.headerRight}>
             {menus.map(
               (
@@ -37,105 +50,71 @@ const Header = ({title, menus, notificationCount}: any) => {
                   key={'' + index}
                   exact
                   activeClassName="active"
-                  to="/Home"
+                  to={menuItem.navigationLink}
                   style={{textDecoration: 'none'}}>
-                  <Text
-                    style={{
-                      marginLeft: 20,
-                      fontSize: 16,
-                      fontFamily: 'OpenSans',
-                      fontWeight: '500',
-                      color: '#fff',
-                    }}>
-                    {menuItem.title}
-                  </Text>
+                  <Text style={styles.navText}>{menuItem.title}</Text>
                 </NavLink>
               ),
             )}
 
-            {isAuthenticated ? null : (
+            {hasLoggedIn ? null : (
               <NavLink
                 exact
                 activeClassName="active"
-                to="/signup"
+                to={ROUTE_NAMES.register}
                 style={{textDecoration: 'none'}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'OpenSans',
-                    fontWeight: '500',
-                    color: '#fff',
-                    marginLeft: 150,
-                  }}>
-                  Register
-                </Text>
+                <Text style={styles.navText}>Register</Text>
               </NavLink>
             )}
-
-            {isAuthenticated ? (
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/logout"
-                style={{textDecoration: 'none'}}>
-                {/* <TouchableOpacity onPress={localStorage.clear()}> */}
+            {hasLoggedIn ? (
+              <>
+                <NavLink
+                  exact
+                  to={ROUTE_NAMES.userCart}
+                  style={{textDecoration: 'none', marginLeft: 20}}>
+                  <CartIcon
+                    size={24}
+                    status="success"
+                    color={'#FFF'}
+                    type="ionicon"
+                    name="cart"
+                  />
+                </NavLink>
+                <NavLink
+                  exact
+                  activeClassName="active"
+                  to="/Notification"
+                  style={{textDecoration: 'none', marginLeft: 20}}>
+                  <NotificationIcon
+                    size={24}
+                    status="success"
+                    color={'#FFF'}
+                    type="ionicon"
+                    name="notifications"
+                  />
+                </NavLink>
+              </>
+            ) : null}
+            {hasLoggedIn ? (
+              <TouchableOpacity onPress={() => onLogout()}>
                 <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'OpenSans',
-                    fontWeight: '500',
-                    color: '#fff',
-                    marginLeft: 20,
-                  }}>
+                  style={[styles.navText, {marginRight: 40, marginLeft: 30}]}>
                   Logout
                 </Text>
-                {/* </TouchableOpacity> */}
-              </NavLink>
+              </TouchableOpacity>
             ) : (
               <NavLink
                 exact
                 activeClassName="active"
-                to="/login"
+                to="/user/login"
                 style={{textDecoration: 'none'}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'OpenSans',
-                    fontWeight: '500',
-                    color: '#fff',
-                    marginLeft: 20,
-                  }}>
-                  Login
-                </Text>
+                <Text style={[styles.navText, {marginRight: 40}]}>Login</Text>
               </NavLink>
             )}
-            <NavLink
-              exact
-              activeClassName="active"
-              to="/Notification"
-              style={{textDecoration: 'none'}}>
-              <MaterialIcons
-                style={{fontSize: 25, color: '#fff', marginLeft: 50}}
-                name="notifications"
-              />
-              <Text
-                style={{
-                  position: 'absolute',
-                  fontSize: 16,
-                  fontFamily: 'OpenSans',
-                  fontWeight: '500',
-                  color: '#fff',
-                  marginTop: -4,
-                  marginLeft: -4,
-                }}>
-                {notificationCount}
-              </Text>
-            </NavLink>
           </View>
         </View>
       </LinearGradient>
     </SafeAreaView>
-    // </div>
   );
 };
 
@@ -147,10 +126,12 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 70,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 10,
     paddingVertical: 5,
-    alignItems: 'center',
-    flexDirection: 'row',
+
     minHeight: 50,
   },
   headerCenter: {
@@ -158,11 +139,14 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     width: 150,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   headerRight: {
-    width: 700,
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   title: {
@@ -170,6 +154,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
     fontStyle: 'italic',
+    marginLeft: 20,
+  },
+  navText: {
+    marginLeft: 20,
+    fontSize: 16,
+    fontFamily: 'OpenSans',
+    fontWeight: '500',
+    color: '#fff',
   },
 });
 

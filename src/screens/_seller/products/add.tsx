@@ -18,7 +18,6 @@ import {SuccessToast, WarningToast} from '../../../components/Toast';
 import {IS_WEB} from '../../../config';
 import {ScrollView} from 'react-native-gesture-handler';
 import {getMultiSelectValues} from '../../../helpers';
-//import {getParamsByProp} from '../../../navigation';
 
 class SellerAddProducts extends Component<any, SellerAddProductsState> {
   multiSelect: any;
@@ -48,9 +47,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
     this.productAction = new ProductAction();
     console.log(this.props);
   }
-  componentDidMount() {
-    // const params = getParamsByProp(this.props);
-  }
+  componentDidMount() {}
   changeState(key: string, value: IProductChangeStateTypes) {
     // @ts-ignore
     this.setState({[key]: value});

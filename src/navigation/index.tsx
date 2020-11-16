@@ -3,6 +3,7 @@ import {useNavigation as useNavigationR} from '@react-navigation/native';
 // import {StackNavigationProp} from '@react-navigation/stack';
 import {Platform} from 'react-native';
 import {useHistory} from 'react-router-dom';
+import {ComponentProp} from '../interfaces';
 // type NavigationProps = StackNavigationProp<StackParams, 'Home'>;
 
 const useNavigation = Platform.OS === 'web' ? useHistory : useNavigationR;
@@ -12,7 +13,7 @@ const navigate = (navigation: any, routeName: string, params: any = {}) => {
     : navigation.navigate(routeName, params);
 };
 const navigateByProp = (
-  props: any,
+  props: ComponentProp,
   routeName: string,
   params: any = {},
   customRouteMobile?: string,
@@ -22,14 +23,14 @@ const navigateByProp = (
     : props.navigation.navigate(customRouteMobile || routeName, params);
 };
 
-const getParamsByProp = (props: any) => {
+const getParamsByProp = (props: ComponentProp): any => {
   if (Platform.OS === 'web') {
     const {
       match: {params},
     } = props;
-    return params;
+    return params || {};
   } else {
-    return props.navigation.state && props.navigation.state.params;
+    return (props.route && props.route.params) || {};
   }
 };
 

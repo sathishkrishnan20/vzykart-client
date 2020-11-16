@@ -16,6 +16,7 @@ export interface ICreateProduct {
 }
 
 export interface IProduct extends ICreateProduct {
+  _id: string;
   productId: string;
   specifications?: {
     specificationKey: string;

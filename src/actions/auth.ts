@@ -11,6 +11,13 @@ import {ErrorToast, showToastByResponse} from '../components/Toast';
 import {USER_TYPE} from '../interfaces/enums';
 import {store} from '../routes/store';
 import {AUTH_USER_LOGIN, AUTH_SELLER_LOGIN} from '../providers/constants';
+import {
+  setToken,
+  setUserId,
+  setUserType,
+  setSellerId,
+  setSalesUserId,
+} from '../services/storage-service';
 class AuthAction {
   async login(
     userType: USER_TYPE = USER_TYPE.USER,
@@ -36,6 +43,7 @@ class AuthAction {
             userId: response.data.id,
             token: response.data.token,
           } as never);
+          setUserId(response.data.id);
         } else if (response.data.type === USER_TYPE.SALES_USER) {
           store.dispatch({
             type: AUTH_SELLER_LOGIN,
@@ -43,7 +51,12 @@ class AuthAction {
             sellerId: response.data.sellerId,
             token: response.data.token,
           } as never);
+          setSalesUserId(response.data.id);
+          setSellerId(response.data.sellerId);
         }
+        setToken(response.data.token);
+
+        setUserType(response.data.type);
         navigateByProp(props, navigateRouteName, navigateParams);
       } else {
         showToastByResponse(response);

@@ -21,7 +21,8 @@ import {navigateByProp, getParamsByProp} from '../../../navigation';
 import AuthAction from '../../../actions/auth';
 import {ILoginAPI} from '../../../interfaces/actions/auth';
 import {showToastByResponse} from '../../../components/Toast';
-export default class Login extends React.Component<any, LoginState> {
+import {ComponentProp} from '../../../interfaces';
+export default class Login extends React.Component<ComponentProp, LoginState> {
   screenHeight: number;
   otpInput?: any;
   authAction: AuthAction;
@@ -45,7 +46,6 @@ export default class Login extends React.Component<any, LoginState> {
     if (params.userType === 'seller') {
       this.setState({userType: USER_TYPE.SALES_USER});
     }
-    console.log(params);
   }
   async doForgotPassword() {
     const {userEntry, userType} = this.state;

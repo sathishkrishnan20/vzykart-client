@@ -68,7 +68,6 @@ const commonTheme = {
     },
   },
 };
-
 export function App() {
   return (
     <Provider store={store} key="provider">

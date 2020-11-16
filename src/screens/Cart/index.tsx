@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {CART_INC_DEC} from '../../interfaces/enums';
+import {getCartItem} from '../../services/storage-service';
 
 export default class Cart extends React.Component<any, any> {
   constructor(props: any) {
@@ -79,7 +80,10 @@ export default class Cart extends React.Component<any, any> {
       ],
     };
   }
-
+  async componentDidMount() {
+    const cartProducts = await getCartItem();
+    this.setState({cartItems: cartProducts});
+  }
   selectHandler = (index: number, value: number) => {
     const newItems = [...this.state.cartItems]; // clone the array
     newItems[index]['checked'] = value === 1 ? 0 : 1; // set the new value
@@ -237,6 +241,8 @@ export default class Cart extends React.Component<any, any> {
                         ${item.qty * item.salePrice}
                       </Text>
                       <CardQtyIncDec
+                        cartProducts={cartItems}
+                        productId={'123'}
                         qty={item.qty}
                         quantityHandler={(incOrDec) =>
                           this.quantityHandler(incOrDec, i)

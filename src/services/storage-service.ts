@@ -4,12 +4,21 @@ import {IS_WEB} from '../config';
 const SELLER_ID_KEY = 'sellerId';
 const USER_ID_KEY = 'userId';
 const TOKEN_KEY = 'token';
+const USER_TYPE_KEY = 'userType';
+const SALES_USER_KEY = 'salesUserId';
+const CART_KEY = 'cart-{userId}';
 
 export const setSellerId = async (sellerId: string) => {
   set(SELLER_ID_KEY, sellerId);
 };
 export const getSellerId = async () => {
   return (await get(SELLER_ID_KEY)) || '1';
+};
+export const setSalesUserId = async (sellerId: string) => {
+  set(SALES_USER_KEY, sellerId);
+};
+export const getSalesUserId = async () => {
+  return (await get(SALES_USER_KEY)) || '1';
 };
 
 export const setUserId = async (userId: string) => {
@@ -18,6 +27,13 @@ export const setUserId = async (userId: string) => {
 
 export const getUserId = async () => {
   return await get(USER_ID_KEY);
+};
+
+export const setUserType = async (sellerId: string) => {
+  set(USER_TYPE_KEY, sellerId);
+};
+export const getUserType = async () => {
+  return (await get(USER_TYPE_KEY)) || '1';
 };
 
 export const setToken = async (token: string) => {
@@ -35,4 +51,20 @@ const set = async (key: string, value: string) => {
 };
 const get = async (key: string) => {
   return IS_WEB ? localStorage.getItem(key) : await AsyncStorage.getItem(key);
+};
+
+export const removeAll = async () => {
+  return IS_WEB ? localStorage.clear() : await AsyncStorage.clear();
+};
+
+export const setCartItem = async (data: any) => {
+  const userId = await getUserId();
+  const cartData = JSON.stringify(data);
+  set(CART_KEY.replace('{userId}', userId || ''), cartData);
+};
+export const getCartItem = async () => {
+  const userId = await getUserId();
+  const cartDataStr =
+    (await get(CART_KEY.replace('{userId}', userId || ''))) || '[]';
+  return JSON.parse(cartDataStr);
 };

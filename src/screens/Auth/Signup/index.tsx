@@ -21,7 +21,11 @@ import {Radio} from '../../../components/Radio';
 import AuthAction from '../../../actions/auth';
 import {IRegisterAPI, ILoginAPI} from '../../../interfaces/actions/auth';
 import {showToastByResponse, ErrorToast} from '../../../components/Toast';
-export default class SignUp extends React.Component<any, SignUpState> {
+import {ComponentProp} from '../../../interfaces';
+export default class SignUp extends React.Component<
+  ComponentProp,
+  SignUpState
+> {
   screenHeight: number;
   authAction: AuthAction;
   constructor(props: any) {

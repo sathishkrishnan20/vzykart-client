@@ -3,7 +3,7 @@ import {Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 import {Row, Col} from 'react-native-easy-grid';
 import {IS_WEB} from '../../config';
-import {ISeller} from '../../interfaces/seller';
+import {ISeller} from '../../interfaces/classes/seller';
 interface ISellerProp {
   data: ISeller;
   onClick: () => void;
@@ -17,7 +17,9 @@ export function Seller({data, onClick}: ISellerProp) {
             <Row size={IS_WEB ? 12 : 0} style={styles.rowStyle}>
               <Image
                 source={{
-                  uri: data.display_thumb_url,
+                  uri:
+                    data.sellerThumbImage &&
+                    data.sellerThumbImage.optimizedDestinationPath,
                 }}
                 resizeMode={'stretch'}
                 style={{
@@ -29,8 +31,8 @@ export function Seller({data, onClick}: ISellerProp) {
             </Row>
             <Row size={IS_WEB ? 12 : 0} style={styles.secondRow}>
               <Col size={IS_WEB ? 12 : 0}>
-                <Text style={styles.mainText}>{data.name}</Text>
-                <Text style={styles.subText}>{data.short_description}</Text>
+                <Text style={styles.mainText}>{data.sellerName}</Text>
+                <Text style={styles.subText}>{data.sellerDescription}</Text>
               </Col>
             </Row>
           </Card>
