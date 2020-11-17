@@ -20,5 +20,6 @@ const ROUTE_NAMES = {
 
   // User Authenticated
   userCart: '/cart',
+  userCheckout: '/checkout',
 };
 export default ROUTE_NAMES;

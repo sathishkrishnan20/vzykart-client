@@ -11,23 +11,27 @@ import {store} from '../../routes/store';
 import {USER_CART} from '../../providers/constants';
 
 interface State {
-  qty: number;
   productId: string;
   cartProducts: ICartItem[];
-  quantityHandler: (incOrDec: CART_INC_DEC) => void;
+  updateQuantity?: (quantity: number) => void;
 }
-export function CardQtyIncDec({productId, cartProducts}: State) {
+export function CardQtyIncDec({
+  productId,
+  cartProducts,
+  updateQuantity,
+}: State) {
   const [quantity, setQuantity] = useState(0);
   const [productIndexOnCart, setProductIndexOnCart] = useState(-1);
   const [cartData, setCartData] = useState([] as ICartItem[]);
 
   useEffect(() => {
     let quantity = 0;
-    let productIndex =
-      cartProducts.findIndex(
-        (item: ICartItem) => item.productId === productId,
-      ) || -1;
+    console.log(cartProducts);
+    let productIndex = cartProducts.findIndex(
+      (item: ICartItem) => item.productId == productId,
+    );
 
+    console.log('productIndex: ' + productIndex);
     if (productIndex !== -1) {
       quantity = cartProducts[productIndex].quantity;
     }
@@ -37,9 +41,23 @@ export function CardQtyIncDec({productId, cartProducts}: State) {
   }, []);
 
   useEffect(() => {
+    const updatedCartProducts = cartProducts.map((item: ICartItem) => {
+      const cartItemUpdated: ICartItem = {
+        quantity: item.quantity,
+        productId: item.productId,
+        checked: item.checked,
+      };
+      return cartItemUpdated;
+    });
+    setCartItem(updatedCartProducts);
+  }, [cartProducts]);
+
+  useEffect(() => {
     if (cartData[productIndexOnCart]) {
       setQuantity(cartData[productIndexOnCart].quantity || 0);
       updateStorage(cartData[productIndexOnCart].quantity);
+      if (updateQuantity)
+        updateQuantity(cartData[productIndexOnCart].quantity || 0);
     }
   }, [cartData]);
 
@@ -52,6 +70,7 @@ export function CardQtyIncDec({productId, cartProducts}: State) {
       cartDataOnStorage.push({
         productId,
         quantity: qty,
+        checked: 1,
       });
     } else {
       if (quantity === 0) {

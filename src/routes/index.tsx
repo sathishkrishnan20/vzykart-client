@@ -36,6 +36,7 @@ import {
 } from '../providers/constants';
 import {USER_TYPE} from '../interfaces/enums';
 import {ICartItem} from '../interfaces/classes/cart';
+import {Checkout} from '../screens/Checkout';
 const HEADER_HEIGHT = 70;
 
 const SELLER_ROUTES = [
@@ -101,6 +102,11 @@ const USER_AUTHENTICATED_ROUTES = [
     routeName: ROUTE_NAMES.userCart,
     component: Cart,
     name: 'Cart',
+  },
+  {
+    routeName: ROUTE_NAMES.userCheckout,
+    component: Checkout,
+    name: 'Checkout',
   },
 ];
 
@@ -191,6 +197,7 @@ const StackNavigator = () => {
         }}
       />
       <Stack.Screen name="/seller/product/add" component={SellerAddProducts} />
+      <Stack.Screen name={ROUTE_NAMES.userCheckout} component={Checkout} />
     </Stack.Navigator>
   );
 };
@@ -220,7 +227,7 @@ const TabNavigator = () => {
         keyboardHidesTabBar: true,
       }}>
       <Tab.Screen name="Home" component={SellersList} />
-      <Tab.Screen name="product-details" component={SellerViewProducts} />
+      <Tab.Screen name="product-details" component={Checkout} />
       <Tab.Screen name="Details" component={Details} />
       <Tab.Screen name="Cart" component={Cart} />
       <Tab.Screen name="Account" component={Details} />

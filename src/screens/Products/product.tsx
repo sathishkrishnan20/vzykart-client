@@ -94,17 +94,10 @@ const renderProductInfo = ({
         {'Seller Name' || productInfo.sellerId}
       </Text>
       <Text style={styles.textName}>
-        {productInfo.unit + ' ' + productInfo.unit}
+        {productInfo.unit + ' ' + productInfo.uom}
       </Text>
       <Text style={styles.textName}>{productInfo.categories[0]}</Text>
-      <CardQtyIncDec
-        cartProducts={cartProducts}
-        productId={productInfo._id}
-        qty={2}
-        quantityHandler={(incOrDec: string) => {
-          return incOrDec;
-        }}
-      />
+      <CardQtyIncDec cartProducts={cartProducts} productId={productInfo._id} />
     </View>
   );
 };

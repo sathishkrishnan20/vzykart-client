@@ -15,74 +15,48 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {CART_INC_DEC} from '../../interfaces/enums';
 import {getCartItem} from '../../services/storage-service';
+import ProductAction from '../../actions/products';
+import {
+  ICartItem,
+  ICartScreenState,
+  ProductAndCart,
+} from '../../interfaces/classes/cart';
+import {IProduct} from '../../interfaces/products';
+import {ComponentProp} from '../../interfaces';
 
-export default class Cart extends React.Component<any, any> {
-  constructor(props: any) {
+export default class Cart extends React.Component<
+  ComponentProp,
+  ICartScreenState
+> {
+  productAction: ProductAction;
+  constructor(props: ComponentProp) {
     super(props);
     this.state = {
       selectAll: false,
       cartItemsIsLoading: false,
-      cartItems: [
-        /* Sample data from walmart */
-        {
-          itemId: '501436323',
-          name: 'Power Wheels Dune Racer Extreme',
-          thumbnailImage:
-            'https://i5.walmartimages.com/asr/a3922e8e-2128-4603-ba8c-b58d1333253b_1.44d66337098c1db8fed9abe2ff4b57ce.jpeg?odnHeight=100&odnWidth=100&odnBg=FFFFFF',
-          color: 'Red',
-          qty: 1,
-          salePrice: '105',
-          checked: 1,
-        },
-        {
-          itemId: '35031861',
-          name:
-            'Better Homes & Gardens Leighton Twin Over Twin Wood Bunk Bed, Multiple Finishes',
-          thumbnailImage:
-            'https://i5.walmartimages.com/asr/4aedb609-4b61-4593-ad8a-cdc8c88696b1_1.3f505ce3d55db4745cf4c51d559994dc.jpeg?odnHeight=100&odnWidth=100&odnBg=FFFFFF',
-          qty: 1,
-          color: 'Green',
-          salePrice: '199',
-          checked: 0,
-        },
-        {
-          itemId: '801099131',
-          name:
-            'LEGO Star Wars 2019 Advent Calendar 75245 Holiday Building Kit',
-          thumbnailImage:
-            'https://i5.walmartimages.com/asr/9a8ea1ab-311d-455c-bda8-ce15692a8185_3.208d48e0260f80891d32b351cb116a4b.jpeg?odnHeight=100&odnWidth=100&odnBg=FFFFFF',
-          qty: 1,
-          color: 'Blue',
-          salePrice: '27.99',
-          checked: 1,
-        },
-        {
-          itemId: '42608079',
-          name: 'Little Tikes Cape Cottage Playhouse, Tan',
-          thumbnailImage:
-            'https://i5.walmartimages.com/asr/2654cd64-1471-44af-8b0c-1debaf598cb3_1.c30c481d1ac8fdd6aa041c0690d7214c.jpeg?odnHeight=100&odnWidth=100&odnBg=FFFFFF',
-          color: 'Purple',
-          qty: 1,
-          salePrice: '129.99',
-          checked: 0,
-        },
-        {
-          itemId: '247714372',
-          name:
-            'HP 14" Laptop, Intel Core i3-1005G1, 4GB SDRAM, 128GB SSD, Pale Gold, 14-DQ1038wm',
-          thumbnailImage:
-            'https://i5.walmartimages.com/asr/b442f6e7-c5e1-4387-9cd9-9205811d4980_1.82b94d1c11dd12a6697bc517219f331e.jpeg?odnHeight=100&odnWidth=100&odnBg=FFFFFF',
-          qty: 1,
-          color: 'Black',
-          salePrice: '269',
-          checked: 1,
-        },
-      ],
+      cartItems: [],
     };
+    this.productAction = new ProductAction();
   }
   async componentDidMount() {
-    const cartProducts = await getCartItem();
-    this.setState({cartItems: cartProducts});
+    const cartProducts = (await getCartItem()) as ICartItem[];
+    const productObj: {[key: string]: ProductAndCart} = {};
+    const productResponse = await this.productAction.getProductsByMultipleIds(
+      cartProducts.map((item) => item.productId).join(','),
+    );
+    if (productResponse.success) {
+      productResponse.data.forEach((element: ProductAndCart) => {
+        productObj[element._id] = element;
+      });
+    }
+    const updatedCartProducts = cartProducts.map((item) => {
+      return {
+        ...item,
+        ...productObj[item.productId],
+      };
+    });
+    console.log(updatedCartProducts);
+    this.setState({cartItems: updatedCartProducts});
   }
   selectHandler = (index: number, value: number) => {
     const newItems = [...this.state.cartItems]; // clone the array
@@ -119,7 +93,7 @@ export default class Cart extends React.Component<any, any> {
               index,
               1,
             ); /* Remove item from the cloned cart state */
-            this.setState(updatedCart); /* Update the state */
+            this.setState({cartItems: updatedCart}); /* Update the state */
           },
         },
       ],
@@ -127,26 +101,12 @@ export default class Cart extends React.Component<any, any> {
     );
   };
 
-  quantityHandler = (action: CART_INC_DEC, index: number) => {
-    const newItems = [...this.state.cartItems]; // clone the array
-
-    let currentQty = newItems[index]['qty'];
-
-    if (action === CART_INC_DEC.INCREMENT) {
-      newItems[index]['qty'] = currentQty + 1;
-    } else if (action === CART_INC_DEC.DECREMENT) {
-      newItems[index]['qty'] = currentQty > 1 ? currentQty - 1 : 1;
-    }
-
-    this.setState({cartItems: newItems}); // set new state
-  };
-
   subtotalPrice = () => {
     const {cartItems} = this.state;
     if (cartItems) {
       return cartItems.reduce(
-        (sum: number, item: any) =>
-          sum + (item.checked === 1 ? item.qty * item.salePrice : 0),
+        (sum: number, item: ProductAndCart) =>
+          sum + (item.checked === 1 ? item.quantity * item.sellingPrice : 0),
         0,
       );
     }
@@ -183,7 +143,7 @@ export default class Cart extends React.Component<any, any> {
         ) : (
           <ScrollView>
             {cartItems &&
-              cartItems.map((item: any, i: number) => (
+              cartItems.map((item: ProductAndCart, i: number) => (
                 <View
                   key={i}
                   style={{
@@ -195,7 +155,7 @@ export default class Cart extends React.Component<any, any> {
                   <View style={[styles.centerElement, {width: 60}]}>
                     <TouchableOpacity
                       style={[styles.centerElement, {width: 32, height: 32}]}
-                      onPress={() => this.selectHandler(i, item.checked)}>
+                      onPress={() => this.selectHandler(i, item.checked || 0)}>
                       <Ionicons
                         name={
                           item.checked === 1
@@ -220,7 +180,12 @@ export default class Cart extends React.Component<any, any> {
                       }}
                       style={{paddingRight: 10}}>
                       <Image
-                        source={{uri: item.thumbnailImage}}
+                        source={{
+                          uri:
+                            item.images &&
+                            item.images[0] &&
+                            item.images[0].optimizedDestinationPath,
+                        }}
                         style={[
                           styles.centerElement,
                           {height: 60, width: 60, backgroundColor: '#eeeeee'},
@@ -230,23 +195,26 @@ export default class Cart extends React.Component<any, any> {
                     <View
                       style={{flexGrow: 1, flexShrink: 1, alignSelf: 'center'}}>
                       <Text numberOfLines={1} style={{fontSize: 15}}>
-                        {item.name}
+                        {item.productName}
                       </Text>
-                      <Text numberOfLines={1} style={{color: '#8f8f8f'}}>
+                      {/* <Text numberOfLines={1} style={{color: '#8f8f8f'}}>
                         {item.color ? 'Variation: ' + item.color : ''}
-                      </Text>
+                      </Text> */}
                       <Text
                         numberOfLines={1}
                         style={{color: '#333333', marginBottom: 10}}>
-                        ${item.qty * item.salePrice}
+                        ${item.quantity * item.sellingPrice}
                       </Text>
                       <CardQtyIncDec
                         cartProducts={cartItems}
-                        productId={'123'}
-                        qty={item.qty}
-                        quantityHandler={(incOrDec) =>
-                          this.quantityHandler(incOrDec, i)
-                        }
+                        productId={item._id}
+                        updateQuantity={(quantity: number) => {
+                          const newItems = [...cartItems];
+                          newItems[i].quantity = quantity;
+                          this.setState({cartItems: newItems});
+
+                          console.log(quantity);
+                        }}
                       />
                     </View>
                   </View>

@@ -13,5 +13,11 @@ class ProductAction {
     );
     return result.data;
   }
+  async getProductsByMultipleIds(productIds: string): Promise<IResponse> {
+    const result = await getService('/products/multi/' + productIds).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
 }
 export default ProductAction;
