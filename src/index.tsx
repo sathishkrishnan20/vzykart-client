@@ -86,6 +86,13 @@ if (Platform.OS === 'web') {
     src: url(${fonts[i].url}) format('truetype');
     font-family: ${fonts[i].fontFamilyName};
   }`;
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.type = 'text/javascript';
+    var code = 'console.log("hello world!");';
+    script.appendChild(document.createTextNode(code));
+    document.body.appendChild(script);
+
     const style = document.createElement('style');
     style.type = 'text/css';
     style.appendChild(document.createTextNode(iconFontStyles));

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Container} from '../../components';
-import {Header, Text} from 'react-native-elements';
+import {Header, Text, Button} from 'react-native-elements';
 import {ProductSummary, RenderSubTotal} from './ProductSummary';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {ProductAndCart} from '../../interfaces/classes/cart';
@@ -8,9 +8,10 @@ import {IS_WEB} from '../../config';
 import {keyExtractor} from '../../helpers/render-helpers';
 import {IUserAddress} from '../../interfaces';
 import Address from '../../components/Address';
-import {View} from 'react-native';
+import {View, TouchableHighlight, Dimensions} from 'react-native';
 import colors from '../../colors';
 import {Row, Col} from 'react-native-easy-grid';
+import {Payment} from '../../components/PayButton';
 
 export function Checkout() {
   const [deliveryAddressIndex, setDeliveryAddressIndex] = useState(0);
@@ -149,7 +150,7 @@ export function Checkout() {
     <Container>
       <ScrollView>
         <HeaderComp headerText={'Products'} />
-        {IS_WEB ? (
+        {Dimensions.get('window').width > 600 ? (
           <Row size={12}>
             <Col size={8}>
               <RenderProductSummaryFlatList />
@@ -181,7 +182,19 @@ export function Checkout() {
             </View>
           )}
         />
-        <HeaderComp headerText="Payment Options" />
+        <Payment
+          name={'Delivery'}
+          amount={String(300 * 100)}
+          description={'Test Transaction'}
+          prefill={{
+            name: 'Gaurav Kumar',
+            email: 'gaurav.kumar@example.com',
+            contact: '9999999999',
+          }}
+          notes={{
+            address: 'Razorpay Corporate Office',
+          }}
+        />
       </ScrollView>
     </Container>
   );
