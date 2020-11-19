@@ -17,6 +17,7 @@ export enum INPUT_COMPONENT {
 }
 
 export enum CRUD {
+  SELECT = 'SELECT',
   CREATE = 'CREATE',
   VIEW = 'VIEW',
   UPDATE = 'UPDATE',

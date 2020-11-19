@@ -32,7 +32,11 @@ export default function TableWriteComponent({
                       placeholder={componentItem.label}
                       errorStyle={{color: 'red'}}
                       onChangeText={(changedText: string) => {
-                        changeState(componentItem.stateKey, changedText);
+                        if (componentItem.changeState) {
+                          componentItem.changeState(changedText);
+                        } else {
+                          changeState(componentItem.stateKey, changedText);
+                        }
                       }}
                       //  errorMessage="ENTER A VALID ERROR HERE"
                     />

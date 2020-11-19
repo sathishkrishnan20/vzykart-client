@@ -1,5 +1,5 @@
 import React, {CSSProperties} from 'react';
-import {Text, Card} from 'react-native-elements';
+import {Text, Card, Icon} from 'react-native-elements';
 import {
   ActivityIndicator,
   View,
@@ -12,44 +12,58 @@ import {IUserAddress} from '../../interfaces';
 import {IS_WEB} from '../../config';
 import {Row, Col} from 'react-native-easy-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {CRUD} from '../../interfaces/enums';
 interface AddressInfo {
-  name: string;
   data: IUserAddress;
   containerStyle?: StyleProp<ViewStyle>;
   checked?: boolean;
   onSelect?: () => void;
+  buttons: CRUD[];
+  onClickUpdate?: () => void;
+  onClickDelete?: () => void;
 }
-const leftRowSize = IS_WEB ? 4 : 15;
 
 const Address = ({
   data,
-  name,
+
   checked,
   onSelect,
+  buttons,
+  onClickUpdate,
+  onClickDelete,
   containerStyle = {},
 }: AddressInfo) => {
+  let leftRowSize = buttons.includes(CRUD.SELECT) ? (IS_WEB ? 4 : 15) : 0;
+  leftRowSize =
+    buttons.includes(CRUD.UPDATE) || buttons.includes(CRUD.DELETE)
+      ? IS_WEB
+        ? 4
+        : 15
+      : leftRowSize;
   return (
     <Card containerStyle={containerStyle}>
       <Row size={100}>
-        <Col size={leftRowSize}>
-          <View style={[styles.centerElement, {width: 60}]}>
-            <TouchableOpacity
-              style={[styles.centerElement, {width: 32, height: 32}]}
-              onPress={() => (onSelect ? onSelect() : null)}>
-              <Ionicons
-                name={
-                  checked
-                    ? 'ios-checkmark-circle'
-                    : 'ios-checkmark-circle-outline'
-                }
-                size={25}
-                color={checked ? '#0faf9a' : '#aaaaaa'}
-              />
-            </TouchableOpacity>
-          </View>
-        </Col>
+        {buttons.includes(CRUD.SELECT) ? (
+          <Col size={leftRowSize}>
+            <View style={[styles.centerElement, {width: 60}]}>
+              <TouchableOpacity
+                style={[styles.centerElement, {width: 32, height: 32}]}
+                onPress={() => (onSelect ? onSelect() : null)}>
+                <Ionicons
+                  name={
+                    checked
+                      ? 'ios-checkmark-circle'
+                      : 'ios-checkmark-circle-outline'
+                  }
+                  size={25}
+                  color={checked ? '#0faf9a' : '#aaaaaa'}
+                />
+              </TouchableOpacity>
+            </View>
+          </Col>
+        ) : null}
         <Col size={100 - leftRowSize}>
-          <Text style={[styles.textName, styles.bold]}>{name}</Text>
+          <Text style={[styles.textName, styles.bold]}>{data.name}</Text>
           <View style={{flex: 1, flexDirection: 'column'}}>
             <Text style={styles.textName}>{data.no_and_street}</Text>
             {data.address_line_1 ? (
@@ -63,11 +77,18 @@ const Address = ({
           <Row>
             <Text style={styles.textName}>{data.pin_code}</Text>
           </Row>
+          <Row>
+            <Text style={styles.textName}>{data.contactNumber}</Text>
+          </Row>
           {data.locality ? (
             <Row>
               <Text style={styles.textNameLight}>{data.locality}</Text>
             </Row>
           ) : null}
+        </Col>
+        <Col size={100 - (100 - leftRowSize)}>
+          <Icon onPress={onClickUpdate} size={25} name="edit" />
+          <Icon onPress={onClickDelete} size={25} name="delete" />
         </Col>
       </Row>
     </Card>

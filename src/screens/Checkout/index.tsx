@@ -12,6 +12,8 @@ import {View, TouchableHighlight, Dimensions} from 'react-native';
 import colors from '../../colors';
 import {Row, Col} from 'react-native-easy-grid';
 import {Payment} from '../../components/PayButton';
+import {SectionTitle} from '../../components/Section-Title';
+import {CRUD} from '../../interfaces/enums';
 
 export function Checkout() {
   const [deliveryAddressIndex, setDeliveryAddressIndex] = useState(0);
@@ -87,6 +89,7 @@ export function Checkout() {
   ];
   const userAddress: IUserAddress[] = [
     {
+      name: 'Sathish',
       no_and_street: '1/120, West Street',
       address_line_1: 'Vairavikinaru',
       post_office_name: 'KoodanKulam Po',
@@ -96,8 +99,10 @@ export function Checkout() {
       country: 'India',
       pin_code: 627106,
       locality: 'Opp to Chandran Store',
+      contactNumber: '',
     },
     {
+      name: 'Krish',
       no_and_street: '1/120, West Street',
       address_line_1: 'Vairavikinaru',
       post_office_name: 'KoodanKulam Po',
@@ -107,8 +112,10 @@ export function Checkout() {
       country: 'India',
       pin_code: 627106,
       locality: 'Opp to Chandran Store',
+      contactNumber: '',
     },
     {
+      name: 'Krish',
       no_and_street: '1/120, West Street',
       address_line_1: 'Vairavikinaru',
       post_office_name: 'KoodanKulam Po',
@@ -118,23 +125,10 @@ export function Checkout() {
       country: 'India',
       pin_code: 627106,
       locality: 'Opp to Chandran Store',
+      contactNumber: '',
     },
   ];
-  const HeaderComp = ({headerText}: {headerText: string}) => {
-    return (
-      <View
-        style={{
-          backgroundColor: colors.themePrimary,
-          justifyContent: 'center',
-          height: 40,
-          borderRadius: 10,
-          margin: IS_WEB ? 8 : 4,
-          marginBottom: IS_WEB ? 0 : -2,
-        }}>
-        <Text style={{color: colors.white}}> {headerText} </Text>
-      </View>
-    );
-  };
+
   const RenderProductSummaryFlatList = () => {
     return (
       <FlatList
@@ -149,7 +143,7 @@ export function Checkout() {
   return (
     <Container>
       <ScrollView>
-        <HeaderComp headerText={'Products'} />
+        <SectionTitle title={'Products'} />
         {Dimensions.get('window').width > 600 ? (
           <Row size={12}>
             <Col size={8}>
@@ -166,17 +160,17 @@ export function Checkout() {
         <FlatList
           data={userAddress}
           ListHeaderComponent={() => (
-            <HeaderComp headerText={'Delivery Address'} />
+            <SectionTitle title={'Delivery Address'} />
           )}
           numColumns={1}
           keyExtractor={keyExtractor}
           renderItem={({item, index}) => (
             <View>
               <Address
+                buttons={[CRUD.SELECT]}
                 onSelect={() => setDeliveryAddressIndex(index)}
                 checked={index === deliveryAddressIndex}
                 containerStyle={{margin: 6}}
-                name={'Sathish'}
                 data={item}
               />
             </View>

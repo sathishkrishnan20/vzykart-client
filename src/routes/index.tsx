@@ -37,6 +37,7 @@ import {
 import {USER_TYPE} from '../interfaces/enums';
 import {ICartItem} from '../interfaces/classes/cart';
 import {Checkout} from '../screens/Checkout';
+import {Profile} from '../screens/_users/Profile';
 const HEADER_HEIGHT = 70;
 
 const SELLER_ROUTES = [
@@ -107,6 +108,11 @@ const USER_AUTHENTICATED_ROUTES = [
     routeName: ROUTE_NAMES.userCheckout,
     component: Checkout,
     name: 'Checkout',
+  },
+  {
+    routeName: ROUTE_NAMES.userProfile,
+    component: Profile,
+    name: 'Profile',
   },
 ];
 
@@ -230,7 +236,7 @@ const TabNavigator = () => {
       <Tab.Screen name="product-details" component={Checkout} />
       <Tab.Screen name="Details" component={Details} />
       <Tab.Screen name="Cart" component={Cart} />
-      <Tab.Screen name="Account" component={Details} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };

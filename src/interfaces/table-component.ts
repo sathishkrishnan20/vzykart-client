@@ -12,6 +12,7 @@ export interface IAddUpdate {
   onSelectedItemsChange?: Function;
   showDatePicker?: boolean;
   showDatePickerStateKey?: string;
+  changeState?: (value: IProductChangeStateTypes) => void;
 }
 
 export interface ITableAddUpdate {
