@@ -22,6 +22,7 @@ import {
 } from '../../interfaces/classes/cart';
 import {ComponentProp} from '../../interfaces';
 import {navigateToCheckoutPage} from '../../navigation';
+import {updateCartDataOnStorage} from '../../helpers';
 
 export default class Cart extends React.Component<
   ComponentProp,
@@ -212,12 +213,14 @@ export default class Cart extends React.Component<
                       <CardQtyIncDec
                         cartProducts={cartItems}
                         productId={item._id}
+                        onUpdateCartProducts={(cartProducts: ICartItem[]) => {
+                          updateCartDataOnStorage(cartProducts);
+                        }}
+                        refreshCount={0}
                         updateQuantity={(quantity: number) => {
                           const newItems = [...cartItems];
                           newItems[i].quantity = quantity;
                           this.setState({cartItems: newItems});
-
-                          console.log(quantity);
                         }}
                       />
                     </View>

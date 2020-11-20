@@ -7,16 +7,27 @@ import {IProduct} from '../../interfaces/products';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {IS_WEB} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
-interface IProductCard {
+
+interface IProductInfo {
   cartProducts: ICartItem[];
   productInfo: IProduct;
+  cartQtyRefreshCount: number;
   onClickProduct: (productId: string) => void;
+  onUpdateCartProducts: (cartItems: ICartItem[]) => void;
 }
+interface IRenderBuyCart {
+  productInfo: IProduct;
+  onClickAddToCart: (productId: string) => void;
+}
+interface IProductCard extends IProductInfo, IRenderBuyCart {}
 
 export const Product = ({
   productInfo,
   onClickProduct,
   cartProducts,
+  onUpdateCartProducts,
+  onClickAddToCart,
+  cartQtyRefreshCount,
 }: IProductCard) => {
   const leftSideSize = 5;
   return (
@@ -37,8 +48,14 @@ export const Product = ({
             <Col
               size={12 - leftSideSize}
               style={{justifyContent: 'flex-start'}}>
-              {renderProductInfo({productInfo, onClickProduct, cartProducts})}
-              {renderCartBuyButtons()}
+              {renderProductInfo({
+                productInfo,
+                onClickProduct,
+                cartProducts,
+                onUpdateCartProducts,
+                cartQtyRefreshCount,
+              })}
+              {renderCartBuyButtons({productInfo, onClickAddToCart})}
             </Col>
           </Grid>
         ) : (
@@ -53,10 +70,18 @@ export const Product = ({
               <Col
                 size={12 - leftSideSize}
                 style={{justifyContent: 'flex-start'}}>
-                {renderProductInfo({productInfo, onClickProduct, cartProducts})}
+                {renderProductInfo({
+                  productInfo,
+                  onClickProduct,
+                  cartProducts,
+                  onUpdateCartProducts,
+                  cartQtyRefreshCount,
+                })}
               </Col>
             </Row>
-            <Row size={3}>{renderCartBuyButtons()}</Row>
+            <Row size={3}>
+              {renderCartBuyButtons({productInfo, onClickAddToCart})}
+            </Row>
           </Grid>
         )}
       </View>
@@ -82,7 +107,9 @@ const renderProductInfo = ({
   productInfo,
   onClickProduct,
   cartProducts,
-}: IProductCard) => {
+  onUpdateCartProducts,
+  cartQtyRefreshCount,
+}: IProductInfo) => {
   return (
     <View onMagicTap={() => onClickProduct(productInfo.productId)}>
       <Text style={styles.textName}>{productInfo.productName}</Text>
@@ -99,12 +126,21 @@ const renderProductInfo = ({
       <Text style={styles.textName}>
         {productInfo.categories && productInfo.categories[0]}
       </Text>
-      <CardQtyIncDec cartProducts={cartProducts} productId={productInfo._id} />
+      <CardQtyIncDec
+        updateQuantity={(qty) => console.debug(qty)}
+        refreshCount={cartQtyRefreshCount}
+        cartProducts={cartProducts}
+        productId={productInfo._id}
+        onUpdateCartProducts={onUpdateCartProducts}
+      />
     </View>
   );
 };
 
-const renderCartBuyButtons = () => {
+const renderCartBuyButtons = ({
+  productInfo,
+  onClickAddToCart,
+}: IRenderBuyCart) => {
   return (
     <Row>
       <Col>
@@ -114,6 +150,7 @@ const renderCartBuyButtons = () => {
             size: 15,
             color: 'white',
           }}
+          onPress={() => console.log(productInfo)}
           title="Buy Now"></Button>
       </Col>
       <Col>
@@ -123,6 +160,7 @@ const renderCartBuyButtons = () => {
             size: 15,
             color: 'white',
           }}
+          onPress={() => onClickAddToCart(productInfo._id)}
           buttonStyle={styles.add2CartButton}
           title="Cart"></Button>
       </Col>

@@ -7,91 +7,51 @@ import {CART_INC_DEC} from '../../interfaces/enums';
 import {IS_WEB} from '../../config';
 import {getCartItem, setCartItem} from '../../services/storage-service';
 import {ICartItem} from '../../interfaces/classes/cart';
+import {updateCartOnStorage} from '../../helpers';
 import {store} from '../../routes/store';
-import {USER_CART} from '../../providers/constants';
+import {USER_CART, UPDATE_CART_ITEMS} from '../../providers/constants';
 
 interface State {
   productId: string;
   cartProducts: ICartItem[];
-  updateQuantity?: (quantity: number) => void;
+  onUpdateCartProducts: (cartItems: ICartItem[]) => void;
+  updateQuantity: (quantity: number) => void;
+  refreshCount: number;
 }
 export function CardQtyIncDec({
   productId,
   cartProducts,
+  onUpdateCartProducts,
   updateQuantity,
+  refreshCount,
 }: State) {
   const [quantity, setQuantity] = useState(0);
   const [productIndexOnCart, setProductIndexOnCart] = useState(-1);
-  const [cartData, setCartData] = useState([] as ICartItem[]);
 
   useEffect(() => {
+    setQuantityAndProdIndex();
+  }, [refreshCount]);
+
+  const setQuantityAndProdIndex = () => {
     let quantity = 0;
     let productIndex = cartProducts.findIndex(
       (item: ICartItem) => item.productId === productId,
     );
-
-    console.log('productIndex: ' + productIndex);
     if (productIndex !== -1) {
       quantity = cartProducts[productIndex].quantity;
     }
     setQuantity(quantity);
     setProductIndexOnCart(productIndex);
-    setCartData(cartProducts);
-  }, []);
-
-  useEffect(() => {
-    const updatedCartProducts = cartProducts.map((item: ICartItem) => {
-      const cartItemUpdated: ICartItem = {
-        quantity: item.quantity,
-        productId: item.productId,
-        checked: item.checked,
-      };
-      return cartItemUpdated;
-    });
-    setCartItem(updatedCartProducts);
-  }, [cartProducts]);
-
-  useEffect(() => {
-    if (cartData[productIndexOnCart]) {
-      setQuantity(cartData[productIndexOnCart].quantity || 0);
-      updateStorage(cartData[productIndexOnCart].quantity);
-      if (updateQuantity)
-        updateQuantity(cartData[productIndexOnCart].quantity || 0);
-    }
-  }, [cartData]);
-
-  const updateStorage = async (qty: number) => {
-    const cartDataOnStorage = (await getCartItem()) as ICartItem[];
-    const productDataIndexOnStorage = cartDataOnStorage.findIndex(
-      (item) => item.productId === productId,
-    );
-    if (productDataIndexOnStorage === -1) {
-      cartDataOnStorage.push({
-        productId,
-        quantity: qty,
-        checked: 1,
-      });
-    } else {
-      if (quantity === 0) {
-        // cartDataOnStorage.splice(productDataIndexOnStorage, 1);
-      } else {
-        cartDataOnStorage[productDataIndexOnStorage].quantity = qty;
-      }
-    }
-    setCartItem(cartDataOnStorage);
-    store.dispatch({
-      type: USER_CART,
-      cartItems: cartDataOnStorage,
-    } as never);
   };
 
   const qtyHandler = (action: CART_INC_DEC) => {
-    const newItems = [...cartData]; // clone the array
+    const newItems = [...cartProducts]; // clone the array
     let index = productIndexOnCart;
     if (index === -1) {
       newItems.push({
         productId: productId,
         quantity: 0,
+        checked: 1,
       });
       index = newItems.length - 1;
       setProductIndexOnCart(index);
@@ -102,8 +62,9 @@ export function CardQtyIncDec({
     } else if (action === CART_INC_DEC.DECREMENT) {
       newItems[index]['quantity'] = currentQty > 1 ? currentQty - 1 : 1;
     }
-
-    setCartData(newItems);
+    onUpdateCartProducts(newItems);
+    updateQuantity(newItems[index]['quantity']);
+    setQuantity(newItems[index]['quantity']);
   };
   return IS_WEB ? (
     <View>

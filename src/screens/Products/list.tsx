@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Container} from '../../components';
 import {FlatList} from 'react-native-gesture-handler';
 import {keyExtractor} from '../../helpers/render-helpers';
+import {updateCartOnStorage, updateCartDataOnStorage} from '../../helpers';
 import {Product} from './product';
 import {IS_WEB} from '../../config';
 import {IProduct} from '../../interfaces/products';
@@ -14,6 +15,7 @@ import {ICartItem} from '../../interfaces/classes/cart';
 export function ProductList(props: ComponentProp) {
   const [productData, setProductData] = useState([] as IProduct[]);
   const [cartProducts, setCartProducts] = useState([] as ICartItem[]);
+  const [cartQtyRefreshCount, setCartQtyRefreshCount] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
   const productAction = new ProductAction();
@@ -42,6 +44,11 @@ export function ProductList(props: ComponentProp) {
       {sellerId: productId},
     );
   };
+
+  const updateCart = (cartProducts: ICartItem[]) => {
+    setCartProducts(cartProducts);
+  };
+
   return (
     <Container>
       <FlatList
@@ -53,10 +60,30 @@ export function ProductList(props: ComponentProp) {
         keyExtractor={keyExtractor}
         renderItem={({item}) => (
           <Product
+            cartQtyRefreshCount={cartQtyRefreshCount}
             cartProducts={cartProducts}
             onClickProduct={(productId: string) =>
               navigateToProductDetailPage(productId)
             }
+            onUpdateCartProducts={(cartProducts: ICartItem[]) =>
+              setCartProducts(cartProducts)
+            }
+            onClickAddToCart={(productId: string) => {
+              const index = cartProducts.findIndex(
+                (item) => item.productId === productId,
+              );
+              if (index === -1) {
+                cartProducts.push({
+                  productId,
+                  quantity: 1,
+                  checked: 1,
+                });
+              }
+              console.log('Updating...');
+              setCartProducts(cartProducts);
+              setCartQtyRefreshCount(cartQtyRefreshCount + 1);
+              updateCartDataOnStorage(cartProducts);
+            }}
             productInfo={item}
           />
         )}

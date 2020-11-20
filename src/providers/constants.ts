@@ -5,3 +5,4 @@ export const AUTH_SET_USER = 'AUTH/SET_USER';
 export const AUTH_LOGOUT = 'AUTH/LOGOUT';
 
 export const USER_CART = 'USER/CART_ITEMS';
+export const UPDATE_CART_ITEMS = 'UPDATE/CART_ITEMS';

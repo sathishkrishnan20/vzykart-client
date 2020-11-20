@@ -11,7 +11,7 @@ import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {SellersList, Details} from '../screens';
 import {View, Platform} from 'react-native';
 import Cart from '../screens/Cart';
-import ProductDetail from '../screens/Products';
+import ProductDetail from '../screens/Products/product-details';
 import Header from '../components/Header';
 import SellerAddProducts from '../screens/_seller/products/add';
 import SellerViewProducts from '../screens/_seller/products/view';
