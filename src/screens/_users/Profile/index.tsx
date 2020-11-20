@@ -18,6 +18,7 @@ import {INPUT_COMPONENT, CRUD} from '../../../interfaces/enums';
 import {IProductChangeStateTypes} from '../../../interfaces/classes/seller-add-products';
 import {showToastByResponse} from '../../../components/Toast';
 import {IAddUpdate} from '../../../interfaces/table-component';
+import {WriteAddress} from './AddAddress';
 
 export function Profile() {
   const addressInitialState: IUserAddress = {
@@ -40,101 +41,6 @@ export function Profile() {
   const [userDataOnEditMode, setUserDataOnEditMode] = useState(false);
   const [editAddressIndex, setEditAddressIndex] = useState(-1);
 
-  const addressTableComponent: IAddUpdate[][] = [
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'Name',
-        stateKey: 'name',
-        value:
-          addressState.name ||
-          userData.firstName + '' + userData.lastName ||
-          '',
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('name', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'Number and Street',
-        stateKey: 'numberAndStreet',
-        value: addressState.no_and_street,
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('no_and_street', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'Address Line 1',
-        stateKey: 'addressLineOne',
-        value: addressState.address_line_1 || '',
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('address_line_1', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'City/Village',
-        stateKey: 'city',
-        value: addressState.city,
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('city', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'District',
-        stateKey: 'district',
-        value: addressState.district,
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('district', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'State',
-        stateKey: 'state',
-        value: addressState.state,
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('state', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'Country',
-        stateKey: 'country',
-        value: addressState.country,
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('country', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'Pin Code',
-        stateKey: 'pinCode',
-        value: addressState.pin_code,
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('pin_code', value as string),
-      },
-    ],
-    [
-      {
-        component: INPUT_COMPONENT.TEXT,
-        label: 'Contact Number',
-        stateKey: 'contactNumber',
-        value: addressState.contactNumber || userData.mobileNumber || '',
-        changeState: (value: IProductChangeStateTypes) =>
-          onAddressChange('contactNumber', value as string),
-      },
-    ],
-  ];
   const userDataReadComponent = [
     {
       label: 'First Name',
@@ -199,30 +105,6 @@ export function Profile() {
       setUserDataOnEditMode(false);
     }
   };
-  const saveAddress = async () => {
-    const userAddressData = userData.address || [];
-    const newAddressRequest: IUserAddress = {
-      coordinates: [1, 2],
-      type: 'Point',
-      ...addressState,
-    };
-    if (editAddressIndex === -1) {
-      // New Address
-      userAddressData.push(newAddressRequest);
-    } else {
-      // Updating Existing Address
-      userAddressData[editAddressIndex] = newAddressRequest;
-    }
-    const addressRequestData = {
-      address: userAddressData,
-    };
-    const userUpdateResponse = await callUserUpdate(addressRequestData);
-    if (userUpdateResponse.success) {
-      resetAddressState();
-      setEnableAddressCreate(false);
-      setEditAddressIndex(-1);
-    }
-  };
 
   const callUserUpdate = async (request: IUserInfo) => {
     const userId = (await getUserId()) as string;
@@ -237,9 +119,6 @@ export function Profile() {
 
   const resetAddressState = () => setAddressState({...addressInitialState});
 
-  const onAddressChange = (name: string, value: string) => {
-    setAddressState((prevState) => ({...prevState, [name]: value}));
-  };
   const onUserDataChange = (name: string, value: string) => {
     setUserData((prevState) => ({...prevState, [name]: value}));
   };
@@ -312,13 +191,19 @@ export function Profile() {
           keyExtractor={keyExtractor}
           renderItem={({item, index}) =>
             editAddressIndex === index ? (
-              <>
-                <TableWriteComponent
-                  changeState={() => console.debug()}
-                  componentData={addressTableComponent}
-                />
-                <Button onPress={saveAddress} title="Save Address" />
-              </>
+              <WriteAddress
+                defaultData={addressState}
+                editAddressIndex={editAddressIndex}
+                userData={userData}
+                onResult={(status: boolean) => {
+                  if (status) {
+                    resetAddressState();
+                    setEnableAddressCreate(false);
+                    setEditAddressIndex(-1);
+                    getUserProfileData();
+                  }
+                }}
+              />
             ) : (
               <Address
                 onClickUpdate={() => {
@@ -333,13 +218,18 @@ export function Profile() {
           }
         />
         {enableAddressCreate && editAddressIndex === -1 ? (
-          <>
-            <TableWriteComponent
-              changeState={() => console.debug()}
-              componentData={addressTableComponent}
-            />
-            <Button onPress={saveAddress} title="Save Address" />
-          </>
+          <WriteAddress
+            editAddressIndex={-1}
+            userData={userData}
+            onResult={(status: boolean) => {
+              if (status) {
+                resetAddressState();
+                setEnableAddressCreate(false);
+                setEditAddressIndex(-1);
+                getUserProfileData();
+              }
+            }}
+          />
         ) : null}
       </>
     );

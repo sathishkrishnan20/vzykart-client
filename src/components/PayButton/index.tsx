@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Button} from 'react-native-elements';
-import {View} from 'react-native';
 import {IS_WEB, RAZORPAY_KEY, RAZORPAY_LOGO_URL} from '../../config';
 //@ts-ignore
 import RazorpayCheckout from 'react-native-razorpay';
 import colors from '../../colors';
-import {getService, postService} from '../../services/http-service';
+import {postService} from '../../services/http-service';
 import {ErrorToast} from '../Toast';
 import {Row, Col} from 'react-native-easy-grid';
 interface IPaymentState {

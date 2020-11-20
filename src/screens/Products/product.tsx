@@ -96,7 +96,9 @@ const renderProductInfo = ({
       <Text style={styles.textName}>
         {productInfo.unit + ' ' + productInfo.uom}
       </Text>
-      <Text style={styles.textName}>{productInfo.categories[0]}</Text>
+      <Text style={styles.textName}>
+        {productInfo.categories && productInfo.categories[0]}
+      </Text>
       <CardQtyIncDec cartProducts={cartProducts} productId={productInfo._id} />
     </View>
   );

@@ -28,62 +28,6 @@ export function ProductList(props: ComponentProp) {
   const getProductDataBySellerId = async (sellerId: string) => {
     setIsLoading(true);
 
-    const data: IProduct[] = [
-      {
-        _id: '12',
-        productId: '12',
-        productName: 'Hamam Soap',
-        productDescription: 'the Bathroom Soap',
-        mrp: 100,
-        sellingPrice: 100,
-        tradePrice: 120,
-        rupeeSymbol: 'RS',
-        reviews: [],
-        ratings: 5,
-        sellerId: '123',
-        discount: 12,
-        categories: [],
-        gst: 1,
-        uom: 'Kg',
-        unit: '4',
-        images: [
-          {
-            destinationPath:
-              'https://images-na.ssl-images-amazon.com/images/I/41eCbvCrlPL._SX425_.jpg',
-            optimizedDestinationPath:
-              'https://images-na.ssl-images-amazon.com/images/I/41eCbvCrlPL._SX425_.jpg',
-            active: true,
-          },
-        ],
-      },
-      {
-        _id: '12',
-        productId: '12',
-        productName: 'Hamam Soap',
-        productDescription: 'the Bathroom Soap',
-        mrp: 100,
-        sellingPrice: 100,
-        tradePrice: 120,
-        rupeeSymbol: 'RS',
-        reviews: [],
-        ratings: 5,
-        sellerId: '123',
-        discount: 12,
-        categories: [],
-        gst: 1,
-        uom: 'Kg',
-        unit: '4',
-        images: [
-          {
-            destinationPath:
-              'https://images-na.ssl-images-amazon.com/images/I/41eCbvCrlPL._SX425_.jpg',
-            optimizedDestinationPath:
-              'https://images-na.ssl-images-amazon.com/images/I/41eCbvCrlPL._SX425_.jpg',
-            active: true,
-          },
-        ],
-      },
-    ];
     const productResponse = await productAction.getProductsBySellerId(sellerId);
     setIsLoading(true);
     if (productResponse.success) {

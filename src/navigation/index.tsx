@@ -1,10 +1,10 @@
-// import {StackParams} from '../index';
 import {useNavigation as useNavigationR} from '@react-navigation/native';
-// import {StackNavigationProp} from '@react-navigation/stack';
 import {Platform} from 'react-native';
 import {useHistory} from 'react-router-dom';
 import {ComponentProp} from '../interfaces';
-// type NavigationProps = StackNavigationProp<StackParams, 'Home'>;
+import {IS_WEB} from '../config';
+import ROUTE_NAMES from '../routes/name';
+import {ProductAndCart} from '../interfaces/classes/cart';
 
 const useNavigation = Platform.OS === 'web' ? useHistory : useNavigationR;
 const navigate = (navigation: any, routeName: string, params: any = {}) => {
@@ -34,4 +34,37 @@ const getParamsByProp = (props: ComponentProp): any => {
   }
 };
 
-export {useNavigation, navigate, navigateByProp, getParamsByProp};
+const navigateToCheckoutPage = (
+  props: ComponentProp,
+  checkoutProducts: ProductAndCart[],
+) => {
+  if (IS_WEB) {
+    localStorage.setItem('checkoutProducts', JSON.stringify(checkoutProducts));
+  }
+  navigateByProp(props, ROUTE_NAMES.userCheckout, {
+    checkoutProducts: checkoutProducts,
+  });
+};
+
+const getParamForCheckoutPage = (props: ComponentProp) => {
+  if (IS_WEB) {
+    const data = localStorage.getItem('checkoutProducts') || '[]';
+    return JSON.parse(data);
+  } else {
+    return (
+      (props.route &&
+        props.route.params &&
+        props.route.params.checkoutProducts) ||
+      []
+    );
+  }
+};
+
+export {
+  useNavigation,
+  navigate,
+  navigateByProp,
+  getParamsByProp,
+  navigateToCheckoutPage,
+  getParamForCheckoutPage,
+};

@@ -26,9 +26,8 @@ export function CardQtyIncDec({
 
   useEffect(() => {
     let quantity = 0;
-    console.log(cartProducts);
     let productIndex = cartProducts.findIndex(
-      (item: ICartItem) => item.productId == productId,
+      (item: ICartItem) => item.productId === productId,
     );
 
     console.log('productIndex: ' + productIndex);

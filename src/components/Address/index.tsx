@@ -1,7 +1,6 @@
-import React, {CSSProperties} from 'react';
+import React from 'react';
 import {Text, Card, Icon} from 'react-native-elements';
 import {
-  ActivityIndicator,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -65,20 +64,20 @@ const Address = ({
         <Col size={100 - leftRowSize}>
           <Text style={[styles.textName, styles.bold]}>{data.name}</Text>
           <View style={{flex: 1, flexDirection: 'column'}}>
-            <Text style={styles.textName}>{data.no_and_street}</Text>
+            <Text style={[styles.textName]}>{data.no_and_street}</Text>
             {data.address_line_1 ? (
-              <Text style={styles.textName}>{data.address_line_1}</Text>
+              <Text style={[styles.textName]}>{data.address_line_1}</Text>
             ) : null}
           </View>
           <Row>
-            <Text style={styles.textName}>{data.city}</Text>
-            <Text style={styles.textName}>{data.district}</Text>
+            <Text style={[styles.textName]}>{data.city}</Text>
+            <Text style={[styles.textName]}>{data.district}</Text>
           </Row>
           <Row>
-            <Text style={styles.textName}>{data.pin_code}</Text>
+            <Text style={[styles.textName]}>{data.pin_code}</Text>
           </Row>
           <Row>
-            <Text style={styles.textName}>{data.contactNumber}</Text>
+            <Text style={[styles.textName]}>{data.contactNumber}</Text>
           </Row>
           {data.locality ? (
             <Row>
@@ -86,10 +85,16 @@ const Address = ({
             </Row>
           ) : null}
         </Col>
-        <Col size={100 - (100 - leftRowSize)}>
-          <Icon onPress={onClickUpdate} size={25} name="edit" />
-          <Icon onPress={onClickDelete} size={25} name="delete" />
-        </Col>
+        {buttons.includes(CRUD.UPDATE) || buttons.includes(CRUD.DELETE) ? (
+          <Col size={100 - (100 - leftRowSize)}>
+            {buttons.includes(CRUD.UPDATE) ? (
+              <Icon onPress={onClickUpdate} size={25} name="edit" />
+            ) : null}
+            {buttons.includes(CRUD.DELETE) ? (
+              <Icon onPress={onClickDelete} size={25} name="delete" />
+            ) : null}
+          </Col>
+        ) : null}
       </Row>
     </Card>
   );

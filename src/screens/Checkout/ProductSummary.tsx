@@ -1,16 +1,20 @@
 import React from 'react';
-import {ActivityIndicator, Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 
-import {Button, Card} from 'react-native-elements';
+import {Card} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IS_WEB} from '../../config';
-import {ICartItem} from '../../interfaces/classes/cart';
 import {ProductAndCart} from '../../interfaces/classes/cart';
 import Image from '../../components/Image/image';
 const leftSideSize = IS_WEB ? 2 : 4;
 
 interface IProductSummary {
   productInfo: ProductAndCart;
+}
+interface ISubTotalComponent {
+  sellingPrice: number;
+  discountPrice: number;
+  deliveryCharge: number;
 }
 export const ProductSummary = ({productInfo}: IProductSummary) => {
   return (
@@ -79,7 +83,11 @@ const renderImage = (
   );
 };
 
-export const RenderSubTotal = () => {
+export const SubTotalComponent = ({
+  sellingPrice,
+  discountPrice,
+  deliveryCharge,
+}: ISubTotalComponent) => {
   return (
     <Card containerStyle={{margin: 4}}>
       <Card.Title> Price Details </Card.Title>
@@ -89,7 +97,17 @@ export const RenderSubTotal = () => {
           <Text> Price </Text>
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
-          <Text> 200 </Text>
+          <Text> {sellingPrice} </Text>
+        </Col>
+      </Row>
+      <Row style={{marginTop: 10}}>
+        <Col>
+          <Text style={{color: 'gray'}}> Discount Price </Text>
+        </Col>
+        <Col style={{alignItems: 'flex-end'}}>
+          <Text style={{textDecorationLine: 'line-through', color: 'gray'}}>
+            {discountPrice}
+          </Text>
         </Col>
       </Row>
       <Row style={{marginTop: 10}}>
@@ -97,17 +115,17 @@ export const RenderSubTotal = () => {
           <Text> Delivery Charges </Text>
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
-          <Text> 5 </Text>
+          <Text>{deliveryCharge} </Text>
         </Col>
       </Row>
       <Card.Divider style={{marginTop: 10}}></Card.Divider>
       <Row>
         <Row style={{marginTop: IS_WEB ? 8 : 4}}>
           <Col>
-            <Text style={styles.bold}> Total Payable (4 Items) </Text>
+            <Text style={styles.bold}> Total Payable </Text>
           </Col>
           <Col style={{alignItems: 'flex-end'}}>
-            <Text style={styles.bold}> 205 </Text>
+            <Text style={styles.bold}> {sellingPrice + deliveryCharge} </Text>
           </Col>
         </Row>
       </Row>

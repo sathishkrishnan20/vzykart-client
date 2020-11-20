@@ -1,5 +1,4 @@
 import {USER_CART} from '../providers/constants';
-import {USER_TYPE} from '../interfaces/enums';
 import {ICartItem} from '../interfaces/classes/cart';
 interface ICartProviderState {
   type?: string;

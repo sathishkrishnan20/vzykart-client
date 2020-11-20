@@ -9,8 +9,8 @@ export interface ICreateProduct {
   gst: number;
   uom: string;
   unit: string;
-  categories: string[];
-  images: IProductImage[];
+  categories?: string[];
+  images?: IProductImage[];
 
   rupeeSymbol?: string;
 }

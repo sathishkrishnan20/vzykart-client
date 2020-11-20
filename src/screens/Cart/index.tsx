@@ -13,7 +13,6 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
-import {CART_INC_DEC} from '../../interfaces/enums';
 import {getCartItem} from '../../services/storage-service';
 import ProductAction from '../../actions/products';
 import {
@@ -21,8 +20,8 @@ import {
   ICartScreenState,
   ProductAndCart,
 } from '../../interfaces/classes/cart';
-import {IProduct} from '../../interfaces/products';
 import {ComponentProp} from '../../interfaces';
+import {navigateToCheckoutPage} from '../../navigation';
 
 export default class Cart extends React.Component<
   ComponentProp,
@@ -111,6 +110,11 @@ export default class Cart extends React.Component<
       );
     }
     return 0;
+  };
+  processCheckout = () => {
+    const {cartItems} = this.state;
+    const checkedProducts = cartItems.filter((ele) => ele.checked === 1);
+    navigateToCheckoutPage(this.props, checkedProducts);
   };
 
   render() {
@@ -326,7 +330,7 @@ export default class Cart extends React.Component<
                     borderRadius: 5,
                   },
                 ]}
-                onPress={() => console.log('test')}>
+                onPress={() => this.processCheckout()}>
                 <Text style={{color: '#ffffff'}}>Checkout</Text>
               </TouchableOpacity>
             </View>
