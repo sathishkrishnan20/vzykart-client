@@ -11,4 +11,5 @@ export interface ICartScreenState {
   cartItemsIsLoading: boolean;
   selectAll: boolean;
   cartItems: ProductAndCart[];
+  refreshCount: number;
 }

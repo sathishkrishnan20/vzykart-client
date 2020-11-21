@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Image,
   ActivityIndicator,
   TextInput,
   Alert,
@@ -22,7 +21,15 @@ import {
 } from '../../interfaces/classes/cart';
 import {ComponentProp} from '../../interfaces';
 import {navigateToCheckoutPage} from '../../navigation';
-import {updateCartDataOnStorage} from '../../helpers';
+import {
+  updateCartDataOnStorage,
+  calculateTotalSellingAmountWithGST,
+  calculateTotalMRPAmountWithGST,
+} from '../../helpers';
+import {IS_WEB} from '../../config';
+import Image from '../../components/Image/image';
+import colors from '../../colors';
+import {Row} from 'react-native-easy-grid';
 
 export default class Cart extends React.Component<
   ComponentProp,
@@ -35,6 +42,7 @@ export default class Cart extends React.Component<
       selectAll: false,
       cartItemsIsLoading: false,
       cartItems: [],
+      refreshCount: 0,
     };
     this.productAction = new ProductAction();
   }
@@ -76,29 +84,43 @@ export default class Cart extends React.Component<
   };
 
   deleteHandler = (index: number) => {
-    Alert.alert(
-      'Are you sure you want to delete this item from your cart?',
-      '',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          onPress: () => {
-            let updatedCart = this.state.cartItems; /* Clone it first */
-            updatedCart.splice(
-              index,
-              1,
-            ); /* Remove item from the cloned cart state */
-            this.setState({cartItems: updatedCart}); /* Update the state */
+    if (IS_WEB) {
+      let updatedCart = this.state.cartItems; /* Clone it first */
+      updatedCart.splice(index, 1); /* Remove item from the cloned cart state */
+      this.setState({
+        cartItems: updatedCart,
+        refreshCount: this.state.refreshCount + 1,
+      }); /* Update the state */
+      updateCartDataOnStorage(updatedCart);
+    } else {
+      Alert.alert(
+        'Are you sure you want to delete this item from your cart?',
+        '',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
           },
-        },
-      ],
-      {cancelable: false},
-    );
+          {
+            text: 'Delete',
+            onPress: () => {
+              let updatedCart = this.state.cartItems; /* Clone it first */
+              updatedCart.splice(
+                index,
+                1,
+              ); /* Remove item from the cloned cart state */
+              this.setState({
+                cartItems: updatedCart,
+                refreshCount: this.state.refreshCount + 1,
+              }); /* Update the state */
+              updateCartDataOnStorage(updatedCart);
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    }
   };
 
   subtotalPrice = () => {
@@ -106,7 +128,10 @@ export default class Cart extends React.Component<
     if (cartItems) {
       return cartItems.reduce(
         (sum: number, item: ProductAndCart) =>
-          sum + (item.checked === 1 ? item.quantity * item.sellingPrice : 0),
+          sum +
+          (item.checked === 1
+            ? calculateTotalSellingAmountWithGST(item, item.quantity)
+            : 0),
         0,
       );
     }
@@ -119,11 +144,7 @@ export default class Cart extends React.Component<
   };
 
   render() {
-    const styles = StyleSheet.create({
-      centerElement: {justifyContent: 'center', alignItems: 'center'},
-    });
-
-    const {cartItems, cartItemsIsLoading, selectAll} = this.state;
+    const {cartItems, cartItemsIsLoading, selectAll, refreshCount} = this.state;
 
     return (
       <View style={{flex: 1, backgroundColor: '#f6f6f6'}}>
@@ -155,7 +176,7 @@ export default class Cart extends React.Component<
                     flexDirection: 'row',
                     backgroundColor: '#fff',
                     marginBottom: 2,
-                    height: 120,
+                    marginTop: 4,
                   }}>
                   <View style={[styles.centerElement, {width: 60}]}>
                     <TouchableOpacity
@@ -193,30 +214,88 @@ export default class Cart extends React.Component<
                         }}
                         style={[
                           styles.centerElement,
-                          {height: 60, width: 60, backgroundColor: '#eeeeee'},
+                          {height: 140, width: 140, backgroundColor: '#eeeeee'},
                         ]}
                       />
                     </TouchableOpacity>
                     <View
                       style={{flexGrow: 1, flexShrink: 1, alignSelf: 'center'}}>
-                      <Text numberOfLines={1} style={{fontSize: 15}}>
-                        {item.productName}
-                      </Text>
-                      {/* <Text numberOfLines={1} style={{color: '#8f8f8f'}}>
-                        {item.color ? 'Variation: ' + item.color : ''}
-                      </Text> */}
                       <Text
                         numberOfLines={1}
-                        style={{color: '#333333', marginBottom: 10}}>
-                        ${item.quantity * item.sellingPrice}
+                        style={[
+                          styles.text,
+                          {marginTop: 4, fontSize: IS_WEB ? 18 : 14},
+                        ]}>
+                        {item.productName}
                       </Text>
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.textLight, styles.marginTopSmall]}>
+                        {'Seller: ' + item.sellerInfo?.sellerName}
+                      </Text>
+
+                      <Row>
+                        <Text style={[styles.text, styles.marginTopSmall]}>
+                          Price {' :'}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.textLight,
+                            styles.marginTopSmall,
+                            styles.strikeThrough,
+                          ]}>
+                          {' ₹'}
+                          {item.mrp}{' '}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.textLight,
+                            styles.strikeThrough,
+                            styles.marginTopSmall,
+                            {fontSize: 12, alignSelf: 'center'},
+                          ]}>
+                          {' + '}₹{item.gst}(GST)
+                        </Text>
+                      </Row>
+                      <Row>
+                        <Text style={[styles.text, styles.marginTopSmall]}>
+                          Offer Price: ₹{item.sellingPrice}{' '}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.text,
+                            styles.marginTopModerate,
+                            {fontSize: 12, alignSelf: 'center'},
+                          ]}>
+                          {' + '}₹{item.gst}(GST)
+                        </Text>
+                      </Row>
+                      <Row>
+                        <Text style={{color: '#333333', marginTop: 5}}>
+                          Total Price: {item.quantity} * ₹
+                          {item.sellingPrice + item.gst} = ₹
+                          {calculateTotalSellingAmountWithGST(
+                            item,
+                            item.quantity,
+                          )}{' '}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.textLight,
+                            styles.strikeThrough,
+                            styles.marginTopSmall,
+                          ]}>
+                          ₹{calculateTotalMRPAmountWithGST(item, item.quantity)}
+                        </Text>
+                      </Row>
+
                       <CardQtyIncDec
                         cartProducts={cartItems}
                         productId={item._id}
                         onUpdateCartProducts={(cartProducts: ICartItem[]) => {
                           updateCartDataOnStorage(cartProducts);
                         }}
-                        refreshCount={0}
+                        refreshCount={refreshCount}
                         updateQuantity={(quantity: number) => {
                           const newItems = [...cartItems];
                           newItems[i].quantity = quantity;
@@ -311,7 +390,7 @@ export default class Cart extends React.Component<
                     alignItems: 'center',
                   }}>
                   <Text style={{color: '#8f8f8f'}}>SubTotal: </Text>
-                  <Text>${this.subtotalPrice().toFixed(2)}</Text>
+                  <Text>₹{this.subtotalPrice().toFixed(2)}</Text>
                 </View>
               </View>
             </View>
@@ -343,3 +422,25 @@ export default class Cart extends React.Component<
     );
   }
 }
+
+const styles = StyleSheet.create({
+  centerElement: {justifyContent: 'center', alignItems: 'center'},
+  text: {
+    color: '#333333',
+    fontSize: 15,
+  },
+  textLight: {
+    color: colors.gray,
+    fontSize: 15,
+  },
+  marginTopSmall: {
+    marginTop: IS_WEB ? 4 : 2,
+  },
+  marginTopModerate: {
+    marginTop: IS_WEB ? 8 : 4,
+  },
+  marginLarge: {
+    marginTop: IS_WEB ? 10 : 5,
+  },
+  strikeThrough: {textDecorationLine: 'line-through'},
+});

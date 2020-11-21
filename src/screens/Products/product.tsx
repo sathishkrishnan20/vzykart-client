@@ -7,6 +7,7 @@ import {IProduct} from '../../interfaces/products';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {IS_WEB} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
+import colors from '../../colors';
 
 interface IProductInfo {
   cartProducts: ICartItem[];
@@ -18,6 +19,7 @@ interface IProductInfo {
 interface IRenderBuyCart {
   productInfo: IProduct;
   onClickAddToCart: (productId: string) => void;
+  onClickBuy: (productInfo: IProduct, productId: string) => void;
 }
 interface IProductCard extends IProductInfo, IRenderBuyCart {}
 
@@ -28,6 +30,7 @@ export const Product = ({
   onUpdateCartProducts,
   onClickAddToCart,
   cartQtyRefreshCount,
+  onClickBuy,
 }: IProductCard) => {
   const leftSideSize = 5;
   return (
@@ -55,7 +58,11 @@ export const Product = ({
                 onUpdateCartProducts,
                 cartQtyRefreshCount,
               })}
-              {renderCartBuyButtons({productInfo, onClickAddToCart})}
+              {renderCartBuyButtons({
+                productInfo,
+                onClickAddToCart,
+                onClickBuy,
+              })}
             </Col>
           </Grid>
         ) : (
@@ -80,7 +87,11 @@ export const Product = ({
               </Col>
             </Row>
             <Row size={3}>
-              {renderCartBuyButtons({productInfo, onClickAddToCart})}
+              {renderCartBuyButtons({
+                productInfo,
+                onClickAddToCart,
+                onClickBuy,
+              })}
             </Row>
           </Grid>
         )}
@@ -113,13 +124,33 @@ const renderProductInfo = ({
   return (
     <View onMagicTap={() => onClickProduct(productInfo.productId)}>
       <Text style={styles.textName}>{productInfo.productName}</Text>
-      <Text style={[styles.textName, {textDecorationLine: 'line-through'}]}>
-        MRP: Rs: {productInfo.mrp}
+      <Text style={[styles.textNameLight]}>
+        {'Seller: ' + productInfo.sellerInfo?.sellerName}
       </Text>
-      <Text style={styles.textName}>Offer:Rs: {productInfo.sellingPrice}</Text>
-      <Text style={styles.textName}>
-        {'Seller Name' || productInfo.sellerId}
-      </Text>
+      <Row>
+        <Text style={[styles.textName, {textDecorationLine: 'line-through'}]}>
+          MRP: ₹{productInfo.mrp}
+        </Text>
+        <Text
+          style={[
+            styles.textName,
+            {textDecorationLine: 'line-through', marginTop: 0},
+          ]}>
+          +
+        </Text>
+        <Text
+          style={[styles.textNameGray, {textDecorationLine: 'line-through'}]}>
+          ₹{productInfo.gst} (GST)
+        </Text>
+      </Row>
+
+      <Row>
+        <Text style={styles.textName}>
+          Offer: ₹{productInfo.sellingPrice} +{' '}
+        </Text>
+        <Text style={styles.textNameGray}>₹{productInfo.gst} (GST)</Text>
+      </Row>
+
       <Text style={styles.textName}>
         {productInfo.unit + ' ' + productInfo.uom}
       </Text>
@@ -140,6 +171,7 @@ const renderProductInfo = ({
 const renderCartBuyButtons = ({
   productInfo,
   onClickAddToCart,
+  onClickBuy,
 }: IRenderBuyCart) => {
   return (
     <Row>
@@ -150,7 +182,7 @@ const renderCartBuyButtons = ({
             size: 15,
             color: 'white',
           }}
-          onPress={() => console.log(productInfo)}
+          onPress={() => onClickBuy(productInfo, productInfo._id)}
           title="Buy Now"></Button>
       </Col>
       <Col>
@@ -210,6 +242,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: IS_WEB ? 8 : 4,
     marginBottom: IS_WEB ? 8 : 4,
+  },
+  textNameLight: {
+    fontSize: IS_WEB ? 14 : 12,
+    color: colors.gray,
+    fontWeight: '400',
+    marginLeft: IS_WEB ? 8 : 4,
+    marginBottom: IS_WEB ? 8 : 4,
+  },
+  textNameGray: {
+    fontSize: IS_WEB ? 14 : 12,
+    color: colors.gray,
+    fontWeight: '400',
+    alignSelf: 'center',
+    marginTop: IS_WEB ? -2 : 0,
+    marginLeft: IS_WEB ? 4 : 2,
   },
   add2CartButton: {
     backgroundColor: '#FA8B41',

@@ -8,6 +8,10 @@ export enum USER_TYPE {
   SALES_USER = 'SALES_USER',
 }
 
+export enum PAYMENT_TYPE {
+  CASH = 'CASH',
+  ONLINE = 'ONLINE',
+}
 export enum INPUT_COMPONENT {
   TEXT = 'TEXT',
   SINGLE_SELECT = 'SINGLE_SELECT',
@@ -22,4 +26,17 @@ export enum CRUD {
   VIEW = 'VIEW',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
+}
+
+export enum VALID_ORDER_STATUS {
+  CREATED = 'CREATED',
+  APPROVED = 'APPROVED',
+  CANCELED = 'CANCELED',
+  OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
+  DELIVERED = 'DELIVERED',
+}
+
+export enum BOOKING_FROM {
+  WEB = 'WEB',
+  APPLICATION = 'APPLICATION',
 }

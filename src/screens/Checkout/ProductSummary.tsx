@@ -6,6 +6,10 @@ import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IS_WEB} from '../../config';
 import {ProductAndCart} from '../../interfaces/classes/cart';
 import Image from '../../components/Image/image';
+import {
+  calculateTotalSellingAmountWithGST,
+  calculateTotalMRPAmountWithGST,
+} from '../../helpers';
 const leftSideSize = IS_WEB ? 2 : 4;
 
 interface IProductSummary {
@@ -14,6 +18,7 @@ interface IProductSummary {
 interface ISubTotalComponent {
   sellingPrice: number;
   discountPrice: number;
+  totalMRPPrice: number;
   deliveryCharge: number;
 }
 export const ProductSummary = ({productInfo}: IProductSummary) => {
@@ -85,8 +90,8 @@ const renderImage = (
 
 export const SubTotalComponent = ({
   sellingPrice,
-  discountPrice,
   deliveryCharge,
+  totalMRPPrice,
 }: ISubTotalComponent) => {
   return (
     <Card containerStyle={{margin: 4}}>
@@ -97,16 +102,27 @@ export const SubTotalComponent = ({
           <Text> Price </Text>
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
-          <Text> {sellingPrice} </Text>
+          <Row>
+            <Text style={[styles.textName]}> ₹{sellingPrice} </Text>
+            <Text
+              style={[
+                styles.strikeThrough,
+                styles.textNameLight,
+                styles.marginTopSmall,
+              ]}>
+              ₹{totalMRPPrice}{' '}
+            </Text>
+          </Row>
         </Col>
       </Row>
-      <Row style={{marginTop: 10}}>
+
+      <Row style={{marginTop: 4}}>
         <Col>
           <Text style={{color: 'gray'}}> Discount Price </Text>
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
           <Text style={{textDecorationLine: 'line-through', color: 'gray'}}>
-            {discountPrice}
+            ₹{totalMRPPrice - sellingPrice}
           </Text>
         </Col>
       </Row>
@@ -115,7 +131,7 @@ export const SubTotalComponent = ({
           <Text> Delivery Charges </Text>
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
-          <Text>{deliveryCharge} </Text>
+          <Text>₹{deliveryCharge} </Text>
         </Col>
       </Row>
       <Card.Divider style={{marginTop: 10}}></Card.Divider>
@@ -141,19 +157,33 @@ const renderProductInfo = ({productInfo}: {productInfo: ProductAndCart}) => {
         {productInfo.unit + ' ' + productInfo.uom}
       </Text>
       <Text style={styles.textNameLight}>
-        {'Seller: ' || productInfo.sellerId}
+        {'Seller: ' + productInfo.sellerInfo?.sellerName}
       </Text>
       <Row>
-        <Text style={styles.textName}>
-          {productInfo.quantity} * ₹{productInfo.sellingPrice} = ₹
-          {productInfo.quantity * productInfo.sellingPrice}
+        <Text style={[styles.textNameLight]}>Price:</Text>
+        <Text style={[styles.textNameLight, styles.strikeThrough]}>
+          {productInfo.quantity} * ( ₹{productInfo.mrp}
         </Text>
-        <Text
-          style={[
-            styles.textNameLight,
-            {textDecorationLine: 'line-through', marginTop: IS_WEB ? 4 : 2},
-          ]}>
-          ₹{productInfo.quantity * productInfo.mrp}
+        <Text style={[styles.textNameLight, styles.strikeThrough]}>
+          + ₹{productInfo.gst}
+        </Text>
+        <Text style={[styles.textNameLight, styles.strikeThrough]}>
+          ) = ₹
+          {calculateTotalMRPAmountWithGST(productInfo, productInfo.quantity)}
+        </Text>
+      </Row>
+      <Row>
+        <Text style={[styles.textName]}>Offer:</Text>
+        <Text style={[styles.textName]}>
+          {productInfo.quantity} * ( ₹{productInfo.sellingPrice}
+        </Text>
+        <Text style={[styles.textName]}>+ ₹{productInfo.gst}</Text>
+        <Text style={[styles.textName]}>
+          ) = ₹
+          {calculateTotalSellingAmountWithGST(
+            productInfo,
+            productInfo.quantity,
+          )}
         </Text>
       </Row>
     </View>
@@ -213,4 +243,14 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
   },
+  marginTopSmall: {
+    marginTop: IS_WEB ? 4 : 2,
+  },
+  marginTopModerate: {
+    marginTop: IS_WEB ? 8 : 4,
+  },
+  marginLarge: {
+    marginTop: IS_WEB ? 10 : 5,
+  },
+  strikeThrough: {textDecorationLine: 'line-through'},
 });

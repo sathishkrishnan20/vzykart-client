@@ -6,17 +6,20 @@ import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {ProductAndCart} from '../../interfaces/classes/cart';
 import {IS_WEB} from '../../config';
 import {keyExtractor} from '../../helpers/render-helpers';
-import {IUserInfo, ComponentProp} from '../../interfaces';
+import {IUserInfo, ComponentProp, IUserAddress} from '../../interfaces';
 import Address from '../../components/Address';
 import {View, Dimensions} from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
 import {Payment} from '../../components/PayButton';
 import {SectionTitle} from '../../components/Section-Title';
-import {CRUD} from '../../interfaces/enums';
+import {CRUD, PAYMENT_TYPE} from '../../interfaces/enums';
 import {getUserId} from '../../services/storage-service';
 import UserAction from '../../actions/users';
 import {WriteAddress} from '../_users/Profile/AddAddress';
 import {getParamForCheckoutPage} from '../../navigation';
+import {createOrder, getSellingAndDiscountGSTPrice} from './helper';
+import {WarningToast} from '../../components/Toast';
+import {RazorPaySuccess} from '../../interfaces/razorpay';
 
 export function Checkout(props: ComponentProp) {
   const userAction = new UserAction();
@@ -46,19 +49,7 @@ export function Checkout(props: ComponentProp) {
     }
   };
   const getSellingAndDiscountPrice = () => {
-    let totalSellingPrice = 0;
-    let discountPrice = 0;
-    checkoutProducts.forEach((productItem) => {
-      totalSellingPrice += productItem.quantity * productItem.sellingPrice;
-      discountPrice =
-        discountPrice +
-        productItem.quantity * (productItem.mrp - productItem.sellingPrice);
-    });
-    return {
-      totalSellingPrice,
-      discountPrice: discountPrice * -1,
-      totalPriceToBePaid: totalSellingPrice + deliveryCharge,
-    };
+    return getSellingAndDiscountGSTPrice(checkoutProducts, deliveryCharge);
   };
   const RenderProductSummaryFlatList = () => {
     return (
@@ -73,16 +64,41 @@ export function Checkout(props: ComponentProp) {
   };
 
   const renderSubTotalComp = () => {
-    const {discountPrice, totalSellingPrice} = getSellingAndDiscountPrice();
+    const {
+      totalDiscountPrice,
+      totalSellingPrice,
+      totalMRPPrice,
+    } = getSellingAndDiscountPrice();
     return (
       <SubTotalComponent
         sellingPrice={totalSellingPrice}
-        discountPrice={discountPrice}
+        discountPrice={totalDiscountPrice}
         deliveryCharge={deliveryCharge}
+        totalMRPPrice={totalMRPPrice}
       />
     );
   };
-
+  const onSuccessOrder = (
+    paymentType: PAYMENT_TYPE,
+    result: RazorPaySuccess,
+  ) => {
+    if (userData.address && userData.address[deliveryAddressIndex]) {
+      const deliveryAddressInfo: IUserAddress =
+        userData.address && userData.address[deliveryAddressIndex];
+      createOrder(
+        checkoutProducts,
+        deliveryAddressInfo,
+        deliveryCharge,
+        paymentType,
+        result,
+      );
+    } else {
+      WarningToast({
+        title: 'Select Address',
+        message: 'Please Select Delivery Address and Continue',
+      });
+    }
+  };
   const renderPaymentComp = () => {
     const {totalPriceToBePaid} = getSellingAndDiscountPrice();
     return (
@@ -98,6 +114,8 @@ export function Checkout(props: ComponentProp) {
         notes={{
           address: 'Razorpay Corporate Office',
         }}
+        onSuccess={onSuccessOrder}
+        onFailure={() => {}}
       />
     );
   };

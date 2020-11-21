@@ -7,21 +7,31 @@ import colors from '../../colors';
 import {postService} from '../../services/http-service';
 import {ErrorToast} from '../Toast';
 import {Row, Col} from 'react-native-easy-grid';
-interface IPaymentState {
+import {
+  RazorPayError,
+  RazorPayFailure,
+  RazorPaySuccess,
+} from '../../interfaces/razorpay';
+import {PAYMENT_TYPE} from '../../interfaces/enums';
+interface OptionsProps {
   amount: string;
   name: string;
   description: string;
   prefill?: {
-    name: 'Gaurav Kumar';
-    email: 'gaurav.kumar@example.com';
-    contact: '9999999999';
+    name: string;
+    email: string;
+    contact: string;
   };
   notes?: {
-    address: 'Razorpay Corporate Office';
+    address: string;
   };
 }
+interface IPaymentState extends OptionsProps {
+  onSuccess: (paymentType: PAYMENT_TYPE, result: RazorPaySuccess) => void;
+  onFailure: (paymentType: PAYMENT_TYPE, result: RazorPayFailure) => void;
+}
 
-interface IPaymentOptions extends IPaymentState {
+interface IPaymentOptions extends OptionsProps {
   key: string;
   currency: string;
   image: string;
@@ -31,26 +41,7 @@ interface IPaymentOptions extends IPaymentState {
   order_id?: string;
   handler?: (response: any) => void;
 }
-interface RazorPaySuccess {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-}
-interface RazorPayError {
-  code: number;
-  description: string;
-  source: string;
-  step: string;
-  reason: string;
-  metadata: {
-    order_id: string;
-    payment_id: string;
-  };
-}
 
-interface RazorPayFailure {
-  error: RazorPayError;
-}
 const defaultCurrency = 'INR';
 export function Payment({
   amount,

@@ -6,12 +6,17 @@ import {updateCartOnStorage, updateCartDataOnStorage} from '../../helpers';
 import {Product} from './product';
 import {IS_WEB} from '../../config';
 import {IProduct} from '../../interfaces/products';
-import {useNavigation, navigate, getParamsByProp} from '../../navigation';
+import {
+  useNavigation,
+  navigate,
+  getParamsByProp,
+  navigateToCheckoutPage,
+} from '../../navigation';
 import ROUTE_NAMES from '../../routes/name';
 import ProductAction from '../../actions/products';
 import {ComponentProp} from '../../interfaces';
 import {getCartItem} from '../../services/storage-service';
-import {ICartItem} from '../../interfaces/classes/cart';
+import {ICartItem, ProductAndCart} from '../../interfaces/classes/cart';
 export function ProductList(props: ComponentProp) {
   const [productData, setProductData] = useState([] as IProduct[]);
   const [cartProducts, setCartProducts] = useState([] as ICartItem[]);
@@ -45,10 +50,29 @@ export function ProductList(props: ComponentProp) {
     );
   };
 
-  const updateCart = (cartProducts: ICartItem[]) => {
+  const updateCartProducts = (productId: string) => {
+    const index = cartProducts.findIndex(
+      (item) => item.productId === productId,
+    );
+    if (index === -1) {
+      cartProducts.push({
+        productId,
+        quantity: 1,
+        checked: 1,
+      });
+    }
     setCartProducts(cartProducts);
+    setCartQtyRefreshCount(cartQtyRefreshCount + 1);
+    return cartProducts;
   };
-
+  const onClickBuy = (productInfo: IProduct, productId: string) => {
+    const cartItems = updateCartProducts(productId);
+    const productAndCartData: ProductAndCart = {
+      ...productInfo,
+      ...(cartItems.find((item) => item.productId === productId) as ICartItem),
+    };
+    navigateToCheckoutPage(props, [productAndCartData]);
+  };
   return (
     <Container>
       <FlatList
@@ -68,20 +92,9 @@ export function ProductList(props: ComponentProp) {
             onUpdateCartProducts={(cartProducts: ICartItem[]) =>
               setCartProducts(cartProducts)
             }
+            onClickBuy={onClickBuy}
             onClickAddToCart={(productId: string) => {
-              const index = cartProducts.findIndex(
-                (item) => item.productId === productId,
-              );
-              if (index === -1) {
-                cartProducts.push({
-                  productId,
-                  quantity: 1,
-                  checked: 1,
-                });
-              }
-              console.log('Updating...');
-              setCartProducts(cartProducts);
-              setCartQtyRefreshCount(cartQtyRefreshCount + 1);
+              updateCartProducts(productId);
               updateCartDataOnStorage(cartProducts);
             }}
             productInfo={item}

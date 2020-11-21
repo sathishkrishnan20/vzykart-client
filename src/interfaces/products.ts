@@ -1,3 +1,5 @@
+import {IUserAddress} from '.';
+
 export interface ICreateProduct {
   sellerId: string;
   productName: string;
@@ -28,9 +30,9 @@ export interface IProduct extends ICreateProduct {
     comment: string;
   }[];
   ratings?: number;
-  seller?: {
-    name: string;
-    location: string;
+  sellerInfo?: {
+    sellerName: string;
+    location: IUserAddress;
   };
 }
 
