@@ -120,78 +120,89 @@ export function Checkout(props: ComponentProp) {
     const {totalPriceToBePaid} = getSellingAndDiscountPrice();
 
     return (
-      <Payment
-        name={userData.firstName + ' ' + userData.lastName}
-        amount={String(totalPriceToBePaid * 100)}
-        description={
-          'Order of ' + checkoutProducts.length + ' Items for ' + userData._id
-        }
-        prefill={{
-          name: userData.firstName + ' ' + userData.lastName,
-          email: userData.email || 'sathishkrish20@gmail.com',
-          contact: userData.mobileNumber || '8883334889',
-        }}
-        onSuccess={onSuccessOrder}
-        onFailure={() => {}}
-      />
+      <View
+        style={{
+          width: '100%',
+          height: 50,
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'absolute',
+          bottom: 0,
+        }}>
+        <Payment
+          name={userData.firstName + ' ' + userData.lastName}
+          amount={String(totalPriceToBePaid * 100)}
+          description={
+            'Order of ' + checkoutProducts.length + ' Items for ' + userData._id
+          }
+          prefill={{
+            name: userData.firstName + ' ' + userData.lastName,
+            email: userData.email || 'sathishkrish20@gmail.com',
+            contact: userData.mobileNumber || '8883334889',
+          }}
+          onSuccess={onSuccessOrder}
+          onFailure={() => {}}
+        />
+      </View>
     );
   };
 
   return (
     <Container>
       <ScrollView>
-        <SectionTitle title={'Products'} />
-        {Dimensions.get('window').width > 600 ? (
-          <Row size={12}>
-            <Col size={8}>{RenderProductSummaryFlatList()}</Col>
-            <Col size={4}>{renderSubTotalComp()}</Col>
-          </Row>
-        ) : (
-          RenderProductSummaryFlatList()
-        )}
+        <View style={{marginBottom: 50}}>
+          <SectionTitle title={'Products'} />
+          {Dimensions.get('window').width > 600 ? (
+            <Row size={12}>
+              <Col size={8}>{RenderProductSummaryFlatList()}</Col>
+              <Col size={4}>{renderSubTotalComp()}</Col>
+            </Row>
+          ) : (
+            RenderProductSummaryFlatList()
+          )}
 
-        <FlatList
-          data={userData.address || []}
-          ListHeaderComponent={() => (
-            <SectionTitle title={'Delivery Address'} />
-          )}
-          ListFooterComponent={() =>
-            enableAddressCreate === false ? (
-              <Button
-                onPress={() => setEnableAddressCreate(true)}
-                title="Add New Address"
-              />
-            ) : null
-          }
-          numColumns={1}
-          keyExtractor={keyExtractor}
-          renderItem={({item, index}) => (
-            <View>
-              <Address
-                buttons={[CRUD.SELECT]}
-                onSelect={() => setDeliveryAddressIndex(index)}
-                checked={index === deliveryAddressIndex}
-                containerStyle={{margin: 6}}
-                data={item}
-              />
-            </View>
-          )}
-        />
-        {enableAddressCreate ? (
-          <WriteAddress
-            editAddressIndex={-1}
-            userData={userData}
-            onResult={(status: boolean) => {
-              if (status) {
-                setEnableAddressCreate(false);
-                getUserProfileData();
-              }
-            }}
+          <FlatList
+            data={userData.address || []}
+            ListHeaderComponent={() => (
+              <SectionTitle title={'Delivery Address'} />
+            )}
+            ListFooterComponent={() =>
+              enableAddressCreate === false ? (
+                <Button
+                  onPress={() => setEnableAddressCreate(true)}
+                  title="Add New Address"
+                />
+              ) : null
+            }
+            numColumns={1}
+            keyExtractor={keyExtractor}
+            renderItem={({item, index}) => (
+              <View>
+                <Address
+                  buttons={[CRUD.SELECT]}
+                  onSelect={() => setDeliveryAddressIndex(index)}
+                  checked={index === deliveryAddressIndex}
+                  containerStyle={{margin: 6}}
+                  data={item}
+                />
+              </View>
+            )}
           />
-        ) : null}
-
-        {renderPaymentComp()}
+          {enableAddressCreate ? (
+            <WriteAddress
+              editAddressIndex={-1}
+              userData={userData}
+              onResult={(status: boolean) => {
+                if (status) {
+                  setEnableAddressCreate(false);
+                  getUserProfileData();
+                }
+              }}
+            />
+          ) : null}
+        </View>
       </ScrollView>
+      {renderPaymentComp()}
     </Container>
   );
 }
