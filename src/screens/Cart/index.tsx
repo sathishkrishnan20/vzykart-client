@@ -26,7 +26,7 @@ import {
   calculateTotalSellingAmountWithGST,
   calculateTotalMRPAmountWithGST,
 } from '../../helpers';
-import {IS_WEB} from '../../config';
+import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import Image from '../../components/Image/image';
 import colors from '../../colors';
 import {Row} from 'react-native-easy-grid';
@@ -214,7 +214,11 @@ export default class Cart extends React.Component<
                         }}
                         style={[
                           styles.centerElement,
-                          {height: 140, width: 140, backgroundColor: '#eeeeee'},
+                          {
+                            height: IS_BIG_SCREEN ? 140 : 80,
+                            width: IS_BIG_SCREEN ? 140 : 80,
+                            backgroundColor: '#eeeeee',
+                          },
                         ]}
                       />
                     </TouchableOpacity>
@@ -224,21 +228,22 @@ export default class Cart extends React.Component<
                         numberOfLines={1}
                         style={[
                           styles.text,
-                          {marginTop: 4, fontSize: IS_WEB ? 18 : 14},
+                          {marginTop: 4, fontSize: IS_BIG_SCREEN ? 18 : 14},
                         ]}>
                         {item.productName}
                       </Text>
-                      <Text
-                        numberOfLines={1}
-                        style={[styles.textLight, styles.marginTopSmall]}>
+                      <Text style={[styles.textLight, styles.marginTopSmall]}>
                         {'Seller: ' + item.sellerInfo?.sellerName}
                       </Text>
 
                       <Row>
-                        <Text style={[styles.text, styles.marginTopSmall]}>
-                          Price {' :'}
+                        <Text
+                          numberOfLines={1}
+                          style={[styles.text, styles.marginTopSmall]}>
+                          Price{' ='}
                         </Text>
                         <Text
+                          numberOfLines={1}
                           style={[
                             styles.textLight,
                             styles.marginTopSmall,
@@ -248,6 +253,7 @@ export default class Cart extends React.Component<
                           {item.mrp}{' '}
                         </Text>
                         <Text
+                          numberOfLines={1}
                           style={[
                             styles.textLight,
                             styles.strikeThrough,
@@ -259,9 +265,10 @@ export default class Cart extends React.Component<
                       </Row>
                       <Row>
                         <Text style={[styles.text, styles.marginTopSmall]}>
-                          Offer Price: ₹{item.sellingPrice}{' '}
+                          Offer = ₹{item.sellingPrice}{' '}
                         </Text>
                         <Text
+                          numberOfLines={1}
                           style={[
                             styles.text,
                             styles.marginTopModerate,
@@ -272,7 +279,7 @@ export default class Cart extends React.Component<
                       </Row>
                       <Row>
                         <Text style={{color: '#333333', marginTop: 5}}>
-                          Total Price: {item.quantity} * ₹
+                          Total = {item.quantity} * ₹
                           {item.sellingPrice + item.gst} = ₹
                           {calculateTotalSellingAmountWithGST(
                             item,
@@ -434,13 +441,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   marginTopSmall: {
-    marginTop: IS_WEB ? 4 : 2,
+    marginTop: IS_BIG_SCREEN ? 4 : 2,
   },
   marginTopModerate: {
-    marginTop: IS_WEB ? 8 : 4,
+    marginTop: IS_BIG_SCREEN ? 8 : 4,
   },
   marginLarge: {
-    marginTop: IS_WEB ? 10 : 5,
+    marginTop: IS_BIG_SCREEN ? 10 : 5,
   },
   strikeThrough: {textDecorationLine: 'line-through'},
 });

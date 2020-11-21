@@ -16,7 +16,7 @@ import {Input} from '../../../components/index';
 import {LoginState} from '../../../interfaces/classes/auth';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
-import {IS_WEB, BACKGROUND_IMAGE_URL} from '../../../config';
+import {BACKGROUND_IMAGE_URL, IS_BIG_SCREEN} from '../../../config';
 import {navigateByProp, getParamsByProp} from '../../../navigation';
 import AuthAction from '../../../actions/auth';
 import {ILoginAPI} from '../../../interfaces/actions/auth';
@@ -172,7 +172,7 @@ export default class Login extends React.Component<ComponentProp, LoginState> {
           }}
           style={[styles.imageBg, {height: this.screenHeight}]}>
           <ScrollView>
-            {IS_WEB ? (
+            {IS_BIG_SCREEN ? (
               <Grid>
                 <Col>{this.renderTitle()}</Col>
                 <Col style={{marginTop: 100, marginRight: 20, marginLeft: 20}}>

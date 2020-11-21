@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card} from 'react-native-elements';
 import {Row, Col} from 'react-native-easy-grid';
-import {IS_WEB} from '../../config';
+import {IS_BIG_SCREEN} from '../../config';
 import {ISeller} from '../../interfaces/classes/seller';
 interface ISellerProp {
   data: ISeller;
@@ -14,7 +14,7 @@ export function Seller({data, onClick}: ISellerProp) {
       <Col size={12}>
         <TouchableOpacity onPress={onClick}>
           <Card containerStyle={{borderRadius: 2, margin: 2}}>
-            <Row size={IS_WEB ? 12 : 0} style={styles.rowStyle}>
+            <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.rowStyle}>
               <Image
                 source={{
                   uri:
@@ -29,8 +29,8 @@ export function Seller({data, onClick}: ISellerProp) {
                 }}
               />
             </Row>
-            <Row size={IS_WEB ? 12 : 0} style={styles.secondRow}>
-              <Col size={IS_WEB ? 12 : 0}>
+            <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.secondRow}>
+              <Col size={IS_BIG_SCREEN ? 12 : 0}>
                 <Text style={styles.mainText}>{data.sellerName}</Text>
                 <Text style={styles.subText}>{data.sellerDescription}</Text>
               </Col>

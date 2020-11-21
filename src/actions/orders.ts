@@ -8,5 +8,11 @@ class OrderAction {
     );
     return result.data;
   }
+  async getOrdersByUserId(userId: string): Promise<IResponse> {
+    const result = await getService('/orders/user/' + userId).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
 }
 export default OrderAction;

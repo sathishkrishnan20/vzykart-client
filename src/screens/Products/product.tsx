@@ -5,7 +5,7 @@ import {Image, Button} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IProduct} from '../../interfaces/products';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
-import {IS_WEB} from '../../config';
+import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
 import colors from '../../colors';
 
@@ -37,10 +37,10 @@ export const Product = ({
     <>
       <View
         style={[
-          IS_WEB ? styles.viewContainerWeb : styles.viewContainerMob,
+          IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob,
           styles.container,
         ]}>
-        {IS_WEB ? (
+        {IS_BIG_SCREEN ? (
           <Grid>
             <Col size={leftSideSize}>
               {renderImage(
@@ -124,7 +124,7 @@ const renderProductInfo = ({
   return (
     <View onMagicTap={() => onClickProduct(productInfo.productId)}>
       <Text style={styles.textName}>{productInfo.productName}</Text>
-      <Text style={[styles.textNameLight]}>
+      <Text numberOfLines={1} style={[styles.textNameLight]}>
         {'Seller: ' + productInfo.sellerInfo?.sellerName}
       </Text>
       <Row>
@@ -151,10 +151,10 @@ const renderProductInfo = ({
         <Text style={styles.textNameGray}>₹{productInfo.gst} (GST)</Text>
       </Row>
 
-      <Text style={styles.textName}>
+      <Text numberOfLines={1} style={styles.textName}>
         {productInfo.unit + ' ' + productInfo.uom}
       </Text>
-      <Text style={styles.textName}>
+      <Text numberOfLines={1} style={styles.textName}>
         {productInfo.categories && productInfo.categories[0]}
       </Text>
       <CardQtyIncDec
@@ -183,7 +183,7 @@ const renderCartBuyButtons = ({
             color: 'white',
           }}
           onPress={() => onClickBuy(productInfo, productInfo._id)}
-          title="Buy Now"></Button>
+          title={'Buy Now'}></Button>
       </Col>
       <Col>
         <Button
@@ -233,30 +233,30 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   image: {
-    height: IS_WEB ? 300 : 180,
+    height: IS_BIG_SCREEN ? 300 : 180,
     width: '100%',
   },
   textName: {
-    fontSize: IS_WEB ? 18 : 14,
+    fontSize: IS_BIG_SCREEN ? 18 : 14,
     color: '#4B5164',
     fontWeight: '600',
-    marginLeft: IS_WEB ? 8 : 4,
-    marginBottom: IS_WEB ? 8 : 4,
+    marginLeft: IS_BIG_SCREEN ? 8 : 4,
+    marginBottom: IS_BIG_SCREEN ? 8 : 4,
   },
   textNameLight: {
-    fontSize: IS_WEB ? 14 : 12,
+    fontSize: IS_BIG_SCREEN ? 14 : 12,
     color: colors.gray,
     fontWeight: '400',
-    marginLeft: IS_WEB ? 8 : 4,
-    marginBottom: IS_WEB ? 8 : 4,
+    marginLeft: IS_BIG_SCREEN ? 8 : 4,
+    marginBottom: IS_BIG_SCREEN ? 8 : 4,
   },
   textNameGray: {
-    fontSize: IS_WEB ? 14 : 12,
+    fontSize: IS_BIG_SCREEN ? 14 : 12,
     color: colors.gray,
     fontWeight: '400',
     alignSelf: 'center',
-    marginTop: IS_WEB ? -2 : 0,
-    marginLeft: IS_WEB ? 4 : 2,
+    marginTop: IS_BIG_SCREEN ? -2 : 0,
+    marginLeft: IS_BIG_SCREEN ? 4 : 2,
   },
   add2CartButton: {
     backgroundColor: '#FA8B41',

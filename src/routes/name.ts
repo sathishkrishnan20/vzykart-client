@@ -22,5 +22,6 @@ const ROUTE_NAMES = {
   userCart: '/cart',
   userCheckout: '/checkout',
   userProfile: '/profile',
+  userOrders: '/orders',
 };
 export default ROUTE_NAMES;

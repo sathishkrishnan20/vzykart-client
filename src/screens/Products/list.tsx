@@ -4,7 +4,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import {keyExtractor} from '../../helpers/render-helpers';
 import {updateCartOnStorage, updateCartDataOnStorage} from '../../helpers';
 import {Product} from './product';
-import {IS_WEB} from '../../config';
+import {IS_BIG_SCREEN} from '../../config';
 import {IProduct} from '../../interfaces/products';
 import {
   useNavigation,
@@ -80,7 +80,7 @@ export function ProductList(props: ComponentProp) {
         //   ListHeaderComponent={() => (
         //     <Text style={styles.headerText}> Products </Text>
         //   )}
-        numColumns={IS_WEB ? 2 : 1}
+        numColumns={IS_BIG_SCREEN ? 2 : 1}
         keyExtractor={keyExtractor}
         renderItem={({item}) => (
           <Product

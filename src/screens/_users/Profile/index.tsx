@@ -5,7 +5,7 @@ import {Text, Card, Button, Icon} from 'react-native-elements';
 import {Grid, Col, Row} from 'react-native-easy-grid';
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../../colors';
-import {IS_WEB} from '../../../config';
+import {IS_WEB, IS_BIG_SCREEN} from '../../../config';
 import Image from '../../../components/Image/image';
 import {getUserId} from '../../../services/storage-service';
 import UserAction from '../../../actions/users';
@@ -240,7 +240,7 @@ export function Profile() {
       <ScrollView>
         <View style={styles.flexContainer}></View>
 
-        {IS_WEB ? (
+        {IS_BIG_SCREEN ? (
           <Grid>
             <Col size={40}>{renderProfileView()}</Col>
             <Col size={60}>{renderAddress()}</Col>
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   rectLeftTop: {
     backgroundColor: '#FFFFFF',
-    width: IS_WEB ? '28em' : '100%',
+    width: IS_WEB && IS_BIG_SCREEN ? '28em' : '100%',
     marginLeft: 2,
     marginTop: 2,
     borderRadius: 16,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
 
   rectLeftTopInnerArc: {
-    width: IS_WEB ? '100%' : '100%',
+    width: '100%',
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
     borderBottomLeftRadius: 36,
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   rectLeftTopInnerImg: {
     height: 150,
     width: 150,
-    top: IS_WEB ? 0 : 0,
+    top: 0,
     left: IS_WEB ? '11.5rem' : 88,
     right: 0,
     borderRadius: 50,
@@ -296,8 +296,8 @@ const styles = StyleSheet.create({
   rectLeftTopInner2: {
     backgroundColor: '#FFFFFF',
     height: 130,
-    width: IS_WEB ? '31rem' : 31 * 8,
-    marginTop: IS_WEB ? '1em' : 8,
+    width: IS_WEB && IS_BIG_SCREEN ? '31rem' : 31 * 8,
+    marginTop: IS_WEB && IS_BIG_SCREEN ? '1em' : 8,
     borderRadius: 16,
   },
 });

@@ -6,7 +6,7 @@ import {
   BOOKING_FROM,
 } from '../../interfaces/enums';
 import {RazorPaySuccess, RazorPayFailure} from '../../interfaces/razorpay';
-import {IOrderCreate, IOrderItem} from '../../interfaces/orders';
+import {IOrderCreate, IOrderProducts} from '../../interfaces/orders';
 import {getUserId} from '../../services/storage-service';
 import {IS_WEB} from '../../config';
 import {
@@ -68,7 +68,7 @@ export const getSellingAndDiscountGSTPrice = (
   let totalSellingPrice = 0;
   let totalGstPrice = 0;
   let totalMRPPrice = 0;
-  const orderItems: IOrderItem[] = [];
+  const orderItems: IOrderProducts[] = [];
 
   items.forEach((productItem) => {
     totalSellingPrice += calculateTotalSellingAmountWithGST(
@@ -82,7 +82,7 @@ export const getSellingAndDiscountGSTPrice = (
 
     totalGstPrice += productItem.quantity * productItem.gst;
     // totalDiscountPrice += productItem.quantity * (productItem.mrp - productItem.sellingPrice);
-    const orderItem: IOrderItem = {
+    const orderItem: IOrderProducts = {
       productId: productItem._id,
       sellerId: productItem.sellerId,
       productName: productItem.productName,

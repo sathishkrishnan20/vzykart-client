@@ -14,7 +14,7 @@ import {Input} from '../../../components/index';
 
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
-import {IS_WEB, BACKGROUND_IMAGE_URL} from '../../../config';
+import {IS_BIG_SCREEN, BACKGROUND_IMAGE_URL} from '../../../config';
 import {SignUpState} from '../../../interfaces/classes/auth';
 import {navigateByProp} from '../../../navigation';
 import {Radio} from '../../../components/Radio';
@@ -145,7 +145,7 @@ export default class SignUp extends React.Component<
           }}
           style={[styles.imageBg, {height: this.screenHeight}]}>
           <ScrollView>
-            {IS_WEB ? (
+            {IS_BIG_SCREEN ? (
               <Grid>
                 <Col>{this.renderTitle()}</Col>
                 <Col style={{marginTop: 100, marginRight: 20, marginLeft: 20}}>

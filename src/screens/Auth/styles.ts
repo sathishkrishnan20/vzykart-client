@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import colors from '../../colors';
-import {IS_WEB} from '../../config';
+import {IS_BIG_SCREEN} from '../../config';
 
 export default StyleSheet.create({
   flexContainer1: {
@@ -21,7 +21,7 @@ export default StyleSheet.create({
     justifyContent: 'space-around',
   },
   heading: {
-    fontSize: IS_WEB ? 36 : 24,
+    fontSize: IS_BIG_SCREEN ? 36 : 24,
     fontWeight: 'bold',
     fontStyle: 'italic',
     color: '#fff',

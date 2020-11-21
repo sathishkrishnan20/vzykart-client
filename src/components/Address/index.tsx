@@ -8,7 +8,7 @@ import {
   StyleProp,
 } from 'react-native';
 import {IUserAddress} from '../../interfaces';
-import {IS_WEB} from '../../config';
+import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {Row, Col} from 'react-native-easy-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CRUD} from '../../interfaces/enums';
@@ -32,10 +32,14 @@ const Address = ({
   onClickDelete,
   containerStyle = {},
 }: AddressInfo) => {
-  let leftRowSize = buttons.includes(CRUD.SELECT) ? (IS_WEB ? 4 : 15) : 0;
+  let leftRowSize = buttons.includes(CRUD.SELECT)
+    ? IS_BIG_SCREEN
+      ? 4
+      : 15
+    : 0;
   leftRowSize =
     buttons.includes(CRUD.UPDATE) || buttons.includes(CRUD.DELETE)
-      ? IS_WEB
+      ? IS_BIG_SCREEN
         ? 4
         : 15
       : leftRowSize;
@@ -102,18 +106,18 @@ const Address = ({
 
 const styles = StyleSheet.create({
   textName: {
-    fontSize: IS_WEB ? 18 : 14,
+    fontSize: IS_BIG_SCREEN ? 18 : 14,
     color: '#4B5164',
     fontWeight: '400',
-    marginLeft: IS_WEB ? 8 : 4,
-    marginBottom: IS_WEB ? 8 : 4,
+    marginLeft: IS_BIG_SCREEN ? 8 : 4,
+    marginBottom: IS_BIG_SCREEN ? 8 : 4,
   },
   textNameLight: {
-    fontSize: IS_WEB ? 14 : 12,
+    fontSize: IS_BIG_SCREEN ? 14 : 12,
     color: 'gray',
     fontWeight: '200',
-    marginLeft: IS_WEB ? 8 : 4,
-    marginBottom: IS_WEB ? 8 : 4,
+    marginLeft: IS_BIG_SCREEN ? 8 : 4,
+    marginBottom: IS_BIG_SCREEN ? 8 : 4,
   },
   bold: {
     fontWeight: 'bold',
