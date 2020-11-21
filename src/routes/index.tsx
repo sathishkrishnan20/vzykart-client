@@ -39,6 +39,7 @@ import {ICartItem} from '../interfaces/classes/cart';
 import {Checkout} from '../screens/Checkout';
 import {Profile} from '../screens/_users/Profile';
 import {MyOrders} from '../screens/_users/Orders';
+import {OrderDetails} from '../screens/_users/Orders/Details';
 const HEADER_HEIGHT = 70;
 
 const SELLER_ROUTES = [
@@ -120,6 +121,11 @@ const USER_AUTHENTICATED_ROUTES = [
     component: MyOrders,
     name: 'Orders',
   },
+  {
+    routeName: ROUTE_NAMES.userOrderDetails,
+    component: OrderDetails,
+    name: 'Orders Details',
+  },
 ];
 
 const getTabNavMenus = (userType: USER_TYPE | null) => {
@@ -198,9 +204,9 @@ const StackNavigator = () => {
         name="Tabs"
         component={TabNavigator}
       />
-      <Stack.Screen name="login" component={Login} />
+      <Stack.Screen name={ROUTE_NAMES.login} component={Login} />
       <Stack.Screen name="register" component={Login} />
-      <Stack.Screen name="Home" component={SellersList} />
+      <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
       <Stack.Screen
         name={ROUTE_NAMES.productListBySellerId}
         component={ProductList}
@@ -214,6 +220,11 @@ const StackNavigator = () => {
         name={ROUTE_NAMES.userOrders}
         options={{title: 'My Orders'}}
         component={MyOrders}
+      />
+      <Stack.Screen
+        name={ROUTE_NAMES.userOrderDetails}
+        options={{title: 'Order Details'}}
+        component={OrderDetails}
       />
     </Stack.Navigator>
   );

@@ -17,7 +17,11 @@ import {
   setUserType,
   setSellerId,
   setSalesUserId,
+  getUserId,
+  getToken,
 } from '../services/storage-service';
+import {ComponentProp} from '../interfaces';
+import ROUTE_NAMES from '../routes/name';
 class AuthAction {
   async login(
     userType: USER_TYPE = USER_TYPE.USER,
@@ -28,7 +32,9 @@ class AuthAction {
   ) {
     try {
       const navigateRouteName =
-        userType === USER_TYPE.SALES_USER ? '/seller/product/view' : '/Home';
+        userType === USER_TYPE.SALES_USER
+          ? ROUTE_NAMES.sellerProductView
+          : ROUTE_NAMES.home;
 
       const result = await postService(
         (userType === USER_TYPE.SALES_USER ? '/seller/sales-user' : '/users') +
@@ -98,6 +104,24 @@ class AuthAction {
       data,
     ).catch((ex) => ex.response);
     return result.data;
+  }
+
+  async redirectUserIfNotLogged(
+    props: ComponentProp,
+    redirectScreenName: string,
+    params: any = {},
+  ) {
+    const userId = await getUserId();
+    const token = await getToken();
+    if (!userId || !token) {
+      navigateByProp(props, ROUTE_NAMES.login, {
+        needToRedirect: true,
+        redirectScreenName,
+        params,
+      });
+      return true;
+    }
+    return false;
   }
 }
 export default AuthAction;

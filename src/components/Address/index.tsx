@@ -17,7 +17,7 @@ interface AddressInfo {
   containerStyle?: StyleProp<ViewStyle>;
   checked?: boolean;
   onSelect?: () => void;
-  buttons: CRUD[];
+  buttons?: CRUD[];
   onClickUpdate?: () => void;
   onClickDelete?: () => void;
 }
@@ -27,7 +27,7 @@ const Address = ({
 
   checked,
   onSelect,
-  buttons,
+  buttons = [],
   onClickUpdate,
   onClickDelete,
   containerStyle = {},

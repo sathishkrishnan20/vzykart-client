@@ -6,7 +6,7 @@ export const RAZORPAY_KEY = 'rzp_test_HoaTilDmiHfZnE';
 export const IS_WEB = Platform.OS === 'web';
 export const IS_IOS = Platform.OS === 'ios';
 export const IS_ANDROID = Platform.OS === 'android';
-export const IS_BIG_SCREEN = Dimensions.get('screen').width >= 400;
+export const IS_BIG_SCREEN = Dimensions.get('window').width >= 600;
 export const RAZORPAY_LOGO_URL = 'https://example.com/your_logo';
 
 export const API_URL = SERVER_URL + '/api';

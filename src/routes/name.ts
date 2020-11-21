@@ -7,12 +7,12 @@ const ROUTE_NAMES = {
   sellerProductCrudById: '/seller/product/:crudType/:productId',
 
   // Auth
-  login: '/login',
+  login: IS_WEB ? '/login' : 'Login',
   dynamicLogin: '/:userType/login',
   register: '/register',
 
   // Public
-  home: '/home',
+  home: IS_WEB ? '/home' : 'Home',
   productListBySellerId: IS_WEB
     ? '/product-list/seller/:sellerId'
     : '/product-list',
@@ -23,5 +23,6 @@ const ROUTE_NAMES = {
   userCheckout: '/checkout',
   userProfile: '/profile',
   userOrders: '/orders',
+  userOrderDetails: IS_WEB ? '/orders/:orderId' : 'Order Details',
 };
 export default ROUTE_NAMES;

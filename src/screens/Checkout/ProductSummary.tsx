@@ -3,7 +3,7 @@ import {Text, StyleSheet, View} from 'react-native';
 
 import {Card} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
-import {IS_WEB} from '../../config';
+import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {ProductAndCart} from '../../interfaces/classes/cart';
 import Image from '../../components/Image/image';
 import {
@@ -24,14 +24,33 @@ interface ISubTotalComponent {
 }
 export const ProductSummary = ({productInfo}: IProductSummary) => {
   return (
-    <>
-      <View
-        style={[
-          IS_WEB ? styles.viewContainerWeb : styles.viewContainerMob,
-          styles.container,
-        ]}>
-        {IS_WEB ? (
-          <Grid>
+    <View
+      style={[
+        IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob,
+        styles.container,
+      ]}>
+      {IS_BIG_SCREEN ? (
+        <Grid>
+          <Col size={leftSideSize}>
+            {renderImage(
+              productInfo.images &&
+                productInfo.images[0]?.optimizedDestinationPath,
+            )}
+          </Col>
+          <Col size={12 - leftSideSize} style={{justifyContent: 'flex-start'}}>
+            {renderProductInfo({
+              productInfo,
+            })}
+          </Col>
+        </Grid>
+      ) : (
+        <Card
+          containerStyle={{
+            padding: 1,
+            margin: 3,
+          }}
+          wrapperStyle={{padding: 0}}>
+          <Row size={12}>
             <Col size={leftSideSize}>
               {renderImage(
                 productInfo.images &&
@@ -45,33 +64,10 @@ export const ProductSummary = ({productInfo}: IProductSummary) => {
                 productInfo,
               })}
             </Col>
-          </Grid>
-        ) : (
-          <Card
-            containerStyle={{
-              padding: 1,
-              margin: 3,
-            }}
-            wrapperStyle={{padding: 0}}>
-            <Row size={12}>
-              <Col size={leftSideSize}>
-                {renderImage(
-                  productInfo.images &&
-                    productInfo.images[0]?.optimizedDestinationPath,
-                )}
-              </Col>
-              <Col
-                size={12 - leftSideSize}
-                style={{justifyContent: 'flex-start'}}>
-                {renderProductInfo({
-                  productInfo,
-                })}
-              </Col>
-            </Row>
-          </Card>
-        )}
-      </View>
-    </>
+          </Row>
+        </Card>
+      )}
+    </View>
   );
 };
 

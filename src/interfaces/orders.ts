@@ -15,6 +15,11 @@ export interface IOrderProducts {
   unit: string;
   image?: IProductImage;
   active?: boolean;
+  sellerInfo?: {
+    _id: string;
+    sellerName: string;
+    sellerDescription: string;
+  };
 }
 
 export interface IOrderCreate {
@@ -38,4 +43,8 @@ export interface IOrderCreate {
   orderItems: IOrderProducts[];
 }
 
-export interface IOrder extends IOrderCreate {}
+export interface IOrder extends IOrderCreate {
+  _id: string;
+  orderId: string;
+  invoiceNumber: string;
+}

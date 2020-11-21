@@ -14,5 +14,11 @@ class OrderAction {
     );
     return result.data;
   }
+  async getOrdersByOrderId(orderId: string): Promise<IResponse> {
+    const result = await getService('/orders/' + orderId).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
 }
 export default OrderAction;
