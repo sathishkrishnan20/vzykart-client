@@ -51,7 +51,10 @@ export function OrderDetails(props: ComponentProp) {
         {IS_BIG_SCREEN ? null : (
           <View>
             <SectionTitle title={'Delivery Details'} />
-            <Address data={orderData.deliveryAddress} />
+            <Address
+              containerStyle={{margin: 4}}
+              data={orderData.deliveryAddress}
+            />
           </View>
         )}
         <SectionTitle title={'Products'} />

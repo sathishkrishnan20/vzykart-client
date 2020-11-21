@@ -98,7 +98,14 @@ const RenderProductData = ({orderData}: IOrderCard) => {
 };
 
 const RenderPaymentData = ({orderData}: IOrderCard) => {
-  return (
+  return IS_BIG_SCREEN === false ? (
+    <Row>
+      <Text style={[styles.textName]} numberOfLines={1}>
+        ₹{orderData.amount} + ₹{orderData.deliveryCharge}(Delivery Charge) = ₹
+        {orderData.totalAmount}
+      </Text>
+    </Row>
+  ) : (
     <View>
       <Row>
         <Text style={[styles.textName]} numberOfLines={1}>
@@ -114,7 +121,7 @@ const RenderPaymentData = ({orderData}: IOrderCard) => {
         Total = ₹{orderData.totalAmount}
       </Text>
       <Text style={[styles.textNameLight]} numberOfLines={1}>
-        {orderData.paymentMode}
+        Payment Mode: {orderData.paymentMode}
       </Text>
     </View>
   );
