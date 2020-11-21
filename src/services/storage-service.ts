@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import {IS_WEB} from '../config';
+import {ICartItem} from '../interfaces/classes/cart';
 
 const SELLER_ID_KEY = 'sellerId';
 const USER_ID_KEY = 'userId';
@@ -57,12 +58,12 @@ export const removeAll = async () => {
   return IS_WEB ? localStorage.clear() : await AsyncStorage.clear();
 };
 
-export const setCartItem = async (data: any) => {
+export const setCartItem = async (data: ICartItem[]) => {
   const userId = await getUserId();
   const cartData = JSON.stringify(data);
   set(CART_KEY.replace('{userId}', userId || ''), cartData);
 };
-export const getCartItem = async () => {
+export const getCartItem = async (): Promise<ICartItem[]> => {
   const userId = await getUserId();
   const cartDataStr =
     (await get(CART_KEY.replace('{userId}', userId || ''))) || '[]';

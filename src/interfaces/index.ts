@@ -23,6 +23,7 @@ export interface IUserAddress {
 }
 
 export interface IUserInfo {
+  _id?: string;
   email?: string;
   mobileNumber?: string;
   type?: USER_TYPE;

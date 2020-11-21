@@ -49,6 +49,8 @@ export function Payment({
   description,
   prefill,
   notes,
+  onSuccess,
+  onFailure,
 }: IPaymentState) {
   const [paymentOptions, setPaymentOptions] = useState({} as IPaymentOptions);
   useEffect(() => {
@@ -87,18 +89,19 @@ export function Payment({
         const orderId = orderResponse.data.id;
         paymentOptions.order_id = orderId;
         paymentOptions.handler = (response: RazorPaySuccess) => {
-          onSuccess(response);
+          onPaymentSuccess(PAYMENT_TYPE.ONLINE, response);
         };
         // @ts-ignore
         const rzp1 = new window.Razorpay(paymentOptions);
         rzp1.on('payment.failed', function (response: RazorPayFailure) {
-          alert(response.error.code);
-          alert(response.error.description);
-          alert(response.error.source);
-          alert(response.error.step);
-          alert(response.error.reason);
-          alert(response.error.metadata.order_id);
-          alert(response.error.metadata.payment_id);
+          onPaymentFailure(PAYMENT_TYPE.ONLINE, response);
+          // alert(response.error.code);
+          // alert(response.error.description);
+          // alert(response.error.source);
+          // alert(response.error.step);
+          // alert(response.error.reason);
+          // alert(response.error.metadata.order_id);
+          // alert(response.error.metadata.payment_id);
         });
         rzp1.open();
       } else {
@@ -107,19 +110,40 @@ export function Payment({
     } else {
       RazorpayCheckout.open(paymentOptions)
         .then((data: RazorPaySuccess) => {
-          onSuccess(data);
+          onPaymentSuccess(PAYMENT_TYPE.ONLINE, data);
         })
         .catch((error: RazorPayError) => {
-          alert(`Error: ${error.code} | ${error.description}`);
+          const errorData = {
+            error: error,
+          };
+          onPaymentFailure(PAYMENT_TYPE.ONLINE, errorData);
+          // alert(`Error: ${error.code} | ${error.description}`);
         });
     }
   };
-  const onSuccess = (response: RazorPaySuccess) => {
-    alert('PaymentId: ' + response.razorpay_payment_id);
-    alert('OrderId: ' + response.razorpay_order_id);
-    alert('Signature: ' + response.razorpay_signature);
+  const onPaymentSuccess = (
+    paymentType: PAYMENT_TYPE,
+    response: RazorPaySuccess,
+  ) => {
+    onSuccess(paymentType, response);
+    //  alert('PaymentId: ' + response.razorpay_payment_id);
+    //  alert('OrderId: ' + response.razorpay_order_id);
+    //  alert('Signature: ' + response.razorpay_signature);
   };
-  const onCOD = () => {};
+
+  const onPaymentFailure = (
+    paymentType: PAYMENT_TYPE,
+    data: RazorPayFailure,
+  ) => {
+    onFailure(paymentType, data);
+  };
+  const onCOD = () => {
+    const paymentResponse: RazorPaySuccess = {
+      razorpay_payment_id: `cash_${new Date().getTime()}`,
+    };
+    onSuccess(PAYMENT_TYPE.CASH, paymentResponse);
+  };
+
   return (
     <Row>
       <Col>

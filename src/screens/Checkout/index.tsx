@@ -3,7 +3,7 @@ import {Container} from '../../components';
 import {Button} from 'react-native-elements';
 import {ProductSummary, SubTotalComponent} from './ProductSummary';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
-import {ProductAndCart} from '../../interfaces/classes/cart';
+import {ProductAndCart, ICartItem} from '../../interfaces/classes/cart';
 import {IS_WEB} from '../../config';
 import {keyExtractor} from '../../helpers/render-helpers';
 import {IUserInfo, ComponentProp, IUserAddress} from '../../interfaces';
@@ -13,7 +13,11 @@ import {Row, Col} from 'react-native-easy-grid';
 import {Payment} from '../../components/PayButton';
 import {SectionTitle} from '../../components/Section-Title';
 import {CRUD, PAYMENT_TYPE} from '../../interfaces/enums';
-import {getUserId} from '../../services/storage-service';
+import {
+  getUserId,
+  getCartItem,
+  setCartItem,
+} from '../../services/storage-service';
 import UserAction from '../../actions/users';
 import {WriteAddress} from '../_users/Profile/AddAddress';
 import {getParamForCheckoutPage} from '../../navigation';
@@ -68,9 +72,11 @@ export function Checkout(props: ComponentProp) {
       totalDiscountPrice,
       totalSellingPrice,
       totalMRPPrice,
+      totalGstPrice,
     } = getSellingAndDiscountPrice();
     return (
       <SubTotalComponent
+        totalGstPrice={totalGstPrice}
         sellingPrice={totalSellingPrice}
         discountPrice={totalDiscountPrice}
         deliveryCharge={deliveryCharge}
@@ -78,20 +84,23 @@ export function Checkout(props: ComponentProp) {
       />
     );
   };
-  const onSuccessOrder = (
+  const onSuccessOrder = async (
     paymentType: PAYMENT_TYPE,
     result: RazorPaySuccess,
   ) => {
     if (userData.address && userData.address[deliveryAddressIndex]) {
       const deliveryAddressInfo: IUserAddress =
         userData.address && userData.address[deliveryAddressIndex];
-      createOrder(
+      const orderResp = await createOrder(
         checkoutProducts,
         deliveryAddressInfo,
         deliveryCharge,
         paymentType,
         result,
       );
+      if (orderResp.success) {
+        removeProductFromCart();
+      }
     } else {
       WarningToast({
         title: 'Select Address',
@@ -99,20 +108,28 @@ export function Checkout(props: ComponentProp) {
       });
     }
   };
+  const removeProductFromCart = async () => {
+    const productIds = checkoutProducts.map((item) => item.productId);
+    const cartItemsOnStorage = (await getCartItem()) as ICartItem[];
+    const updatedCartItems = cartItemsOnStorage.filter(
+      (productItem) => productIds.includes(productItem.productId) === false,
+    );
+    setCartItem(updatedCartItems);
+  };
   const renderPaymentComp = () => {
     const {totalPriceToBePaid} = getSellingAndDiscountPrice();
+
     return (
       <Payment
-        name={'Delivery'}
+        name={userData.firstName + ' ' + userData.lastName}
         amount={String(totalPriceToBePaid * 100)}
-        description={'Test Transaction'}
+        description={
+          'Order of ' + checkoutProducts.length + ' Items for ' + userData._id
+        }
         prefill={{
-          name: 'Gaurav Kumar',
-          email: 'gaurav.kumar@example.com',
-          contact: '9999999999',
-        }}
-        notes={{
-          address: 'Razorpay Corporate Office',
+          name: userData.firstName + ' ' + userData.lastName,
+          email: userData.email || 'sathishkrish20@gmail.com',
+          contact: userData.mobileNumber || '8883334889',
         }}
         onSuccess={onSuccessOrder}
         onFailure={() => {}}

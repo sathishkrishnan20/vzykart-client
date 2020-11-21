@@ -20,6 +20,7 @@ interface ISubTotalComponent {
   discountPrice: number;
   totalMRPPrice: number;
   deliveryCharge: number;
+  totalGstPrice: number;
 }
 export const ProductSummary = ({productInfo}: IProductSummary) => {
   return (
@@ -92,6 +93,7 @@ export const SubTotalComponent = ({
   sellingPrice,
   deliveryCharge,
   totalMRPPrice,
+  totalGstPrice,
 }: ISubTotalComponent) => {
   return (
     <Card containerStyle={{margin: 4}}>
@@ -103,15 +105,39 @@ export const SubTotalComponent = ({
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
           <Row>
+            <Text style={[styles.textName]}>
+              {' '}
+              ₹{sellingPrice - totalGstPrice}{' '}
+            </Text>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Text> GST </Text>
+        </Col>
+        <Col style={{alignItems: 'flex-end'}}>
+          <Row>
+            <Text style={[styles.textName]}> ₹{totalGstPrice} </Text>
+          </Row>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <Text> Price + GST</Text>
+        </Col>
+        <Col style={{alignItems: 'flex-end'}}>
+          <Row>
             <Text style={[styles.textName]}> ₹{sellingPrice} </Text>
-            <Text
+            {/* <Text
               style={[
                 styles.strikeThrough,
                 styles.textNameLight,
                 styles.marginTopSmall,
               ]}>
               ₹{totalMRPPrice}{' '}
-            </Text>
+            </Text> */}
           </Row>
         </Col>
       </Row>

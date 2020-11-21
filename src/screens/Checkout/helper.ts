@@ -13,7 +13,8 @@ import {
   calculateTotalSellingAmountWithGST,
   calculateTotalMRPAmountWithGST,
 } from '../../helpers';
-
+import OrderAction from '../../actions/orders';
+import {showToastByResponse} from '../../components/Toast';
 export const createOrder = async (
   items: ProductAndCart[],
   deliveryAddress: IUserAddress,
@@ -35,6 +36,7 @@ export const createOrder = async (
     amount: totalSellingPrice,
     gstAmount: totalGstPrice,
     discountAmount: totalDiscountPrice,
+    deliveryCharge: deliveryCharge,
     totalAmount: totalPriceToBePaid,
     totalAmountPaid:
       paymentType === PAYMENT_TYPE.ONLINE ? totalPriceToBePaid : 0,
@@ -51,7 +53,12 @@ export const createOrder = async (
     // @ts-ignore
     isPaymentError: result.error ? true : false,
   };
-  console.log(items, deliveryAddress, paymentType, result);
+  const orderAction = new OrderAction();
+  const orderCreateResponse = await orderAction.createNewOrder(
+    orderCreateRequest,
+  );
+  showToastByResponse(orderCreateResponse);
+  return orderCreateResponse;
 };
 
 export const getSellingAndDiscountGSTPrice = (
@@ -59,7 +66,6 @@ export const getSellingAndDiscountGSTPrice = (
   deliveryCharge: number,
 ) => {
   let totalSellingPrice = 0;
-  let totalDiscountPrice = 0;
   let totalGstPrice = 0;
   let totalMRPPrice = 0;
   const orderItems: IOrderItem[] = [];
@@ -75,27 +81,22 @@ export const getSellingAndDiscountGSTPrice = (
     );
 
     totalGstPrice += productItem.quantity * productItem.gst;
-    totalDiscountPrice =
-      totalDiscountPrice +
-      productItem.quantity * (productItem.mrp - productItem.sellingPrice);
+    // totalDiscountPrice += productItem.quantity * (productItem.mrp - productItem.sellingPrice);
     const orderItem: IOrderItem = {
       productId: productItem._id,
       sellerId: productItem.sellerId,
       productName: productItem.productName,
       productDescription: productItem.productDescription,
       amount: productItem.sellingPrice,
-      discountAmount: calculateTotalMRPAmountWithGST(
-        productItem,
-        productItem.quantity,
-      ),
+      discountAmount: productItem.mrp - productItem.sellingPrice,
       totalAmount: calculateTotalSellingAmountWithGST(
         productItem,
         productItem.quantity,
       ),
+      quantity: productItem.quantity,
       gstAmount: productItem.gst,
       uom: productItem.uom,
       unit: productItem.unit,
-      active: true,
       image: productItem.images && productItem.images[0],
     };
     orderItems.push(orderItem);
@@ -104,7 +105,7 @@ export const getSellingAndDiscountGSTPrice = (
     totalSellingPrice,
     totalMRPPrice,
     totalGstPrice,
-    totalDiscountPrice: totalDiscountPrice * -1,
+    totalDiscountPrice: totalMRPPrice - totalSellingPrice,
     totalPriceToBePaid: totalSellingPrice + deliveryCharge,
     orderItems,
   };

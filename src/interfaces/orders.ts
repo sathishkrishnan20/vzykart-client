@@ -8,6 +8,7 @@ export interface IOrderCreate {
   amount: number; // amount without Discount and tax details
   gstAmount: number;
   discountAmount: number;
+  deliveryCharge: number;
   totalAmount: number; // amount with Discount and tax details
 
   // PAYMENTS
@@ -25,6 +26,7 @@ export interface IOrderItem {
   productId: string;
   sellerId: string;
   productName: string;
+  quantity: number;
   productDescription: string;
   amount: number; // amount without Discount and tax details
   gstAmount: number;
@@ -33,5 +35,5 @@ export interface IOrderItem {
   uom: string;
   unit: string;
   image?: IProductImage;
-  active: boolean;
+  active?: boolean;
 }
