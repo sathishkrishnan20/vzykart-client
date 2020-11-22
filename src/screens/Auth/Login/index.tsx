@@ -13,7 +13,6 @@ import OTPTextInput from 'react-native-otp-textinput';
 import {Card} from 'react-native-elements';
 import {Col, Grid} from 'react-native-easy-grid';
 import {Input, Button} from '../../../components/index';
-import {LoginState} from '../../../interfaces/classes/auth';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
 import {BACKGROUND_IMAGE_URL, IS_BIG_SCREEN} from '../../../config';
@@ -23,11 +22,13 @@ import {ILoginAPI} from '../../../interfaces/actions/auth';
 import {showToastByResponse} from '../../../components/Toast';
 import {ComponentProp} from '../../../interfaces';
 import ROUTE_NAMES from '../../../routes/name';
+import {AuthContext} from '../../../routes';
 const screenHeight: number = Dimensions.get('window').height - 60;
 const authAction: AuthAction = new AuthAction();
 
 export function Login(props: ComponentProp) {
   let otpInput = useRef();
+
   const [userEntry, setUserEntry] = useState('');
   const [password, setPassword] = useState('');
   const [otpCode, setOTpCode] = useState('');
@@ -36,6 +37,8 @@ export function Login(props: ComponentProp) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [enableForgotPassword, setEnableForgotPassword] = useState(false);
+  // @ts-ignore
+  const {signIn} = React.useContext(AuthContext);
 
   useEffect(() => {
     const params = getParamsByProp(props);
@@ -65,12 +68,12 @@ export function Login(props: ComponentProp) {
       showToastByResponse(response);
     }
   };
-  const doLogin = () => {
+  const doLogin = async () => {
     const loginAPIRequest: ILoginAPI = {
       userEntry,
       password,
     };
-    authAction.login(userType, loginAPIRequest, props);
+    await authAction.login(userType, loginAPIRequest, props, {}, signIn);
   };
 
   const renderTitle = () => {

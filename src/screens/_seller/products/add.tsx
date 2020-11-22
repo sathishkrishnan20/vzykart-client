@@ -15,7 +15,7 @@ import ProductAction from '../../../actions/products';
 import {getSellerId} from '../../../services/storage-service';
 import {IResponse} from '../../../interfaces/request-response';
 import {SuccessToast, WarningToast} from '../../../components/Toast';
-import {IS_WEB, IS_BIG_SCREEN} from '../../../config';
+import {IS_BIG_SCREEN} from '../../../config';
 import {ScrollView} from 'react-native-gesture-handler';
 import {getMultiSelectValues} from '../../../helpers';
 

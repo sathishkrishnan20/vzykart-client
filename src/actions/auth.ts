@@ -22,14 +22,15 @@ import {
 } from '../services/storage-service';
 import {ComponentProp} from '../interfaces';
 import ROUTE_NAMES from '../routes/name';
+import {IS_WEB} from '../config';
 class AuthAction {
   async login(
     userType: USER_TYPE = USER_TYPE.USER,
     data: ILoginAPI,
     props: any,
-
     navigateParams = {},
-  ) {
+    signInHook: (data: any) => void,
+  ): Promise<IResponse> {
     try {
       const navigateRouteName =
         userType === USER_TYPE.SALES_USER
@@ -43,7 +44,15 @@ class AuthAction {
       ).catch((ex) => ex.response);
       const response: IResponse = result.data;
       if (response.success) {
-        navigateByProp(props, navigateRouteName, navigateParams);
+        const signInHookRequest = {
+          token: response.data?.token,
+          userType: response.data?.type,
+          userId: response.data?.id,
+        };
+        signInHook(signInHookRequest);
+        if (IS_WEB) {
+          navigateByProp(props, navigateRouteName, navigateParams);
+        }
         if (response.data.type === USER_TYPE.USER) {
           store.dispatch({
             type: AUTH_USER_LOGIN,
@@ -62,14 +71,14 @@ class AuthAction {
           setSellerId(response.data.sellerId);
         }
         setToken(response.data.token);
-
         setUserType(response.data.type);
       } else {
         showToastByResponse(response);
-        return result.data;
       }
+      return response;
     } catch (error) {
       ErrorToast({message: error.message});
+      return error;
     }
   }
   async register(
@@ -111,6 +120,7 @@ class AuthAction {
     redirectScreenName: string,
     params: any = {},
   ) {
+    console.log('Redirecting to Login');
     const userId = await getUserId();
     const token = await getToken();
     if (!userId || !token) {

@@ -3,7 +3,6 @@ import {getCartItem, setCartItem} from '../services/storage-service';
 import {ICartItem} from '../interfaces/classes/cart';
 import {store} from '../routes/store';
 import {USER_CART} from '../providers/constants';
-import {useCallback} from 'react';
 import {IProduct} from '../interfaces/products';
 
 export const getMultiSelectValues = (array: string[] | Item[]): string[] => {

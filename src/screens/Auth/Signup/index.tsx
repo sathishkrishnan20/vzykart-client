@@ -15,7 +15,6 @@ import {Input} from '../../../components/index';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
 import {IS_BIG_SCREEN, BACKGROUND_IMAGE_URL} from '../../../config';
-import {SignUpState} from '../../../interfaces/classes/auth';
 import {navigateByProp} from '../../../navigation';
 import {Radio} from '../../../components/Radio';
 import AuthAction from '../../../actions/auth';
@@ -23,6 +22,7 @@ import {IRegisterAPI, ILoginAPI} from '../../../interfaces/actions/auth';
 import {showToastByResponse, ErrorToast} from '../../../components/Toast';
 import {ComponentProp} from '../../../interfaces';
 import ROUTE_NAMES from '../../../routes/name';
+import {AuthContext} from '../../../routes';
 const screenHeight: number = Dimensions.get('window').height - 60;
 const authAction: AuthAction = new AuthAction();
 export function SignUp(props: ComponentProp) {
@@ -32,7 +32,8 @@ export function SignUp(props: ComponentProp) {
   const [userType, setUserType] = useState(USER_TYPE.USER as USER_TYPE);
   const [isLoading, setIsLoading] = useState(false);
   const [useEmail, setUseEmail] = useState(true);
-
+  // @ts-ignore
+  const {signIn} = React.useContext(AuthContext);
   const doSignUp = async () => {
     try {
       const registerItem: IRegisterAPI = {
@@ -50,7 +51,7 @@ export function SignUp(props: ComponentProp) {
           userEntry: useEmail ? email : mobileNumber,
           password,
         };
-        authAction.login(userType, loginAPIRequest, props);
+        authAction.login(userType, loginAPIRequest, props, {}, signIn);
       }
     } catch (error) {
       ErrorToast({title: 'Failed', message: error.message || error});

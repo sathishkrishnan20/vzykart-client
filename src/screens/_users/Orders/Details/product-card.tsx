@@ -1,7 +1,6 @@
 import React from 'react';
 import {IOrderProducts} from '../../../../interfaces/orders';
-import {FlatList, Text, View, StyleSheet} from 'react-native';
-import {keyExtractor} from '../../../../helpers/render-helpers';
+import {Text, View, StyleSheet} from 'react-native';
 import {IS_BIG_SCREEN, IS_ANDROID, IS_IOS} from '../../../../config';
 import {Grid, Col, Row} from 'react-native-easy-grid';
 import {Card} from 'react-native-elements';

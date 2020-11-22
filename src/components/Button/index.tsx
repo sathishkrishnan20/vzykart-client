@@ -1,13 +1,9 @@
 import React from 'react';
-import {View, StyleProp, TextStyle} from 'react-native';
-import colors from '../../colors';
-import {IS_WEB} from '../../config';
+import {TouchableOpacity} from 'react-native';
+import {IS_WEB, IS_IOS} from '../../config';
 import {Button as RNButton, ButtonProps} from 'react-native-elements';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 class Touchable extends React.Component {
-  constructor(props: any) {
-    super(props);
-  }
   render() {
     return (
       <TouchableHighlight
@@ -18,5 +14,10 @@ class Touchable extends React.Component {
   }
 }
 export const Button = (props: ButtonProps) => {
-  return <RNButton {...props} TouchableComponent={Touchable} />;
+  return (
+    <RNButton
+      {...props}
+      TouchableComponent={IS_WEB || IS_IOS ? TouchableOpacity : Touchable}
+    />
+  );
 };

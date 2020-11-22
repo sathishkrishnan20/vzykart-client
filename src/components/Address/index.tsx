@@ -8,7 +8,7 @@ import {
   StyleProp,
 } from 'react-native';
 import {IUserAddress} from '../../interfaces';
-import {IS_WEB, IS_BIG_SCREEN} from '../../config';
+import {IS_BIG_SCREEN} from '../../config';
 import {Row, Col} from 'react-native-easy-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CRUD} from '../../interfaces/enums';

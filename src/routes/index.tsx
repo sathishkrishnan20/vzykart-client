@@ -8,10 +8,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {SellersList, Details} from '../screens';
+import {SellersList} from '../screens';
 import {View, Platform} from 'react-native';
 import Cart from '../screens/Cart';
-import ProductDetail from '../screens/Products/product-details';
 import Header from '../components/Header';
 import SellerAddProducts from '../screens/_seller/products/add';
 import SellerViewProducts from '../screens/_seller/products/view';
@@ -26,7 +25,6 @@ import {
   getSalesUserId,
   getSellerId,
   removeAll,
-  getCartItem,
 } from '../services/storage-service';
 import ROUTE_NAMES from './name';
 import {
@@ -35,14 +33,13 @@ import {
   AUTH_LOGOUT,
 } from '../providers/constants';
 import {USER_TYPE} from '../interfaces/enums';
-import {ICartItem} from '../interfaces/classes/cart';
 import {Checkout} from '../screens/Checkout';
 import {Profile} from '../screens/_users/Profile';
 import {MyOrders} from '../screens/_users/Orders';
 import {OrderDetails} from '../screens/_users/Orders/Details';
-import {Button, withBadge} from 'react-native-elements';
+import {withBadge} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {IS_WEB} from '../config';
+
 const HEADER_HEIGHT = 70;
 
 const SELLER_ROUTES = [
@@ -144,11 +141,11 @@ const getTabNavMenus = (userType: USER_TYPE | null) => {
       },
       {
         title: 'Profile',
-        navigationLink: 'profile',
+        navigationLink: ROUTE_NAMES.userProfile,
       },
       {
         title: 'Orders',
-        navigationLink: '/seller/product/add',
+        navigationLink: ROUTE_NAMES.userOrders,
       },
     ];
   } else if (userType === USER_TYPE.SALES_USER) {
@@ -191,69 +188,125 @@ function getHeaderTitle(route: any) {
 }
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
+// @ts-ignore
+export const AuthContext = React.createContext();
 export function Routes() {
-  const [userLoggedIn, setUserLoggedIn] = useState(true);
-  const [userType, setUserType] = useState('');
   const [cartProductsLength, setCartProductsLength] = useState(0);
-  const beforeRender = async () => {
-    const userType = (await getUserType()) as USER_TYPE;
-    if (userType) {
-      setUserType(userType);
-    }
-    const token = await getToken();
-    if (userType === USER_TYPE.USER) {
-      const userId = await getUserId();
-      store.dispatch({
-        type: AUTH_USER_LOGIN,
-        userId: userId,
-        token: token,
-      } as never);
-      setUserLoggedIn(true);
-      const cartItemsOnStorage = (await getCartItem()) as ICartItem[];
-      setCartProductsLength(cartItemsOnStorage.length);
-    } else if (userType === USER_TYPE.SALES_USER) {
-      const userId = await getSalesUserId();
-      const sellerId = await getSellerId();
-      store.dispatch({
-        type: AUTH_SELLER_LOGIN,
-        userId: userId,
-        sellerId: sellerId,
-        token: token,
-      } as never);
-      setUserLoggedIn(true);
-    } else {
-      store.dispatch({
-        type: AUTH_LOGOUT,
-      } as never);
-      setUserLoggedIn(false);
-    }
-  };
+
+  const [state, dispatch] = React.useReducer(
+    (
+      prevState: any,
+      action: {type: any; token?: any; userType: USER_TYPE | null | undefined},
+    ) => {
+      switch (action.type) {
+        case 'RESTORE_TOKEN':
+          return {
+            ...prevState,
+            userType: action.userType,
+            userToken: action.token,
+            isLoading: false,
+          };
+        case 'SIGN_IN':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+            userType: action.userType,
+          };
+        case 'SIGN_OUT':
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+            userType: null,
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      userToken: null,
+      userType: null,
+    },
+  );
+
   React.useEffect(() => {
-    beforeRender();
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+      let userType;
+      let userId;
+      try {
+        userToken = await getToken();
+        userType = (await getUserType()) as USER_TYPE;
+        userId = (await getUserId()) || (await getSalesUserId());
+      } catch (e) {
+        // Restoring token failed
+        console.error('exception getting user Token', e);
+      }
+      if (userToken && userId && userType === USER_TYPE.USER) {
+        store.dispatch({
+          type: AUTH_USER_LOGIN,
+          userId: userId,
+          token: userToken,
+        } as never);
+      } else if (userToken && userId && userType === USER_TYPE.SALES_USER) {
+        const sellerId = await getSellerId();
+        store.dispatch({
+          type: AUTH_SELLER_LOGIN,
+          userId: userId,
+          sellerId: sellerId,
+          token: userToken,
+        } as never);
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      dispatch({type: 'RESTORE_TOKEN', token: userToken, userType: userType});
+    };
+
+    bootstrapAsync();
   }, []);
 
+  const authContext = React.useMemo(
+    () => ({
+      signIn: async (data: {token: any; userType: USER_TYPE}) => {
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `AsyncStorage`
+        // In the example, we'll use a dummy token
+        console.log(data);
+        dispatch({
+          type: 'SIGN_IN',
+          token: data.token,
+          userType: data.userType,
+        });
+      },
+      signOut: () => {
+        store.dispatch({
+          type: AUTH_LOGOUT,
+        } as never);
+        dispatch({type: 'SIGN_OUT', userType: null});
+      },
+    }),
+    [],
+  );
+
   store.subscribe(() => {
-    if (userLoggedIn === false && store.getState().auth.hasLoggedIn === true)
-      setUserLoggedIn(true);
     if (store.getState().cart.cartItems.length !== cartProductsLength) {
       setCartProductsLength(store.getState().cart.cartItems.length);
     }
   });
-
-  const logout = async (navigation?: any) => {
-    const userType = (await getUserType()) as USER_TYPE;
+  const logout = async () => {
     store.dispatch({
       type: AUTH_LOGOUT,
     } as never);
-    setUserLoggedIn(false);
     removeAll();
-    if (!IS_WEB) {
-      return navigation.navigate(ROUTE_NAMES.login);
-    }
-    // this works only for WEB, since Redirect is part Of React Router DOM
-    else
-      return (
+    authContext.signOut();
+    return;
+    /* return (
         <Redirect
           to={{
             pathname:
@@ -262,7 +315,7 @@ export function Routes() {
                 : 'user/login',
           }}
         />
-      );
+      ); */
   };
 
   const CartIcon: any = withBadge(cartProductsLength)(Icon);
@@ -300,160 +353,195 @@ export function Routes() {
   };
   const StackNavigator = () => {
     return (
-      <Stack.Navigator
-        screenOptions={({navigation}: any) => ({
-          gestureEnabled: true,
-          gestureDirection: 'horizontal',
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          headerStyle: {backgroundColor: '#F02245'},
-          headerTintColor: 'white',
-          headerRight: () => {
-            return (
-              <View
-                style={{
-                  marginRight: 10,
-                  flexDirection: 'row',
-                }}>
-                <View style={{marginLeft: 4, marginRight: 4}}>
-                  <CartIcon
-                    onPress={() => navigation.navigate(ROUTE_NAMES.userCart)}
-                    style={{marginRight: 5, marginTop: 10}}
-                    size={24}
-                    status="success"
-                    color={'#FFF'}
-                    name="cart"
-                  />
+      <AuthContext.Provider value={authContext}>
+        <Stack.Navigator
+          screenOptions={({navigation}: any) => ({
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {backgroundColor: '#F02245'},
+            headerTintColor: 'white',
+            headerRight: () => {
+              return (
+                <View
+                  style={{
+                    marginRight: 10,
+                    flexDirection: 'row',
+                  }}>
+                  <View style={{marginLeft: 4, marginRight: 4}}>
+                    <CartIcon
+                      onPress={() => navigation.navigate(ROUTE_NAMES.userCart)}
+                      style={{marginRight: 5, marginTop: 10}}
+                      size={24}
+                      status="success"
+                      color={'#FFF'}
+                      name="cart"
+                    />
+                  </View>
+                  <View style={{marginLeft: 4, marginRight: 4}}>
+                    <NotificationIcon
+                      style={{marginRight: 5, marginTop: 10}}
+                      size={24}
+                      status="success"
+                      color={'#FFF'}
+                      name="notifications"
+                    />
+                  </View>
+                  <View style={{marginLeft: 4, marginRight: 4}}>
+                    <Icon
+                      onPress={() => logout()}
+                      style={{marginRight: 5, marginTop: 10}}
+                      name="power-sharp"
+                      color={'#FFF'}
+                      size={24}
+                    />
+                  </View>
                 </View>
-                <View style={{marginLeft: 4, marginRight: 4}}>
-                  <NotificationIcon
-                    style={{marginRight: 5, marginTop: 10}}
-                    size={24}
-                    status="success"
-                    color={'#FFF'}
-                    name="notifications"
-                  />
-                </View>
-                <View style={{marginLeft: 4, marginRight: 4}}>
-                  <Icon
-                    onPress={() => logout(navigation)}
-                    style={{marginRight: 5, marginTop: 10}}
-                    name="power-sharp"
-                    color={'#FFF'}
-                    size={24}
-                  />
-                </View>
-              </View>
-            );
-          },
-        })}>
-        <Stack.Screen
-          options={({route}) => ({
-            title: getHeaderTitle(route),
-          })}
-          name="Tabs"
-          component={TabNavigator}
-        />
+              );
+            },
+          })}>
+          {state.userToken == null ? (
+            <>
+              {/* Auth Routes */}
 
-        {/* User Public Routes */}
-        <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
-        <Stack.Screen
-          name={ROUTE_NAMES.productListBySellerId}
-          component={ProductList}
-        />
+              <Stack.Screen
+                options={{headerShown: false}}
+                name={ROUTE_NAMES.login}
+                component={Login}
+              />
+              <Stack.Screen
+                options={{headerShown: false}}
+                name={ROUTE_NAMES.register}
+                component={SignUp}
+              />
+            </>
+          ) : state.userType === USER_TYPE.USER ? (
+            <>
+              <Stack.Screen
+                options={({route}) => ({
+                  title: getHeaderTitle(route),
+                })}
+                name="Tabs"
+                component={TabNavigator}
+              />
+              {/* User Public Routes */}
+              <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
+              <Stack.Screen
+                name={ROUTE_NAMES.productListBySellerId}
+                component={ProductList}
+              />
 
-        {/* Auth Routes */}
-        <Stack.Screen name={ROUTE_NAMES.login} component={Login} />
-        <Stack.Screen name={ROUTE_NAMES.register} component={SignUp} />
-
-        {/* User Authenticated Routes */}
-        <Stack.Screen name={ROUTE_NAMES.userCheckout} component={Checkout} />
-        <Stack.Screen name={ROUTE_NAMES.userCart} component={Cart} />
-        <Stack.Screen name={ROUTE_NAMES.userProfile} component={Profile} />
-        <Stack.Screen name={ROUTE_NAMES.userOrders} component={MyOrders} />
-        <Stack.Screen
-          name={ROUTE_NAMES.userOrderDetails}
-          component={OrderDetails}
-        />
-
-        {/* Seller Routes */}
-        <Stack.Screen
-          name={ROUTE_NAMES.sellerProductAdd}
-          component={SellerAddProducts}
-        />
-        <Stack.Screen
-          name={ROUTE_NAMES.sellerProductView}
-          component={SellerViewProducts}
-        />
-        <Stack.Screen
-          name={ROUTE_NAMES.sellerProductCrudById}
-          component={SellerAddProducts}
-        />
-      </Stack.Navigator>
+              {/* User Authenticated Routes */}
+              <Stack.Screen
+                name={ROUTE_NAMES.userCheckout}
+                component={Checkout}
+              />
+              <Stack.Screen name={ROUTE_NAMES.userCart} component={Cart} />
+              <Stack.Screen
+                name={ROUTE_NAMES.userProfile}
+                component={Profile}
+              />
+              <Stack.Screen
+                name={ROUTE_NAMES.userOrders}
+                component={MyOrders}
+              />
+              <Stack.Screen
+                name={ROUTE_NAMES.userOrderDetails}
+                component={OrderDetails}
+              />
+            </>
+          ) : (
+            <>
+              {/* Seller Routes */}
+              <Stack.Screen
+                name={ROUTE_NAMES.sellerProductAdd}
+                component={SellerAddProducts}
+              />
+              <Stack.Screen
+                name={ROUTE_NAMES.sellerProductView}
+                component={SellerViewProducts}
+              />
+              <Stack.Screen
+                name={ROUTE_NAMES.sellerProductCrudById}
+                component={SellerAddProducts}
+              />
+            </>
+          )}
+        </Stack.Navigator>
+      </AuthContext.Provider>
     );
   };
 
   return Platform.OS === 'web' ? (
     <>
-      <Router>
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-            height: HEADER_HEIGHT,
-            zIndex: 99,
-          }}>
-          <Header
-            title="V-Cart"
-            onLogout={() => logout()}
-            hasLoggedIn={userLoggedIn}
-            menus={
-              userLoggedIn ? getTabNavMenus(userType as USER_TYPE | null) : []
-            }
-            cartLength={cartProductsLength}
-            notificationCount={'99+'}
-          />
-        </div>
-        <View style={{marginTop: HEADER_HEIGHT}}>
-          {AUTH_ROUTES.map((route, key: number) => (
-            <Route
-              key={'auth' + key}
-              exact
-              path={route.routeName}
-              component={route.component}
+      <AuthContext.Provider value={authContext}>
+        <Router>
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              left: 0,
+              bottom: 0,
+              height: HEADER_HEIGHT,
+              zIndex: 99,
+            }}>
+            <Header
+              title="V-Cart"
+              userType={state.userType}
+              onLogout={() => logout()}
+              hasLoggedIn={state.userToken !== null}
+              menus={
+                state.userToken !== null
+                  ? getTabNavMenus(state.userType as USER_TYPE | null)
+                  : []
+              }
+              cartLength={cartProductsLength}
+              notificationCount={'99+'}
             />
-          ))}
-          {PUBLIC_ROUTES.map((route, key: number) => (
-            <Route
-              key={'public' + key}
-              exact
-              path={route.routeName}
-              component={route.component}
-            />
-          ))}
+          </div>
+          <View style={{marginTop: HEADER_HEIGHT}}>
+            {AUTH_ROUTES.map((route, key: number) => (
+              <Route
+                key={'auth' + key}
+                exact
+                path={route.routeName}
+                component={route.component}
+              />
+            ))}
+            {PUBLIC_ROUTES.map((route, key: number) => (
+              <Route
+                key={'public' + key}
+                exact
+                path={route.routeName}
+                component={route.component}
+              />
+            ))}
 
-          {USER_AUTHENTICATED_ROUTES.map((route, key: number) => (
-            <Route
-              key={'user-auth' + key}
-              exact
-              path={route.routeName}
-              component={route.component}
-            />
-          ))}
+            {USER_AUTHENTICATED_ROUTES.map((route, key: number) => (
+              <PrivateRoute
+                key={'user-auth' + key}
+                exact
+                authenticated={state.userToken !== null}
+                userType={USER_TYPE.USER}
+                path={route.routeName}
+                component={route.component}
+              />
+            ))}
 
-          {SELLER_ROUTES.map((route, key: number) => (
-            <PrivateRoute
-              key={'seller' + key}
-              exact
-              authenticated={userLoggedIn}
-              path={route.routeName}
-              component={route.component}
-            />
-          ))}
-        </View>
-      </Router>
+            {SELLER_ROUTES.map((route, key: number) => (
+              <PrivateRoute
+                key={'seller' + key}
+                exact
+                authenticated={state.userToken !== null}
+                userType={USER_TYPE.SALES_USER}
+                path={route.routeName}
+                component={route.component}
+              />
+            ))}
+          </View>
+        </Router>
+      </AuthContext.Provider>
     </>
   ) : (
     <NavigationContainer>
@@ -462,7 +550,12 @@ export function Routes() {
   );
 }
 
-function PrivateRoute({component: Component, authenticated, ...rest}: any) {
+function PrivateRoute({
+  component: Component,
+  authenticated,
+  userType,
+  ...rest
+}: any) {
   return (
     <Route
       {...rest}
@@ -471,7 +564,13 @@ function PrivateRoute({component: Component, authenticated, ...rest}: any) {
           <Component {...props} />
         ) : (
           <Redirect
-            to={{pathname: '/seller/login', state: {from: props.location}}}
+            to={{
+              pathname:
+                userType === USER_TYPE.SALES_USER
+                  ? '/seller/login'
+                  : '/user/login',
+              state: {from: props.location},
+            }}
           />
         )
       }

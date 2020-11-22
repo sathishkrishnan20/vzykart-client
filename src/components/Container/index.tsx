@@ -1,5 +1,5 @@
-import React, {ReactNode, CSSProperties} from 'react';
-import {View, RegisteredStyle, ViewStyle, StyleProp} from 'react-native';
+import React, {ReactNode} from 'react';
+import {View, ViewStyle, StyleProp} from 'react-native';
 import {styles} from './styles';
 
 type Props = {

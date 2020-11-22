@@ -20,7 +20,7 @@ import Octicons from 'react-native-vector-icons/Fonts/Octicons.ttf';
 import Zocial from 'react-native-vector-icons/Fonts/Zocial.ttf';
 import Fontisto from 'react-native-vector-icons/Fonts/Fontisto.ttf';
 import Helvetica from './assets/fonts/Helvetica-Light.ttf';
-
+import {MenuProvider} from 'react-native-popup-menu';
 const fonts = [
   {url: AntDesign, fontFamilyName: 'AntDesign'},
   {url: Entypo, fontFamilyName: 'Entypo'},
@@ -71,10 +71,12 @@ const commonTheme = {
 export function App() {
   return (
     <Provider store={store} key="provider">
-      <ThemeProvider theme={commonTheme}>
-        <Routes />
-        <Toast ref={(ref) => Toast.setRef(ref)} />
-      </ThemeProvider>
+      <MenuProvider>
+        <ThemeProvider theme={commonTheme}>
+          <Routes />
+          <Toast ref={(ref) => Toast.setRef(ref)} />
+        </ThemeProvider>
+      </MenuProvider>
     </Provider>
   );
 }
@@ -86,18 +88,19 @@ if (Platform.OS === 'web') {
     src: url(${fonts[i].url}) format('truetype');
     font-family: ${fonts[i].fontFamilyName};
   }`;
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.type = 'text/javascript';
-    var code = 'console.log("hello world!");';
-    script.appendChild(document.createTextNode(code));
-    document.body.appendChild(script);
 
     const style = document.createElement('style');
     style.type = 'text/css';
     style.appendChild(document.createTextNode(iconFontStyles));
     document.head.appendChild(style);
   }
+  const script = document.createElement('script');
+  script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+  script.type = 'text/javascript';
+  var code = '';
+  script.appendChild(document.createTextNode(code));
+  document.body.appendChild(script);
+
   var head = document.getElementsByTagName('head')[0];
   const link = document.createElement('link');
   link.rel = 'stylesheet';

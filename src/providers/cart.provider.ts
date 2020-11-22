@@ -20,11 +20,6 @@ export default (state = userInitialState, action: ICartProviderState) => {
         ...state,
         cartItems: action.cartItems,
       };
-    case USER_CART:
-      return {
-        ...state,
-        cartItems: action.cartItems,
-      };
     case UPDATE_CART_ITEMS:
       return {
         ...state,

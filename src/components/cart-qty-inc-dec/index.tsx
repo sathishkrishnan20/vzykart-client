@@ -5,11 +5,7 @@ import {Row} from 'react-native-easy-grid';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {CART_INC_DEC} from '../../interfaces/enums';
 import {IS_WEB} from '../../config';
-import {getCartItem, setCartItem} from '../../services/storage-service';
 import {ICartItem} from '../../interfaces/classes/cart';
-import {updateCartOnStorage} from '../../helpers';
-import {store} from '../../routes/store';
-import {USER_CART, UPDATE_CART_ITEMS} from '../../providers/constants';
 
 interface State {
   productId: string;

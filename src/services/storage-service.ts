@@ -34,7 +34,7 @@ export const setUserType = async (sellerId: string) => {
   set(USER_TYPE_KEY, sellerId);
 };
 export const getUserType = async () => {
-  return (await get(USER_TYPE_KEY)) || '1';
+  return (await get(USER_TYPE_KEY)) || '';
 };
 
 export const setToken = async (token: string) => {

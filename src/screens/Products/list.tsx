@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Container} from '../../components';
 import {FlatList} from 'react-native-gesture-handler';
 import {keyExtractor} from '../../helpers/render-helpers';
-import {updateCartOnStorage, updateCartDataOnStorage} from '../../helpers';
+import {updateCartDataOnStorage} from '../../helpers';
 import {Product} from './product';
 import {IS_BIG_SCREEN} from '../../config';
 import {IProduct} from '../../interfaces/products';

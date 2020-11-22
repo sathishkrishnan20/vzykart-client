@@ -1,28 +1,28 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
 import {withBadge} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useHistory} from 'react-router-dom';
 import ROUTE_NAMES from '../../routes/name';
+import {IS_BIG_SCREEN} from '../../config';
+import HeaderMenu from './material-header';
+import {USER_TYPE} from '../../interfaces/enums';
 
-const Header = ({
+export function Header({
   hasLoggedIn,
   title,
   menus,
   notificationCount,
   onLogout,
   cartLength,
-}: any) => {
+  userType,
+}: any) {
+  console.log('hasLoggedIn', hasLoggedIn);
+  console.log('UserType', userType);
   const CartIcon: any = withBadge(cartLength)(Icon);
   const NotificationIcon: any = withBadge(notificationCount)(Icon);
-
+  const history = useHistory();
   return (
     <SafeAreaView>
       <LinearGradient
@@ -41,31 +41,24 @@ const Header = ({
           </View>
 
           <View style={styles.headerRight}>
-            {menus.map(
-              (
-                menuItem: {title: string; navigationLink: string},
-                index: number,
-              ) => (
-                <NavLink
-                  key={'' + index}
-                  exact
-                  activeClassName="active"
-                  to={menuItem.navigationLink}
-                  style={{textDecoration: 'none'}}>
-                  <Text style={styles.navText}>{menuItem.title}</Text>
-                </NavLink>
-              ),
-            )}
+            {IS_BIG_SCREEN
+              ? menus.map(
+                  (
+                    menuItem: {title: string; navigationLink: string},
+                    index: number,
+                  ) => (
+                    <NavLink
+                      key={'' + index}
+                      exact
+                      activeClassName="active"
+                      to={menuItem.navigationLink}
+                      style={{textDecoration: 'none'}}>
+                      <Text style={styles.navText}>{menuItem.title}</Text>
+                    </NavLink>
+                  ),
+                )
+              : null}
 
-            {hasLoggedIn ? null : (
-              <NavLink
-                exact
-                activeClassName="active"
-                to={ROUTE_NAMES.register}
-                style={{textDecoration: 'none'}}>
-                <Text style={styles.navText}>Register</Text>
-              </NavLink>
-            )}
             {hasLoggedIn ? (
               <>
                 <NavLink
@@ -93,30 +86,51 @@ const Header = ({
                     name="notifications"
                   />
                 </NavLink>
+                <Icon
+                  onPress={() => {
+                    const dynamicParam =
+                      String(userType) === USER_TYPE.SALES_USER
+                        ? 'seller'
+                        : 'user';
+                    history.push(
+                      ROUTE_NAMES.dynamicLogin.replace(
+                        ':userType',
+                        dynamicParam,
+                      ),
+                    );
+                    onLogout();
+                  }}
+                  style={{marginLeft: 20}}
+                  name="power-sharp"
+                  color={'#FFF'}
+                  size={24}
+                />
+                {IS_BIG_SCREEN === false ? <HeaderMenu menus={menus} /> : null}
               </>
-            ) : null}
-            {hasLoggedIn ? (
-              <TouchableOpacity onPress={() => onLogout()}>
-                <Text
-                  style={[styles.navText, {marginRight: 40, marginLeft: 30}]}>
-                  Logout
-                </Text>
-              </TouchableOpacity>
             ) : (
-              <NavLink
-                exact
-                activeClassName="active"
-                to="/user/login"
-                style={{textDecoration: 'none'}}>
-                <Text style={[styles.navText, {marginRight: 40}]}>Login</Text>
-              </NavLink>
+              <>
+                <NavLink
+                  exact
+                  activeClassName="active"
+                  to={ROUTE_NAMES.register}
+                  style={{textDecoration: 'none'}}>
+                  <Text style={styles.navText}>Register</Text>
+                </NavLink>
+                <NavLink
+                  exact
+                  activeClassName="active"
+                  to="/user/login"
+                  style={{textDecoration: 'none'}}>
+                  <Text style={[styles.navText, {marginRight: 40}]}>Login</Text>
+                </NavLink>
+              </>
             )}
           </View>
         </View>
       </LinearGradient>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   headerContainer: {
