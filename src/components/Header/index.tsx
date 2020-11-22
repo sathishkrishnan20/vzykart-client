@@ -18,8 +18,6 @@ export function Header({
   cartLength,
   userType,
 }: any) {
-  console.log('hasLoggedIn', hasLoggedIn);
-  console.log('UserType', userType);
   const CartIcon: any = withBadge(cartLength)(Icon);
   const NotificationIcon: any = withBadge(notificationCount)(Icon);
   const history = useHistory();
