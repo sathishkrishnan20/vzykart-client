@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Container} from '../../components';
 import {useNavigation, navigate} from '../../navigation';
 import {HeaderSearchBar} from './SearchBar';
@@ -11,6 +11,7 @@ import {showToastByResponse} from '../../components/Toast';
 import ROUTE_NAMES from '../../routes/name';
 const sellerAction = new SellerAction();
 export function SellersList() {
+  let isRendered = useRef(false);
   const [search, setSearch] = useState('');
   const [sellerListData, setSellerListData] = useState<ISeller[]>();
   // @ts-ignore
@@ -18,12 +19,16 @@ export function SellersList() {
   useEffect(() => {}, [search]);
 
   useEffect(() => {
+    isRendered.current = true;
     getSellerData();
+    return () => {
+      isRendered.current = false;
+    };
   }, []);
 
   const getSellerData = async () => {
     const sellerDataResponse = await sellerAction.getAllSellers();
-    if (sellerDataResponse.success) {
+    if (sellerDataResponse.success && isRendered.current) {
       setSellerListData(sellerDataResponse.data);
     } else {
       showToastByResponse(sellerDataResponse);

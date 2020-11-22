@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -22,29 +22,19 @@ import AuthAction from '../../../actions/auth';
 import {IRegisterAPI, ILoginAPI} from '../../../interfaces/actions/auth';
 import {showToastByResponse, ErrorToast} from '../../../components/Toast';
 import {ComponentProp} from '../../../interfaces';
-export default class SignUp extends React.Component<
-  ComponentProp,
-  SignUpState
-> {
-  screenHeight: number;
-  authAction: AuthAction;
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      email: '',
-      mobileNumber: '',
-      password: '',
-      userType: USER_TYPE.USER,
-      isLoading: false,
-      useEmail: true,
-    };
-    this.screenHeight = Dimensions.get('window').height - 60;
-    this.authAction = new AuthAction();
-    this.updateIndex = this.updateIndex.bind(this);
-  }
-  async doSignUp() {
+import ROUTE_NAMES from '../../../routes/name';
+const screenHeight: number = Dimensions.get('window').height - 60;
+const authAction: AuthAction = new AuthAction();
+export function SignUp(props: ComponentProp) {
+  const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState(USER_TYPE.USER as USER_TYPE);
+  const [isLoading, setIsLoading] = useState(false);
+  const [useEmail, setUseEmail] = useState(true);
+
+  const doSignUp = async () => {
     try {
-      const {email, mobileNumber, userType, password, useEmail} = this.state;
       const registerItem: IRegisterAPI = {
         password: password,
       };
@@ -53,32 +43,31 @@ export default class SignUp extends React.Component<
       } else {
         registerItem.mobileNumber = Number(mobileNumber);
       }
-      const response = await this.authAction.register(userType, registerItem);
+      const response = await authAction.register(userType, registerItem);
       showToastByResponse(response);
       if (response.success) {
         const loginAPIRequest: ILoginAPI = {
           userEntry: useEmail ? email : mobileNumber,
           password,
         };
-        this.authAction.login(userType, loginAPIRequest, this.props);
+        authAction.login(userType, loginAPIRequest, props);
       }
     } catch (error) {
       ErrorToast({title: 'Failed', message: error.message || error});
     }
-  }
+  };
 
-  renderTitle() {
+  const renderTitle = () => {
     return (
       <View>
         <Text style={styles.heading}>V-Cart</Text>
       </View>
     );
-  }
-  updateIndex(selectedIndex: number) {
-    this.setState({useEmail: selectedIndex === 0});
-  }
-  renderInputs() {
-    const {mobileNumber, email, password, isLoading, useEmail} = this.state;
+  };
+  const updateIndex = (selectedIndex: number) => {
+    setUseEmail(selectedIndex === 0);
+  };
+  const renderInputs = () => {
     return (
       <Card containerStyle={{borderRadius: 10}}>
         <Card.Title>Register account to get Special orders</Card.Title>
@@ -87,13 +76,13 @@ export default class SignUp extends React.Component<
           buttons={['Email', 'Mobile Number']}
           selectedIndex={useEmail ? 0 : 1}
           containerWidth={400}
-          onPress={(index: number) => this.updateIndex(index)}
+          onPress={(index: number) => updateIndex(index)}
         />
         {!useEmail ? (
           <Input
             value={mobileNumber}
             onChangeText={(mobileNumber: string) =>
-              this.setState({mobileNumber})
+              setMobileNumber(mobileNumber)
             }
             returnKeyType={'next'}
             autoCapitalize="none"
@@ -104,7 +93,7 @@ export default class SignUp extends React.Component<
         ) : (
           <Input
             value={email}
-            onChangeText={(email: string) => this.setState({email})}
+            onChangeText={(email: string) => setEmail(email)}
             returnKeyType={'next'}
             keyboardType={'email-address'}
             autoCapitalize="none"
@@ -114,53 +103,52 @@ export default class SignUp extends React.Component<
         )}
         <Input
           value={password}
-          onChangeText={(password: string) => this.setState({password})}
+          onChangeText={(password: string) => setPassword(password)}
           returnKeyType={'done'}
           autoCapitalize="none"
           placeholder="Enter Password"
           blurOnSubmit={false}
           secureTextEntry={true}
-          onSubmitEditing={() => this.doSignUp()}
+          onSubmitEditing={() => doSignUp()}
         />
         <Button
           loading={isLoading}
-          onPress={() => this.doSignUp()}
+          onPress={() => doSignUp()}
           title="Register"
         />
-        <TouchableOpacity onPress={() => navigateByProp(this.props, 'login')}>
+        <TouchableOpacity
+          onPress={() => navigateByProp(props, ROUTE_NAMES.login)}>
           <Card.FeaturedTitle style={styles.newUserRegisterText}>
             Existing User? Login Here
           </Card.FeaturedTitle>
         </TouchableOpacity>
       </Card>
     );
-  }
+  };
 
-  render() {
-    return (
-      <SafeAreaView style={{flex: 1}}>
-        <ImageBackground
-          source={{
-            uri: BACKGROUND_IMAGE_URL,
-          }}
-          style={[styles.imageBg, {height: this.screenHeight}]}>
-          <ScrollView>
-            {IS_BIG_SCREEN ? (
-              <Grid>
-                <Col>{this.renderTitle()}</Col>
-                <Col style={{marginTop: 100, marginRight: 20, marginLeft: 20}}>
-                  {this.renderInputs()}
-                </Col>
-              </Grid>
-            ) : (
-              <View>
-                <View>{this.renderTitle()}</View>
-                <View style={{marginTop: 80}}>{this.renderInputs()}</View>
-              </View>
-            )}
-          </ScrollView>
-        </ImageBackground>
-      </SafeAreaView>
-    );
-  }
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <ImageBackground
+        source={{
+          uri: BACKGROUND_IMAGE_URL,
+        }}
+        style={[styles.imageBg, {height: screenHeight}]}>
+        <ScrollView>
+          {IS_BIG_SCREEN ? (
+            <Grid>
+              <Col>{renderTitle()}</Col>
+              <Col style={{marginTop: 100, marginRight: 20, marginLeft: 20}}>
+                {renderInputs()}
+              </Col>
+            </Grid>
+          ) : (
+            <View>
+              <View>{renderTitle()}</View>
+              <View style={{marginTop: 80}}>{renderInputs()}</View>
+            </View>
+          )}
+        </ScrollView>
+      </ImageBackground>
+    </SafeAreaView>
+  );
 }

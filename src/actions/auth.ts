@@ -43,6 +43,7 @@ class AuthAction {
       ).catch((ex) => ex.response);
       const response: IResponse = result.data;
       if (response.success) {
+        navigateByProp(props, navigateRouteName, navigateParams);
         if (response.data.type === USER_TYPE.USER) {
           store.dispatch({
             type: AUTH_USER_LOGIN,
@@ -63,7 +64,6 @@ class AuthAction {
         setToken(response.data.token);
 
         setUserType(response.data.type);
-        navigateByProp(props, navigateRouteName, navigateParams);
       } else {
         showToastByResponse(response);
         return result.data;

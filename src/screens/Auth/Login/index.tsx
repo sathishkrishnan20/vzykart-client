@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   Text,
   View,
@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 // @ts-ignore
 import OTPTextInput from 'react-native-otp-textinput';
-import {Button, Card} from 'react-native-elements';
+import {Card} from 'react-native-elements';
 import {Col, Grid} from 'react-native-easy-grid';
-import {Input} from '../../../components/index';
+import {Input, Button} from '../../../components/index';
 import {LoginState} from '../../../interfaces/classes/auth';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
@@ -22,80 +22,66 @@ import AuthAction from '../../../actions/auth';
 import {ILoginAPI} from '../../../interfaces/actions/auth';
 import {showToastByResponse} from '../../../components/Toast';
 import {ComponentProp} from '../../../interfaces';
-export default class Login extends React.Component<ComponentProp, LoginState> {
-  screenHeight: number;
-  otpInput?: any;
-  authAction: AuthAction;
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      userEntry: '',
-      password: '',
-      userType: USER_TYPE.USER,
-      isLoading: false,
-      showPassword: false,
-      enableForgotPassword: false,
-      otpCode: '',
-      userId: '',
-    };
-    this.authAction = new AuthAction();
-    this.screenHeight = Dimensions.get('window').height - 60;
-  }
-  componentDidMount() {
-    const params = getParamsByProp(this.props);
+import ROUTE_NAMES from '../../../routes/name';
+const screenHeight: number = Dimensions.get('window').height - 60;
+const authAction: AuthAction = new AuthAction();
+
+export function Login(props: ComponentProp) {
+  let otpInput = useRef();
+  const [userEntry, setUserEntry] = useState('');
+  const [password, setPassword] = useState('');
+  const [otpCode, setOTpCode] = useState('');
+  const [userId, setUserId] = useState('');
+  const [userType, setUserType] = useState(USER_TYPE.USER as USER_TYPE);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [enableForgotPassword, setEnableForgotPassword] = useState(false);
+
+  useEffect(() => {
+    const params = getParamsByProp(props);
     if (params.userType === 'seller') {
-      this.setState({userType: USER_TYPE.SALES_USER});
+      setUserType(USER_TYPE.SALES_USER);
     }
-  }
-  async doForgotPassword() {
-    const {userEntry, userType} = this.state;
-    const response = await this.authAction.generateOTP(userType, {
+  }, []);
+  const doForgotPassword = async () => {
+    const response = await authAction.generateOTP(userType, {
       userEntry: userEntry,
     });
     showToastByResponse(response);
     if (response.success) {
-      this.setState({enableForgotPassword: true, userId: response.data.userId});
+      setEnableForgotPassword(true);
+      setUserId(response.data.userId);
     }
-  }
-  async setPasswordByOtp() {
-    const {otpCode, userType, userId, password} = this.state;
-    const response = await this.authAction.forgotPassword(userType, {
+  };
+  const setPasswordByOtp = async () => {
+    const response = await authAction.forgotPassword(userType, {
       issuerId: userId,
       otpCode,
       password,
     });
     if (response.success) {
-      this.doLogin();
+      doLogin();
     } else {
       showToastByResponse(response);
     }
-  }
-  doLogin() {
-    const {userEntry, password, userType} = this.state;
+  };
+  const doLogin = () => {
     const loginAPIRequest: ILoginAPI = {
       userEntry,
       password,
     };
-    this.authAction.login(userType, loginAPIRequest, this.props);
-  }
+    authAction.login(userType, loginAPIRequest, props);
+  };
 
-  renderTitle() {
+  const renderTitle = () => {
     return (
       <View>
         <Text style={styles.heading}>V-Cart</Text>
       </View>
     );
-  }
+  };
 
-  renderInputs() {
-    const {
-      userEntry,
-      password,
-      userType,
-      isLoading,
-      showPassword,
-      enableForgotPassword,
-    } = this.state;
+  const renderInputs = () => {
     return (
       <Card containerStyle={{borderRadius: 10}}>
         <Card.Title>
@@ -105,7 +91,7 @@ export default class Login extends React.Component<ComponentProp, LoginState> {
         </Card.Title>
         <Input
           value={userEntry}
-          onChangeText={(userEntry: string) => this.setState({userEntry})}
+          onChangeText={(userEntry: string) => setUserEntry(userEntry)}
           returnKeyType={'next'}
           autoCapitalize="none"
           placeholder="Email/Mobile Number"
@@ -113,47 +99,49 @@ export default class Login extends React.Component<ComponentProp, LoginState> {
         />
         {enableForgotPassword ? (
           <OTPTextInput
-            ref={(e: any) => (this.otpInput = e)}
+            ref={(e: any) => (otpInput = e)}
             inputCount={6}
             textInputStyle={{width: 40}}
             tintColor={'#F68535'}
             inputCellLength={1}
-            handleTextChange={(otpCode: string) => this.setState({otpCode})}
+            handleTextChange={(otpCode: string) => setOTpCode(otpCode)}
           />
         ) : null}
 
         <Input
           value={password}
-          onChangeText={(password: string) => this.setState({password})}
+          onChangeText={(password: string) => setPassword(password)}
           returnKeyType={'next'}
           autoCapitalize="none"
           rightIcon={{
             name: 'eye',
             type: 'font-awesome',
-            onPress: () => this.setState({showPassword: !showPassword}),
+            onPress: () => setShowPassword(!showPassword),
           }}
           placeholder="Enter Password"
           blurOnSubmit={false}
           secureTextEntry={showPassword ? false : true}
-          onSubmitEditing={() => console.log('Do Login')}
+          onSubmitEditing={() => doLogin()}
         />
 
         <TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -8}}
-          onPress={() => this.doForgotPassword()}>
+          onPress={() => doForgotPassword()}>
           <Text style={styles.textForgotPassword}>Forgot?</Text>
         </TouchableOpacity>
+
         <Button
           onPress={() =>
-            enableForgotPassword ? this.setPasswordByOtp() : this.doLogin()
+            enableForgotPassword ? setPasswordByOtp() : doLogin()
           }
           style={{marginTop: 4}}
           loading={isLoading}
           title={enableForgotPassword ? 'Set Password' : 'Login'}
         />
+
         {userType === USER_TYPE.USER ? (
           <TouchableOpacity
-            onPress={() => navigateByProp(this.props, 'register')}>
+            onPress={() => navigateByProp(props, ROUTE_NAMES.register)}>
             <Card.FeaturedTitle style={styles.newUserRegisterText}>
               New User? Register Here
             </Card.FeaturedTitle>
@@ -161,33 +149,31 @@ export default class Login extends React.Component<ComponentProp, LoginState> {
         ) : null}
       </Card>
     );
-  }
+  };
 
-  render() {
-    return (
-      <SafeAreaView style={{flex: 1}}>
-        <ImageBackground
-          source={{
-            uri: BACKGROUND_IMAGE_URL,
-          }}
-          style={[styles.imageBg, {height: this.screenHeight}]}>
-          <ScrollView>
-            {IS_BIG_SCREEN ? (
-              <Grid>
-                <Col>{this.renderTitle()}</Col>
-                <Col style={{marginTop: 100, marginRight: 20, marginLeft: 20}}>
-                  {this.renderInputs()}
-                </Col>
-              </Grid>
-            ) : (
-              <View>
-                <View>{this.renderTitle()}</View>
-                <View style={{marginTop: 80}}>{this.renderInputs()}</View>
-              </View>
-            )}
-          </ScrollView>
-        </ImageBackground>
-      </SafeAreaView>
-    );
-  }
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <ImageBackground
+        source={{
+          uri: BACKGROUND_IMAGE_URL,
+        }}
+        style={[styles.imageBg, {height: screenHeight}]}>
+        <ScrollView>
+          {IS_BIG_SCREEN ? (
+            <Grid>
+              <Col>{renderTitle()}</Col>
+              <Col style={{marginTop: 100, marginRight: 20, marginLeft: 20}}>
+                {renderInputs()}
+              </Col>
+            </Grid>
+          ) : (
+            <View>
+              <View>{renderTitle()}</View>
+              <View style={{marginTop: 80}}>{renderInputs()}</View>
+            </View>
+          )}
+        </ScrollView>
+      </ImageBackground>
+    </SafeAreaView>
+  );
 }

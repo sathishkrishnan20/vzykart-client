@@ -15,8 +15,8 @@ import ProductDetail from '../screens/Products/product-details';
 import Header from '../components/Header';
 import SellerAddProducts from '../screens/_seller/products/add';
 import SellerViewProducts from '../screens/_seller/products/view';
-import Login from '../screens/Auth/Login';
-import SignUp from '../screens/Auth/Signup';
+import {Login} from '../screens/Auth/Login';
+import {SignUp} from '../screens/Auth/Signup';
 import {ProductList} from '../screens/Products/list';
 import {store} from './store';
 import {
@@ -40,6 +40,9 @@ import {Checkout} from '../screens/Checkout';
 import {Profile} from '../screens/_users/Profile';
 import {MyOrders} from '../screens/_users/Orders';
 import {OrderDetails} from '../screens/_users/Orders/Details';
+import {Button, withBadge} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {IS_WEB} from '../config';
 const HEADER_HEIGHT = 70;
 
 const SELLER_ROUTES = [
@@ -94,11 +97,11 @@ const PUBLIC_ROUTES = [
     component: ProductList,
     name: 'Product List',
   },
-  {
+  /* {
     routeName: ROUTE_NAMES.productDetails,
     component: ProductDetail,
     name: 'Product Details',
-  },
+  }, */
 ];
 const USER_AUTHENTICATED_ROUTES = [
   {
@@ -187,85 +190,7 @@ function getHeaderTitle(route: any) {
   return routeName;
 }
 const Stack = createStackNavigator();
-const StackNavigator = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        gestureEnabled: true,
-        gestureDirection: 'horizontal',
-        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        headerStyle: {backgroundColor: '#F02245'},
-        headerTintColor: 'white',
-      }}>
-      <Stack.Screen
-        options={({route}) => ({
-          title: getHeaderTitle(route),
-        })}
-        name="Tabs"
-        component={TabNavigator}
-      />
-      <Stack.Screen name={ROUTE_NAMES.login} component={Login} />
-      <Stack.Screen name="register" component={Login} />
-      <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
-      <Stack.Screen
-        name={ROUTE_NAMES.productListBySellerId}
-        component={ProductList}
-        options={{
-          title: 'Product List',
-        }}
-      />
-      <Stack.Screen name="/seller/product/add" component={SellerAddProducts} />
-      <Stack.Screen name={ROUTE_NAMES.userCheckout} component={Checkout} />
-      <Stack.Screen
-        name={ROUTE_NAMES.userOrders}
-        options={{title: 'My Orders'}}
-        component={MyOrders}
-      />
-      <Stack.Screen
-        name={ROUTE_NAMES.userOrderDetails}
-        options={{title: 'Order Details'}}
-        component={OrderDetails}
-      />
-    </Stack.Navigator>
-  );
-};
-
 const Tab = createBottomTabNavigator();
-const TabNavigator = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color, size}) => {
-          let iconName = 'home-circle-outline';
-          if (route.name === 'Home') {
-            iconName = focused ? 'home-circle-outline' : 'home-circle';
-          } else if (route.name === 'Details') {
-            iconName = focused ? 'text-search' : 'text-search';
-          } else if (route.name === 'Cart') {
-            iconName = focused ? 'cart' : 'cart-outline';
-          } else if (route.name === 'Account') {
-            iconName = focused ? 'account-circle-outline' : 'account-circle';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
-        keyboardHidesTabBar: true,
-      }}>
-      <Tab.Screen name="Home" component={SellersList} />
-      <Tab.Screen name="product-details" component={Checkout} />
-      <Tab.Screen
-        name={ROUTE_NAMES.userOrders}
-        options={{title: 'My Orders'}}
-        component={MyOrders}
-      />
-      <Tab.Screen name="Cart" component={Cart} />
-      <Tab.Screen name="Profile" component={Profile} />
-    </Tab.Navigator>
-  );
-};
 
 export function Routes() {
   const [userLoggedIn, setUserLoggedIn] = useState(true);
@@ -307,6 +232,7 @@ export function Routes() {
   React.useEffect(() => {
     beforeRender();
   }, []);
+
   store.subscribe(() => {
     if (userLoggedIn === false && store.getState().auth.hasLoggedIn === true)
       setUserLoggedIn(true);
@@ -315,21 +241,154 @@ export function Routes() {
     }
   });
 
-  const logout = async () => {
+  const logout = async (navigation?: any) => {
     const userType = (await getUserType()) as USER_TYPE;
     store.dispatch({
       type: AUTH_LOGOUT,
     } as never);
     setUserLoggedIn(false);
     removeAll();
+    if (!IS_WEB) {
+      return navigation.navigate(ROUTE_NAMES.login);
+    }
+    // this works only for WEB, since Redirect is part Of React Router DOM
+    else
+      return (
+        <Redirect
+          to={{
+            pathname:
+              userType === USER_TYPE.SALES_USER
+                ? '/seller/login'
+                : 'user/login',
+          }}
+        />
+      );
+  };
 
+  const CartIcon: any = withBadge(cartProductsLength)(Icon);
+  const NotificationIcon: any = withBadge(0)(Icon);
+
+  const TabNavigator = () => {
     return (
-      <Redirect
-        to={{
-          pathname:
-            userType === USER_TYPE.SALES_USER ? '/seller/login' : 'user/login',
-        }}
-      />
+      <Tab.Navigator
+        screenOptions={({route}) => ({
+          tabBarIcon: ({focused, color, size}) => {
+            let iconName = 'home-circle-outline';
+            if (route.name === 'Home') {
+              iconName = focused ? 'home-circle-outline' : 'home-circle';
+            } else if (route.name === 'Details') {
+              iconName = focused ? 'text-search' : 'text-search';
+            } else if (route.name === 'Cart') {
+              iconName = focused ? 'cart' : 'cart-outline';
+            } else if (route.name === 'Account') {
+              iconName = focused ? 'account-circle-outline' : 'account-circle';
+            }
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+          keyboardHidesTabBar: true,
+        }}>
+        <Tab.Screen name={ROUTE_NAMES.home} component={SellersList} />
+        <Tab.Screen name={ROUTE_NAMES.userOrders} component={MyOrders} />
+        <Tab.Screen name={ROUTE_NAMES.userCart} component={Cart} />
+        <Tab.Screen name={ROUTE_NAMES.userProfile} component={Profile} />
+      </Tab.Navigator>
+    );
+  };
+  const StackNavigator = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={({navigation}: any) => ({
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          headerStyle: {backgroundColor: '#F02245'},
+          headerTintColor: 'white',
+          headerRight: () => {
+            return (
+              <View
+                style={{
+                  marginRight: 10,
+                  flexDirection: 'row',
+                }}>
+                <View style={{marginLeft: 4, marginRight: 4}}>
+                  <CartIcon
+                    onPress={() => navigation.navigate(ROUTE_NAMES.userCart)}
+                    style={{marginRight: 5, marginTop: 10}}
+                    size={24}
+                    status="success"
+                    color={'#FFF'}
+                    name="cart"
+                  />
+                </View>
+                <View style={{marginLeft: 4, marginRight: 4}}>
+                  <NotificationIcon
+                    style={{marginRight: 5, marginTop: 10}}
+                    size={24}
+                    status="success"
+                    color={'#FFF'}
+                    name="notifications"
+                  />
+                </View>
+                <View style={{marginLeft: 4, marginRight: 4}}>
+                  <Icon
+                    onPress={() => logout(navigation)}
+                    style={{marginRight: 5, marginTop: 10}}
+                    name="power-sharp"
+                    color={'#FFF'}
+                    size={24}
+                  />
+                </View>
+              </View>
+            );
+          },
+        })}>
+        <Stack.Screen
+          options={({route}) => ({
+            title: getHeaderTitle(route),
+          })}
+          name="Tabs"
+          component={TabNavigator}
+        />
+
+        {/* User Public Routes */}
+        <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
+        <Stack.Screen
+          name={ROUTE_NAMES.productListBySellerId}
+          component={ProductList}
+        />
+
+        {/* Auth Routes */}
+        <Stack.Screen name={ROUTE_NAMES.login} component={Login} />
+        <Stack.Screen name={ROUTE_NAMES.register} component={SignUp} />
+
+        {/* User Authenticated Routes */}
+        <Stack.Screen name={ROUTE_NAMES.userCheckout} component={Checkout} />
+        <Stack.Screen name={ROUTE_NAMES.userCart} component={Cart} />
+        <Stack.Screen name={ROUTE_NAMES.userProfile} component={Profile} />
+        <Stack.Screen name={ROUTE_NAMES.userOrders} component={MyOrders} />
+        <Stack.Screen
+          name={ROUTE_NAMES.userOrderDetails}
+          component={OrderDetails}
+        />
+
+        {/* Seller Routes */}
+        <Stack.Screen
+          name={ROUTE_NAMES.sellerProductAdd}
+          component={SellerAddProducts}
+        />
+        <Stack.Screen
+          name={ROUTE_NAMES.sellerProductView}
+          component={SellerViewProducts}
+        />
+        <Stack.Screen
+          name={ROUTE_NAMES.sellerProductCrudById}
+          component={SellerAddProducts}
+        />
+      </Stack.Navigator>
     );
   };
 
