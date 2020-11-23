@@ -12,7 +12,7 @@ import {TableHeader} from '../../../interfaces/table-component';
 import {CRUD} from '../../../interfaces/enums';
 import {navigateByProp} from '../../../navigation';
 import {ComponentProp} from '../../../interfaces';
-import {Button} from '../../../components/index';
+import {Button, Loader} from '../../../components/index';
 import ROUTE_NAMES from '../../../routes/name';
 class SellerViewProducts extends Component<
   ComponentProp,
@@ -86,7 +86,7 @@ class SellerViewProducts extends Component<
   }
 
   render() {
-    const {productData} = this.state;
+    const {productData, isLoading} = this.state;
 
     return (
       <ScrollView horizontal={true}>
@@ -107,6 +107,8 @@ class SellerViewProducts extends Component<
               }
               title="Add Product"></Button>
           </View>
+
+          <Loader visible={isLoading} />
 
           <ScrollView style={styles.dataWrapper}>
             <TableComponent

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Container} from '../../../components';
+import {Container, Loader} from '../../../components';
 import {ScrollView, View, StyleSheet, FlatList} from 'react-native';
 import {Text, Card, Button, Icon} from 'react-native-elements';
 import {Grid, Col, Row} from 'react-native-easy-grid';
@@ -40,6 +40,7 @@ export function Profile() {
   const [enableAddressCreate, setEnableAddressCreate] = useState(false);
   const [userDataOnEditMode, setUserDataOnEditMode] = useState(false);
   const [editAddressIndex, setEditAddressIndex] = useState(-1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const userDataReadComponent = [
     {
@@ -86,23 +87,36 @@ export function Profile() {
     getUserProfileData();
   }, []);
   const getUserProfileData = async () => {
-    const userId = (await getUserId()) as string;
-    if (!userId) {
-      // Do Redirect Function
-    }
-    const userResponse = await userAction.getUserByUserId(userId);
-    if (userResponse.success) {
-      setUserData(userResponse.data);
+    try {
+      const userId = (await getUserId()) as string;
+      if (!userId) {
+        // Do Redirect Function
+      }
+      setIsLoading(true);
+      const userResponse = await userAction.getUserByUserId(userId);
+      if (userResponse.success) {
+        setUserData(userResponse.data);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
     }
   };
   const saveUserData = async () => {
-    const requestData: IUserInfo = {
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-    };
-    const response = await callUserUpdate(requestData);
-    if (response.success) {
-      setUserDataOnEditMode(false);
+    try {
+      setIsLoading(true);
+
+      const requestData: IUserInfo = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+      };
+      const response = await callUserUpdate(requestData);
+      if (response.success) {
+        setUserDataOnEditMode(false);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
     }
   };
 
@@ -134,6 +148,7 @@ export function Profile() {
             source={require('../../../assets/images/female.png')}
           />
         </LinearGradient>
+        <Loader visible={isLoading} />
         {userDataOnEditMode === false ? (
           <Card containerStyle={styles.infoCard}>
             <Row>
@@ -163,7 +178,7 @@ export function Profile() {
               componentData={userDataWriteComponent}
               changeState={() => console.debug()}
             />
-            <Button onPress={saveUserData} title="Save" />
+            <Button loading={isLoading} onPress={saveUserData} title="Save" />
           </>
         )}
       </View>

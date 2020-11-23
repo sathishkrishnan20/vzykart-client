@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 import {FlatList, SafeAreaView, View} from 'react-native';
 
 import OrderAction from '../../../../actions/orders';
-import {Container} from '../../../../components';
+import {Container, Loader} from '../../../../components';
 import {showToastByResponse} from '../../../../components/Toast';
 import {ProductCardsOrdered} from '../../../../components/Orders/product-card';
 import {OrderOverView} from '../../../../components/Orders/order-overview';
@@ -19,16 +19,26 @@ import {getSellerId} from '../../../../services/storage-service';
 export function SellerOrderDetails(props: ComponentProp) {
   const orderAction = new OrderAction();
   const [orderData, setOrderData] = useState({} as IOrder);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     getOrderInfo();
   }, []);
   const getOrderInfo = async () => {
-    const params = getParamsByProp(props);
-    const orderResponse = await orderAction.getOrdersByOrderId(params.orderId);
-    if (orderResponse.success) {
-      setOrderData(orderResponse.data);
-    } else {
-      showToastByResponse(orderResponse);
+    try {
+      setIsLoading(true);
+
+      const params = getParamsByProp(props);
+      const orderResponse = await orderAction.getOrdersByOrderId(
+        params.orderId,
+      );
+      if (orderResponse.success) {
+        setOrderData(orderResponse.data);
+      } else {
+        showToastByResponse(orderResponse);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
     }
   };
   const updateOrderByOrderId = async (
@@ -55,6 +65,7 @@ export function SellerOrderDetails(props: ComponentProp) {
   return (
     <Container>
       <SafeAreaView style={{flex: 1}}>
+        <Loader visible={isLoading} />
         {Object.keys(orderData).length ? (
           <View>
             <FlatList

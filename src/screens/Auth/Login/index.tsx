@@ -15,12 +15,7 @@ import {Col, Grid} from 'react-native-easy-grid';
 import {Input, Button} from '../../../components/index';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
-import {
-  BACKGROUND_IMAGE_URL,
-  IS_BIG_SCREEN,
-  APP_HEADER,
-  IS_WEB,
-} from '../../../config';
+import {BACKGROUND_IMAGE_URL, IS_BIG_SCREEN, APP_HEADER} from '../../../config';
 import {navigateByProp, getParamsByProp} from '../../../navigation';
 import AuthAction from '../../../actions/auth';
 import {ILoginAPI} from '../../../interfaces/actions/auth';
@@ -29,6 +24,7 @@ import {ComponentProp} from '../../../interfaces';
 import ROUTE_NAMES from '../../../routes/name';
 import {AuthContext} from '../../../routes';
 import {getLoginRouteByUserType} from '../../../helpers';
+import {Loader} from '../../../components';
 const screenHeight: number = Dimensions.get('window').height - 60;
 const authAction: AuthAction = new AuthAction();
 
@@ -53,33 +49,50 @@ export function Login(props: ComponentProp) {
     }
   }, []);
   const doForgotPassword = async () => {
-    const response = await authAction.generateOTP(userType, {
-      userEntry: userEntry,
-    });
-    showToastByResponse(response);
-    if (response.success) {
-      setEnableForgotPassword(true);
-      setUserId(response.data.userId);
+    try {
+      setIsLoading(true);
+      const response = await authAction.generateOTP(userType, {
+        userEntry: userEntry,
+      });
+      setIsLoading(false);
+      showToastByResponse(response);
+      if (response.success) {
+        setEnableForgotPassword(true);
+        setUserId(response.data.userId);
+      }
+    } catch (error) {
+      setIsLoading(false);
     }
   };
   const setPasswordByOtp = async () => {
-    const response = await authAction.forgotPassword(userType, {
-      issuerId: userId,
-      otpCode,
-      password,
-    });
-    if (response.success) {
-      doLogin();
-    } else {
-      showToastByResponse(response);
+    try {
+      setIsLoading(true);
+      const response = await authAction.forgotPassword(userType, {
+        issuerId: userId,
+        otpCode,
+        password,
+      });
+      setIsLoading(false);
+      if (response.success) {
+        doLogin();
+      } else {
+        showToastByResponse(response);
+      }
+    } catch (error) {
+      setIsLoading(false);
     }
   };
   const doLogin = async () => {
-    const loginAPIRequest: ILoginAPI = {
-      userEntry,
-      password,
-    };
-    await authAction.login(userType, loginAPIRequest, props, {}, signIn);
+    try {
+      setIsLoading(true);
+      const loginAPIRequest: ILoginAPI = {
+        userEntry,
+        password,
+      };
+      await authAction.login(userType, loginAPIRequest, props, {}, signIn);
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 
   const renderTitle = () => {
@@ -191,6 +204,7 @@ export function Login(props: ComponentProp) {
         }}
         style={[styles.imageBg, {height: screenHeight}]}>
         <ScrollView>
+          <Loader visible={isLoading} />
           {IS_BIG_SCREEN ? (
             <Grid>
               <Col>{renderTitle()}</Col>

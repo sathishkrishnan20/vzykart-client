@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Container} from '../../components';
+import {Container, Loader} from '../../components';
 import {useNavigation, navigate} from '../../navigation';
 import {HeaderSearchBar} from './SearchBar';
 import {Seller} from './sellers';
@@ -14,6 +14,7 @@ export function SellersList() {
   let isRendered = useRef(false);
   const [search, setSearch] = useState('');
   const [sellerListData, setSellerListData] = useState<ISeller[]>();
+  const [isLoading, setIsLoading] = useState(false);
   // @ts-ignore
   const navigation = useNavigation();
   useEffect(() => {}, [search]);
@@ -27,17 +28,24 @@ export function SellersList() {
   }, []);
 
   const getSellerData = async () => {
-    const sellerDataResponse = await sellerAction.getAllSellers();
-    if (sellerDataResponse.success && isRendered.current) {
-      setSellerListData(sellerDataResponse.data);
-    } else {
-      showToastByResponse(sellerDataResponse);
+    try {
+      setIsLoading(true);
+      const sellerDataResponse = await sellerAction.getAllSellers();
+      if (sellerDataResponse.success && isRendered.current) {
+        setSellerListData(sellerDataResponse.data);
+      } else {
+        showToastByResponse(sellerDataResponse);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
     }
   };
 
   return (
     <Container>
       <HeaderSearchBar onChangeText={setSearch} value={search} />
+      <Loader visible={isLoading} />
       {sellerListData?.length === 0 ? null : (
         <FlatList
           data={sellerListData}

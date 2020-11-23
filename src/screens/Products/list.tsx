@@ -17,6 +17,7 @@ import ProductAction from '../../actions/products';
 import {ComponentProp} from '../../interfaces';
 import {getCartItem} from '../../services/storage-service';
 import {ICartItem, ProductAndCart} from '../../interfaces/classes/cart';
+import {Loader} from '../../components/Loader';
 export function ProductList(props: ComponentProp) {
   const [productData, setProductData] = useState([] as IProduct[]);
   const [cartProducts, setCartProducts] = useState([] as ICartItem[]);
@@ -75,6 +76,8 @@ export function ProductList(props: ComponentProp) {
   };
   return (
     <Container>
+      <Loader visible={isLoading} />
+
       <FlatList
         data={productData}
         //   ListHeaderComponent={() => (

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Container} from '../../components';
+import {Container, Loader} from '../../components';
 import {Button} from 'react-native-elements';
 import {ProductSummary, SubTotalComponent} from './ProductSummary';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
@@ -36,6 +36,7 @@ export function Checkout(props: ComponentProp) {
   const [deliveryCharge, setDeliveryCharge] = useState(5);
   const [userData, setUserData] = useState({} as IUserInfo);
   const [enableAddressCreate, setEnableAddressCreate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const checkoutItemsFromProp = getParamForCheckoutPage(props);
@@ -44,13 +45,19 @@ export function Checkout(props: ComponentProp) {
   }, []);
 
   const getUserProfileData = async () => {
-    const userId = (await getUserId()) as string;
-    if (!userId) {
-      // Do Redirect Function
-    }
-    const userResponse = await userAction.getUserByUserId(userId);
-    if (userResponse.success) {
-      setUserData(userResponse.data);
+    try {
+      setIsLoading(true);
+      const userId = (await getUserId()) as string;
+      if (!userId) {
+        // Do Redirect Function
+      }
+      const userResponse = await userAction.getUserByUserId(userId);
+      setIsLoading(false);
+      if (userResponse.success) {
+        setUserData(userResponse.data);
+      }
+    } catch (error) {
+      setIsLoading(false);
     }
   };
   const getSellingAndDiscountPrice = () => {
@@ -89,32 +96,39 @@ export function Checkout(props: ComponentProp) {
     paymentType: PAYMENT_TYPE,
     result: RazorPaySuccess,
   ) => {
-    if (userData.address && userData.address[deliveryAddressIndex]) {
-      const deliveryAddressInfo: IUserAddress =
-        userData.address && userData.address[deliveryAddressIndex];
-      const orderResp = await createOrder(
-        checkoutProducts,
-        deliveryAddressInfo,
-        deliveryCharge,
-        paymentType,
-        result,
-      );
-      if (orderResp.success) {
-        removeProductFromCart();
-        navigateByProp(
-          props,
-          ROUTE_NAMES.userOrderDetails.replace(
-            ':orderId',
-            orderResp.data.insertedId,
-          ),
-          {orderId: orderResp.data.insertedId},
+    try {
+      setIsLoading(true);
+
+      if (userData.address && userData.address[deliveryAddressIndex]) {
+        const deliveryAddressInfo: IUserAddress =
+          userData.address && userData.address[deliveryAddressIndex];
+        const orderResp = await createOrder(
+          checkoutProducts,
+          deliveryAddressInfo,
+          deliveryCharge,
+          paymentType,
+          result,
         );
+        setIsLoading(false);
+        if (orderResp.success) {
+          removeProductFromCart();
+          navigateByProp(
+            props,
+            ROUTE_NAMES.userOrderDetails.replace(
+              ':orderId',
+              orderResp.data.insertedId,
+            ),
+            {orderId: orderResp.data.insertedId},
+          );
+        }
+      } else {
+        WarningToast({
+          title: 'Select Address',
+          message: 'Please Select Delivery Address and Continue',
+        });
       }
-    } else {
-      WarningToast({
-        title: 'Select Address',
-        message: 'Please Select Delivery Address and Continue',
-      });
+    } catch (error) {
+      setIsLoading(false);
     }
   };
   const removeProductFromCart = async () => {
@@ -169,6 +183,8 @@ export function Checkout(props: ComponentProp) {
           ) : (
             RenderProductSummaryFlatList()
           )}
+
+          <Loader visible={isLoading} />
 
           <FlatList
             data={userData.address || []}

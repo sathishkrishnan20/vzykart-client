@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {Button, Card} from 'react-native-elements';
 import {Col, Grid} from 'react-native-easy-grid';
-import {Input} from '../../../components/index';
+import {Input, Loader} from '../../../components/index';
 
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
@@ -36,6 +36,7 @@ export function SignUp(props: ComponentProp) {
   const {signIn} = React.useContext(AuthContext);
   const doSignUp = async () => {
     try {
+      setIsLoading(true);
       const registerItem: IRegisterAPI = {
         password: password,
       };
@@ -45,6 +46,7 @@ export function SignUp(props: ComponentProp) {
         registerItem.mobileNumber = Number(mobileNumber);
       }
       const response = await authAction.register(userType, registerItem);
+      setIsLoading(false);
       showToastByResponse(response);
       if (response.success) {
         const loginAPIRequest: ILoginAPI = {
@@ -54,6 +56,7 @@ export function SignUp(props: ComponentProp) {
         authAction.login(userType, loginAPIRequest, props, {}, signIn);
       }
     } catch (error) {
+      setIsLoading(false);
       ErrorToast({title: 'Failed', message: error.message || error});
     }
   };
@@ -135,6 +138,7 @@ export function SignUp(props: ComponentProp) {
         }}
         style={[styles.imageBg, {height: screenHeight}]}>
         <ScrollView>
+          <Loader visible={isLoading} />
           {IS_BIG_SCREEN ? (
             <Grid>
               <Col>{renderTitle()}</Col>
