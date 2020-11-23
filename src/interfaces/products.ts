@@ -1,5 +1,8 @@
 import {IUserAddress} from '.';
-
+export interface ICategoryInfo {
+  _id: string;
+  category: string;
+}
 export interface ICreateProduct {
   productId?: string;
   sellerId: string;
@@ -11,7 +14,7 @@ export interface ICreateProduct {
   gst: number;
   uom: string;
   unit: string;
-  categories?: string[];
+  categories?: ICategoryInfo[];
   images?: IProductImage[];
   rupeeSymbol?: string;
 }

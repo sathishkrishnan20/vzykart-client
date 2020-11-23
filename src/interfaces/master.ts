@@ -3,3 +3,9 @@ export interface IUOM {
   _id: string;
   active: string;
 }
+
+export interface ICategory {
+  category: string;
+  _id: string;
+  active: string;
+}

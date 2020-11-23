@@ -15,8 +15,7 @@ export interface SellerAddProductsState {
   sellerId: string;
   uom: string;
   unit: string;
-  categories: string[] | Item[];
-  selectedItems: any[];
+  selectedCategories: string[] | Item[];
   images: IProductImage[];
 
   date: Date;
@@ -26,6 +25,7 @@ export interface SellerAddProductsState {
   disableInputs: boolean;
   crudType: CRUD;
   uomData: Item[];
+  categoryData: Item[];
 }
 
 export interface SellerViewProductsState {

@@ -3,14 +3,42 @@ import {getCartItem, setCartItem} from '../services/storage-service';
 import {ICartItem} from '../interfaces/classes/cart';
 import {store} from '../routes/store';
 import {USER_CART} from '../providers/constants';
-import {IProduct} from '../interfaces/products';
+import {IProduct, ICategoryInfo} from '../interfaces/products';
+import {IS_WEB} from '../config';
 
-export const getMultiSelectValues = (array: string[] | Item[]): string[] => {
-  const finalArray: string[] = [];
-  array.forEach((item: Item | string) =>
-    finalArray.push(typeof item === 'string' ? item : item.label),
-  );
+export const getCategoryValues = (
+  array: string[] | Item[],
+): ICategoryInfo[] => {
+  const finalArray: ICategoryInfo[] = [];
+  array.forEach((item: Item | string) => {
+    if (typeof item === 'string') {
+      finalArray.push({
+        _id: item,
+        category: item,
+      });
+    } else {
+      finalArray.push({
+        _id: item.value,
+        category: item.label,
+      });
+    }
+  });
   return finalArray;
+};
+
+export const getMultiSelectCategoryValues = (
+  array: ICategoryInfo[],
+): Item[] | string[] => {
+  return array.map((item) => {
+    if (IS_WEB) {
+      return {
+        label: item.category,
+        value: item._id,
+      };
+    } else {
+      return item._id;
+    }
+  }) as Item[] | string[];
 };
 
 export const updateCartOnStorage = async (productId: string, qty: number) => {

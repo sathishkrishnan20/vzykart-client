@@ -21,12 +21,16 @@ import {
 } from '../../../components/Toast';
 import {IS_BIG_SCREEN} from '../../../config';
 import {ScrollView} from 'react-native-gesture-handler';
-import {getMultiSelectValues} from '../../../helpers';
+import {
+  getMultiSelectCategoryValues,
+  getCategoryValues,
+} from '../../../helpers';
 import {getParamsByProp} from '../../../navigation';
 import {ComponentProp} from '../../../interfaces';
 import {Button} from '../../../components';
 import MasterAction from '../../../actions/master';
-import {IUOM} from '../../../interfaces/master';
+import {IUOM, ICategory} from '../../../interfaces/master';
+import {Item} from 'react-native-picker-select';
 const RU = {
   VIEW: 'view',
   UPDATE: 'edit',
@@ -54,9 +58,8 @@ class SellerAddProducts extends Component<
       sellerId: '',
       uom: '',
       unit: '',
-      categories: [],
+      selectedCategories: [],
       images: [],
-      selectedItems: [],
       date: new Date(),
       showDatePicker: false,
       isLoading: false,
@@ -64,6 +67,7 @@ class SellerAddProducts extends Component<
       disableInputs: false,
       crudType: CRUD.CREATE,
       uomData: [],
+      categoryData: [],
     };
     this.productAction = new ProductAction();
     this.masterAction = new MasterAction();
@@ -73,6 +77,7 @@ class SellerAddProducts extends Component<
     const params = getParamsByProp(this.props);
     const crudType = params.crudType;
     this.getUOM();
+    this.getCategories();
     if (RUParams.includes(crudType) && params.productId) {
       this.getProductById(params.productId, crudType);
     }
@@ -94,8 +99,19 @@ class SellerAddProducts extends Component<
       this.setState({uomData});
     }
   }
+  async getCategories() {
+    const masterResponse = await this.masterAction.getCategories();
+    if (masterResponse.success) {
+      const categoryData = masterResponse.data.map((item: ICategory) => {
+        return {
+          value: item._id,
+          label: item.category,
+        };
+      });
+      this.setState({categoryData});
+    }
+  }
   async getProductById(productId: string, crudType: string) {
-    console.log(productId);
     const productResponse = await this.productAction.getProductByProductId(
       productId,
     );
@@ -112,7 +128,9 @@ class SellerAddProducts extends Component<
         sellerId: productData.sellerId,
         uom: productData.uom,
         unit: productData.unit,
-        categories: productData.categories as string[],
+        selectedCategories: getMultiSelectCategoryValues(
+          productData.categories || [],
+        ),
         images: productData.images || [],
         disableInputs: crudType === RU.VIEW,
       });
@@ -125,8 +143,8 @@ class SellerAddProducts extends Component<
     this.setState({[key]: value});
   }
 
-  onSelectedItemsChange = (selectedItems: any) => {
-    this.setState({selectedItems});
+  onCategoriesChange = (selectedCategories: any) => {
+    this.setState({selectedCategories});
   };
 
   async createProduct() {
@@ -169,7 +187,7 @@ class SellerAddProducts extends Component<
       uom,
       gst,
       unit,
-      categories,
+      selectedCategories,
       discount,
       images,
     } = this.state;
@@ -184,7 +202,7 @@ class SellerAddProducts extends Component<
       gst: Number(gst),
       uom,
       unit,
-      categories: getMultiSelectValues(categories),
+      categories: getCategoryValues(selectedCategories),
       images,
     };
     return productRequest;
@@ -201,8 +219,7 @@ class SellerAddProducts extends Component<
       sellerId: '',
       uom: '',
       unit: '',
-      categories: [],
-      selectedItems: [],
+      selectedCategories: [],
       images: [],
     });
   }
@@ -236,50 +253,13 @@ class SellerAddProducts extends Component<
       sellingPrice,
       unit,
       uom,
-      categories,
+      selectedCategories,
       images,
       uomData,
       isLoading,
       disableInputs,
+      categoryData,
     } = this.state;
-    const items = [
-      {
-        value: '92iijs7yta',
-        label: 'Ondo',
-      },
-      {
-        value: 'a0s0a8ssbsd',
-        label: 'Ogun',
-      },
-      {
-        value: '16hbajsabsd',
-        label: 'Calabar',
-      },
-      {
-        value: 'nahs75a5sg',
-        label: 'Lagos',
-      },
-      {
-        value: '667atsas',
-        label: 'Maiduguri',
-      },
-      {
-        value: 'hsyasajs',
-        label: 'Anambra',
-      },
-      {
-        value: 'djsjudksjd',
-        label: 'Benue',
-      },
-      {
-        value: 'sdhyaysdj',
-        label: 'Kaduna',
-      },
-      {
-        value: 'suudydjsjd',
-        label: 'Abuja',
-      },
-    ];
 
     const data: IAddUpdate[][] = [
       [
@@ -319,10 +299,10 @@ class SellerAddProducts extends Component<
         {
           component: INPUT_COMPONENT.MULTI_SELECT,
           label: 'Select the Categories of Product',
-          stateKey: 'categories',
-          value: categories,
-          selectionItems: items,
-          onSelectedItemsChange: this.onSelectedItemsChange.bind(this),
+          stateKey: 'selectedCategories',
+          value: selectedCategories,
+          selectionItems: categoryData,
+          onSelectedItemsChange: this.onCategoriesChange.bind(this),
           disabled: disableInputs,
         },
         {
