@@ -20,10 +20,11 @@ import {
 } from '../../services/storage-service';
 import UserAction from '../../actions/users';
 import {WriteAddress} from '../_users/Profile/AddAddress';
-import {getParamForCheckoutPage} from '../../navigation';
+import {getParamForCheckoutPage, navigateByProp} from '../../navigation';
 import {createOrder, getSellingAndDiscountGSTPrice} from './helper';
 import {WarningToast} from '../../components/Toast';
 import {RazorPaySuccess} from '../../interfaces/razorpay';
+import ROUTE_NAMES from '../../routes/name';
 
 export function Checkout(props: ComponentProp) {
   const userAction = new UserAction();
@@ -100,6 +101,14 @@ export function Checkout(props: ComponentProp) {
       );
       if (orderResp.success) {
         removeProductFromCart();
+        navigateByProp(
+          props,
+          ROUTE_NAMES.userOrderDetails.replace(
+            ':orderId',
+            orderResp.data.insertedId,
+          ),
+          {orderId: orderResp.data.insertedId},
+        );
       }
     } else {
       WarningToast({
@@ -118,7 +127,7 @@ export function Checkout(props: ComponentProp) {
   };
   const renderPaymentComp = () => {
     const {totalPriceToBePaid} = getSellingAndDiscountPrice();
-
+    console.log(userData);
     return (
       <View
         style={{

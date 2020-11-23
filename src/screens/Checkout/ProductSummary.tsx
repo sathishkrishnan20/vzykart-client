@@ -9,6 +9,7 @@ import Image from '../../components/Image/image';
 import {
   calculateTotalSellingAmountWithGST,
   calculateTotalMRPAmountWithGST,
+  getImageLink,
 } from '../../helpers';
 const leftSideSize = IS_WEB ? 2 : 4;
 
@@ -79,7 +80,7 @@ const renderImage = (
       resizeMode="cover"
       style={styles.image}
       source={{
-        uri: imageUrl,
+        uri: getImageLink(imageUrl),
       }}
     />
   );

@@ -5,6 +5,7 @@ import {IS_BIG_SCREEN, IS_ANDROID, IS_IOS} from '../../../../config';
 import {Grid, Col, Row} from 'react-native-easy-grid';
 import {Card} from 'react-native-elements';
 import Image from '../../../../components/Image/image';
+import {getImageLink} from '../../../../helpers';
 
 const leftSideSize = IS_BIG_SCREEN ? 2 : 4;
 interface ProductCardOrderedState {
@@ -71,7 +72,7 @@ const renderImage = (
       resizeMode="cover"
       style={styles.image}
       source={{
-        uri: imageUrl,
+        uri: getImageLink(imageUrl),
       }}
     />
   );

@@ -72,7 +72,7 @@ export function Payment({
       options.prefill = prefill;
     }
     setPaymentOptions(options);
-  }, []);
+  }, [amount, name, description, prefill, notes]);
 
   const onHandler = async (e: any) => {
     if (IS_WEB) {
@@ -91,6 +91,7 @@ export function Payment({
         paymentOptions.handler = (response: RazorPaySuccess) => {
           onPaymentSuccess(PAYMENT_TYPE.ONLINE, response);
         };
+        console.log('payment options', paymentOptions);
         // @ts-ignore
         const rzp1 = new window.Razorpay(paymentOptions);
         rzp1.on('payment.failed', function (response: RazorPayFailure) {
