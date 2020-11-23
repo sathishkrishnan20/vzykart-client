@@ -1,4 +1,4 @@
-import {INPUT_COMPONENT, CRUD} from './enums';
+import {INPUT_COMPONENT, CRUD, INPUT_DATA_TYPE} from './enums';
 import {Item} from 'react-native-picker-select';
 import {IProductImage} from './products';
 import {IProductChangeStateTypes} from './classes/seller-add-products';
@@ -8,6 +8,7 @@ export interface IAddUpdate {
   label: string;
   stateKey: string;
   value: string | object | number | boolean | string[];
+  inputDataType?: INPUT_DATA_TYPE;
   disabled?: boolean;
   selectionItems?: Item[];
   onSelectedItemsChange?: Function;

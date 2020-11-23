@@ -25,6 +25,7 @@ import {
   updateCartDataOnStorage,
   calculateTotalSellingAmountWithGST,
   calculateTotalMRPAmountWithGST,
+  getImageLink,
 } from '../../helpers';
 import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import Image from '../../components/Image/image';
@@ -207,17 +208,18 @@ export default class Cart extends React.Component<
                       style={{paddingRight: 10}}>
                       <Image
                         source={{
-                          uri:
+                          uri: getImageLink(
                             item.images &&
-                            item.images[0] &&
-                            item.images[0].optimizedDestinationPath,
+                              item.images[0] &&
+                              (item.images[0]
+                                .optimizedDestinationPath as string),
+                          ),
                         }}
                         style={[
                           styles.centerElement,
                           {
                             height: IS_BIG_SCREEN ? 140 : 80,
                             width: IS_BIG_SCREEN ? 140 : 80,
-                            backgroundColor: '#eeeeee',
                           },
                         ]}
                       />

@@ -50,7 +50,7 @@ class SellerViewProducts extends Component<
       node: 'uom',
     },
     {
-      label: 'Available Units',
+      label: 'Units',
       node: 'unit',
     },
     {

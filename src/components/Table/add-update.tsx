@@ -26,6 +26,7 @@ export default function TableWriteComponent({
                 <Col key={`${index}${componentIndex}`}>
                   {componentItem.component === INPUT_COMPONENT.TEXT ? (
                     <Input
+                      keyboardType={componentItem.inputDataType || 'default'}
                       disabled={componentItem.disabled || false}
                       style={{padding: 4}}
                       label={componentItem.label}

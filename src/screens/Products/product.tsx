@@ -8,6 +8,7 @@ import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
 import colors from '../../colors';
+import {getImageLink} from '../../helpers';
 
 interface IProductInfo {
   cartProducts: ICartItem[];
@@ -108,7 +109,7 @@ const renderImage = (
       resizeMode="cover"
       style={styles.image}
       source={{
-        uri: imageUrl,
+        uri: getImageLink(imageUrl),
       }}
       PlaceholderContent={<ActivityIndicator />}
     />
@@ -155,7 +156,9 @@ const renderProductInfo = ({
         {productInfo.unit + ' ' + productInfo.uom}
       </Text>
       <Text numberOfLines={1} style={styles.textName}>
-        {productInfo.categories && productInfo.categories[0]}
+        {productInfo.categories &&
+          productInfo.categories[0] &&
+          productInfo.categories[0].category}
       </Text>
       <CardQtyIncDec
         updateQuantity={(qty) => console.debug(qty)}

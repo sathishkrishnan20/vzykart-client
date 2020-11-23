@@ -5,7 +5,11 @@ import {Text} from 'react-native-elements';
 
 import TableWriteComponent from '../../../components/Table/add-update';
 import {IAddUpdate} from '../../../interfaces/table-component';
-import {INPUT_COMPONENT, CRUD} from '../../../interfaces/enums';
+import {
+  INPUT_COMPONENT,
+  CRUD,
+  INPUT_DATA_TYPE,
+} from '../../../interfaces/enums';
 import {
   SellerAddProductsState,
   IProductChangeStateTypes,
@@ -253,6 +257,7 @@ class SellerAddProducts extends Component<
       sellingPrice,
       unit,
       uom,
+      gst,
       selectedCategories,
       images,
       uomData,
@@ -281,9 +286,10 @@ class SellerAddProducts extends Component<
       [
         {
           component: INPUT_COMPONENT.TEXT,
-          label: 'MRP',
+          label: 'MRP/Original Price',
           stateKey: 'mrp',
           value: mrp,
+          inputDataType: INPUT_DATA_TYPE.NUMBER,
           disabled: disableInputs,
         },
 
@@ -292,9 +298,31 @@ class SellerAddProducts extends Component<
           label: 'Selling Price',
           stateKey: 'sellingPrice',
           value: sellingPrice,
+          inputDataType: INPUT_DATA_TYPE.NUMBER,
           disabled: disableInputs,
         },
       ],
+
+      [
+        {
+          component: INPUT_COMPONENT.TEXT,
+          label: 'GST amount in RS',
+          stateKey: 'gst',
+          value: gst,
+          inputDataType: INPUT_DATA_TYPE.NUMBER,
+          disabled: disableInputs,
+        },
+
+        {
+          component: INPUT_COMPONENT.TEXT,
+          label: 'Discount Price',
+          stateKey: 'sellingPrice',
+          inputDataType: INPUT_DATA_TYPE.NUMBER,
+          value: String(Number(mrp) - Number(sellingPrice)),
+          disabled: true,
+        },
+      ],
+
       [
         {
           component: INPUT_COMPONENT.MULTI_SELECT,

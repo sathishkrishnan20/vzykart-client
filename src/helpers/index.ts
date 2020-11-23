@@ -4,7 +4,7 @@ import {ICartItem} from '../interfaces/classes/cart';
 import {store} from '../routes/store';
 import {USER_CART} from '../providers/constants';
 import {IProduct, ICategoryInfo} from '../interfaces/products';
-import {IS_WEB} from '../config';
+import {IS_WEB, IMAGE_BASE_URL} from '../config';
 
 export const getCategoryValues = (
   array: string[] | Item[],
@@ -86,4 +86,20 @@ export const calculateTotalMRPAmountWithGST = (
   quantity: number,
 ) => {
   return quantity * (productItem.mrp + productItem.gst || 0);
+};
+
+export const getImageLink = (url?: string) => {
+  if (!url) {
+    return;
+  }
+  if (
+    url.indexOf('http://') > 0 ||
+    url.indexOf('https://') > 0 ||
+    url.indexOf('www.') === 0
+  ) {
+    return url;
+  } else {
+    // URL is relative
+    return IMAGE_BASE_URL + url;
+  }
 };

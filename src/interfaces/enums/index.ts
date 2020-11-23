@@ -41,3 +41,9 @@ export enum BOOKING_FROM {
   WEB = 'WEB',
   APPLICATION = 'APPLICATION',
 }
+
+export enum INPUT_DATA_TYPE {
+  STRING = 'default',
+  NUMBER = 'numeric',
+  EMAIl = 'email-address',
+}

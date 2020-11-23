@@ -37,7 +37,7 @@ class FileUpload extends Component {
         }
         const types = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
 
-        let size = 120000; // 15MegaByte 
+        let size = 1200000; // 15MegaByte 
         for (let x = 0; x < files.length; x++) {
             if (files[x].size > size) {
                 ErrorToast({
