@@ -6,6 +6,8 @@ export enum CART_INC_DEC {
 export enum USER_TYPE {
   USER = 'USER',
   SALES_USER = 'SALES_USER',
+  ADMIN = 'ADMIN',
+  DELIVERY_PERSON = 'DELIVERY_PERSON',
 }
 
 export enum PAYMENT_TYPE {

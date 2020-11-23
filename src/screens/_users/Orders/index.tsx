@@ -7,7 +7,7 @@ import {Container} from '../../../components';
 import {IOrder} from '../../../interfaces/orders';
 import {showToastByResponse} from '../../../components/Toast';
 import {keyExtractor} from '../../../helpers/render-helpers';
-import {OrderCard} from './order-card';
+import {OrderCard} from '../../../components/Orders/order-card';
 import {ComponentProp} from '../../../interfaces';
 import ROUTE_NAMES from '../../../routes/name';
 import {navigateByProp} from '../../../navigation';

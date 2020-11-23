@@ -1,4 +1,4 @@
-import {getService, putService} from '../services/http-service';
+import {getService} from '../services/http-service';
 import {IResponse} from '../interfaces/request-response';
 
 class MasterAction {

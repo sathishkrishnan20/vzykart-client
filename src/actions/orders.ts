@@ -1,4 +1,4 @@
-import {getService, postService} from '../services/http-service';
+import {getService, postService, putService} from '../services/http-service';
 import {IResponse} from '../interfaces/request-response';
 import {IOrderCreate} from '../interfaces/orders';
 class OrderAction {
@@ -16,6 +16,18 @@ class OrderAction {
   }
   async getOrdersByOrderId(orderId: string): Promise<IResponse> {
     const result = await getService('/orders/' + orderId).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
+  async getOrdersBySellerId(sellerId: string): Promise<IResponse> {
+    const result = await getService('/orders/seller/' + sellerId).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
+  async updateOrdersByOrderId(orderId: string, data: any): Promise<IResponse> {
+    const result = await putService('/orders/' + orderId, data).catch(
       (ex) => ex.response,
     );
     return result.data;

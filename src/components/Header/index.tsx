@@ -8,6 +8,7 @@ import ROUTE_NAMES from '../../routes/name';
 import {IS_BIG_SCREEN} from '../../config';
 import HeaderMenu from './material-header';
 import {USER_TYPE} from '../../interfaces/enums';
+import {getLoginRouteByUserType} from '../../helpers';
 
 export function Header({
   hasLoggedIn,
@@ -59,18 +60,20 @@ export function Header({
 
             {hasLoggedIn ? (
               <>
-                <NavLink
-                  exact
-                  to={ROUTE_NAMES.userCart}
-                  style={{textDecoration: 'none', marginLeft: 20}}>
-                  <CartIcon
-                    size={24}
-                    status="success"
-                    color={'#FFF'}
-                    type="ionicon"
-                    name="cart"
-                  />
-                </NavLink>
+                {userType === USER_TYPE.USER ? (
+                  <NavLink
+                    exact
+                    to={ROUTE_NAMES.userCart}
+                    style={{textDecoration: 'none', marginLeft: 20}}>
+                    <CartIcon
+                      size={24}
+                      status="success"
+                      color={'#FFF'}
+                      type="ionicon"
+                      name="cart"
+                    />
+                  </NavLink>
+                ) : null}
                 <NavLink
                   exact
                   activeClassName="active"
@@ -86,16 +89,9 @@ export function Header({
                 </NavLink>
                 <Icon
                   onPress={() => {
-                    const dynamicParam =
-                      String(userType) === USER_TYPE.SALES_USER
-                        ? 'seller'
-                        : 'user';
-                    history.push(
-                      ROUTE_NAMES.dynamicLogin.replace(
-                        ':userType',
-                        dynamicParam,
-                      ),
-                    );
+                    const loginRoute = getLoginRouteByUserType(userType);
+
+                    history.push(loginRoute);
                     onLogout();
                   }}
                   style={{marginLeft: 20}}

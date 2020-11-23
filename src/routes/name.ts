@@ -7,6 +7,8 @@ const ROUTE_NAMES = {
   sellerProductCrudById: IS_WEB
     ? '/seller/product/:crudType/:productId'
     : 'Seller Product Details',
+  sellerOrders: IS_WEB ? '/seller/orders' : 'Orders',
+  sellerOrdersDetails: IS_WEB ? '/seller/orders/:orderId' : 'Orders View',
 
   // Auth
   login: IS_WEB ? '/login' : 'Login',

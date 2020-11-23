@@ -5,6 +5,8 @@ import {store} from '../routes/store';
 import {USER_CART} from '../providers/constants';
 import {IProduct, ICategoryInfo} from '../interfaces/products';
 import {IS_WEB, IMAGE_BASE_URL} from '../config';
+import {USER_TYPE} from '../interfaces/enums';
+import ROUTE_NAMES from '../routes/name';
 
 export const getCategoryValues = (
   array: string[] | Item[],
@@ -101,5 +103,27 @@ export const getImageLink = (url?: string) => {
   } else {
     // URL is relative
     return IMAGE_BASE_URL + url;
+  }
+};
+
+export const getHomeRouteByUserType = (userType: USER_TYPE) => {
+  switch (userType) {
+    case USER_TYPE.USER:
+      return ROUTE_NAMES.home;
+    case USER_TYPE.SALES_USER:
+      return ROUTE_NAMES.sellerOrders;
+    default:
+      return ROUTE_NAMES.home;
+  }
+};
+
+export const getLoginRouteByUserType = (userType: USER_TYPE) => {
+  switch (userType) {
+    case USER_TYPE.USER:
+      return ROUTE_NAMES.dynamicLogin.replace(':userType', 'user');
+    case USER_TYPE.SALES_USER:
+      return ROUTE_NAMES.dynamicLogin.replace(':userType', 'seller');
+    default:
+      return ROUTE_NAMES.login;
   }
 };

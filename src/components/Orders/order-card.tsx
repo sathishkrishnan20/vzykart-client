@@ -1,63 +1,59 @@
 import React from 'react';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {
-  StyleSheet,
-  View,
-  TouchableHighlight,
-  TouchableOpacity,
-} from 'react-native';
-import {IOrder} from '../../../interfaces/orders';
+  IOrderCard,
+  IOrderCardState,
+  IStatusUpdateActions,
+} from '../../interfaces/orders';
 import {Text, Card} from 'react-native-elements';
 import {Row, Col, Grid} from 'react-native-easy-grid';
-import {IS_BIG_SCREEN} from '../../../config';
+import {IS_BIG_SCREEN} from '../../config';
 import {getUserMessageByOrderStatus, getColorByOrderStatus} from './helpers';
-import Address from '../../../components/Address';
-
-interface IOrderCard {
-  orderData: IOrder;
-}
-interface IOrderCardState extends IOrderCard {
-  onClick: () => void;
-  disabled?: boolean;
-}
+import Address from '../Address';
+import {Button} from '../Button';
 
 export const OrderCard = ({
   orderData,
   onClick,
   disabled = false,
+  statusUpdateButtons = [],
+  onChangeStatus,
 }: IOrderCardState) => {
   return IS_BIG_SCREEN ? (
-    <TouchableHighlight disabled={disabled} onPress={onClick}>
-      <OrderCardBigScreen orderData={orderData} />
-    </TouchableHighlight>
+    <TouchableOpacity disabled={disabled} onPress={onClick}>
+      <Card>
+        <Grid>
+          <Col>
+            <RenderProductData orderData={orderData} />
+            <RenderOrderStatusData orderData={orderData} />
+          </Col>
+          <Col>
+            <RenderPaymentData orderData={orderData} />
+            <RenderActionButtons
+              onChangeStatus={onChangeStatus}
+              statusUpdateButtons={statusUpdateButtons}
+            />
+          </Col>
+          {orderData.deliveryAddress ? (
+            <Col>
+              <Address data={orderData.deliveryAddress} />
+            </Col>
+          ) : null}
+        </Grid>
+      </Card>
+    </TouchableOpacity>
   ) : (
     <TouchableOpacity disabled={disabled} onPress={onClick}>
       <Card containerStyle={{margin: 4}}>
         <RenderProductData orderData={orderData} />
         <RenderPaymentData orderData={orderData} />
         <RenderOrderStatusData orderData={orderData} />
+        <RenderActionButtons
+          onChangeStatus={onChangeStatus}
+          statusUpdateButtons={statusUpdateButtons}
+        />
       </Card>
     </TouchableOpacity>
-  );
-};
-
-export const OrderCardBigScreen = ({orderData}: IOrderCard) => {
-  return (
-    <Card>
-      <Grid>
-        <Col>
-          <RenderProductData orderData={orderData} />
-          <RenderOrderStatusData orderData={orderData} />
-        </Col>
-        <Col>
-          <RenderPaymentData orderData={orderData} />
-        </Col>
-        {orderData.deliveryAddress ? (
-          <Col>
-            <Address data={orderData.deliveryAddress} />
-          </Col>
-        ) : null}
-      </Grid>
-    </Card>
   );
 };
 
@@ -133,6 +129,27 @@ const RenderOrderStatusData = ({orderData}: IOrderCard) => {
       <Text style={[styles.textName]} numberOfLines={2}>
         {getUserMessageByOrderStatus(orderData.orderStatus)}
       </Text>
+    </Row>
+  );
+};
+
+const RenderActionButtons = ({
+  statusUpdateButtons,
+  onChangeStatus,
+}: IStatusUpdateActions) => {
+  return (
+    <Row>
+      {typeof onChangeStatus === 'function' &&
+        statusUpdateButtons?.map((item) => (
+          <Col>
+            <Button
+              disabled={item.disabled || false}
+              onPress={() => onChangeStatus(item.value)}
+              buttonStyle={item.style}
+              title={item.label}
+            />
+          </Col>
+        ))}
     </Row>
   );
 };

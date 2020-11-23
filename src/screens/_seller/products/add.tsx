@@ -18,11 +18,7 @@ import {ICreateProduct, IProduct} from '../../../interfaces/products';
 import ProductAction from '../../../actions/products';
 import {getSellerId} from '../../../services/storage-service';
 import {IResponse} from '../../../interfaces/request-response';
-import {
-  SuccessToast,
-  WarningToast,
-  showToastByResponse,
-} from '../../../components/Toast';
+import {showToastByResponse} from '../../../components/Toast';
 import {IS_BIG_SCREEN} from '../../../config';
 import {ScrollView} from 'react-native-gesture-handler';
 import {
@@ -34,7 +30,6 @@ import {ComponentProp} from '../../../interfaces';
 import {Button} from '../../../components';
 import MasterAction from '../../../actions/master';
 import {IUOM, ICategory} from '../../../interfaces/master';
-import {Item} from 'react-native-picker-select';
 const RU = {
   VIEW: 'view',
   UPDATE: 'edit',

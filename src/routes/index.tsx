@@ -39,10 +39,23 @@ import {MyOrders} from '../screens/_users/Orders';
 import {OrderDetails} from '../screens/_users/Orders/Details';
 import {withBadge} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {SellerOrders} from '../screens/_seller/orders';
+import {getLoginRouteByUserType, getHomeRouteByUserType} from '../helpers';
+import {SellerOrderDetails} from '../screens/_seller/orders/details';
 
 const HEADER_HEIGHT = 70;
 
 const SELLER_ROUTES = [
+  {
+    routeName: ROUTE_NAMES.sellerOrders,
+    component: SellerOrders,
+    name: 'Orders',
+  },
+  {
+    routeName: ROUTE_NAMES.sellerOrdersDetails,
+    component: SellerOrderDetails,
+    name: 'Orders Details',
+  },
   {
     routeName: ROUTE_NAMES.sellerProductAdd,
     component: SellerAddProducts,
@@ -136,10 +149,6 @@ const getTabNavMenus = (userType: USER_TYPE | null) => {
         navigationLink: ROUTE_NAMES.home,
       },
       {
-        title: 'Notifications',
-        navigationLink: 'about',
-      },
-      {
         title: 'Profile',
         navigationLink: ROUTE_NAMES.userProfile,
       },
@@ -152,23 +161,19 @@ const getTabNavMenus = (userType: USER_TYPE | null) => {
     return [
       {
         title: 'Home',
-        navigationLink: 'home',
+        navigationLink: ROUTE_NAMES.sellerOrders,
       },
       {
-        title: 'Filters',
-        navigationLink: '/seller/product/add',
+        title: 'Orders',
+        navigationLink: ROUTE_NAMES.sellerOrders,
       },
       {
-        title: 'About',
-        navigationLink: 'about',
+        title: 'Products',
+        navigationLink: ROUTE_NAMES.sellerProductView,
       },
       {
-        title: 'Notifications',
-        navigationLink: 'about',
-      },
-      {
-        title: 'Profile',
-        navigationLink: 'profile',
+        title: 'Add Product',
+        navigationLink: ROUTE_NAMES.sellerProductAdd,
       },
     ];
   } else {
@@ -198,7 +203,6 @@ export function Routes() {
       prevState: any,
       action: {type: any; token?: any; userType: USER_TYPE | null | undefined},
     ) => {
-      console.log(action);
       switch (action.type) {
         case 'RESTORE_TOKEN':
           return {
@@ -283,7 +287,6 @@ export function Routes() {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
-        console.log(data);
         dispatch({
           type: 'SIGN_IN',
           token: data.token,
@@ -312,16 +315,6 @@ export function Routes() {
     removeAll();
     authContext.signOut();
     return;
-    /* return (
-        <Redirect
-          to={{
-            pathname:
-              userType === USER_TYPE.SALES_USER
-                ? '/seller/login'
-                : 'user/login',
-          }}
-        />
-      ); */
   };
 
   const CartIcon: any = withBadge(cartProductsLength)(Icon);
@@ -456,9 +449,17 @@ export function Routes() {
                 component={OrderDetails}
               />
             </>
-          ) : (
+          ) : state.userType === USER_TYPE.SALES_USER ? (
             <>
               {/* Seller Routes */}
+              <Stack.Screen
+                name={ROUTE_NAMES.sellerOrders}
+                component={SellerOrders}
+              />
+              <Stack.Screen
+                name={ROUTE_NAMES.sellerOrdersDetails}
+                component={SellerOrderDetails}
+              />
               <Stack.Screen
                 name={ROUTE_NAMES.sellerProductAdd}
                 component={SellerAddProducts}
@@ -472,7 +473,7 @@ export function Routes() {
                 component={SellerAddProducts}
               />
             </>
-          )}
+          ) : null}
         </Stack.Navigator>
       </AuthContext.Provider>
     );
@@ -574,10 +575,7 @@ function PrivateRoute({
         ) : (
           <Redirect
             to={{
-              pathname:
-                userType === USER_TYPE.SALES_USER
-                  ? '/seller/login'
-                  : '/user/login',
+              pathname: getLoginRouteByUserType(userType),
               state: {from: props.location},
             }}
           />
@@ -601,10 +599,7 @@ function RedirectHomeRouteIfLoggedIn({
         authenticated && userType ? (
           <Redirect
             to={{
-              pathname:
-                userType === USER_TYPE.SALES_USER
-                  ? ROUTE_NAMES.sellerProductView
-                  : ROUTE_NAMES.home,
+              pathname: getHomeRouteByUserType(userType),
               state: {from: props.location},
             }}
           />

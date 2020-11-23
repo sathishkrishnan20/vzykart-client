@@ -23,6 +23,17 @@ import {
 import {ComponentProp} from '../interfaces';
 import ROUTE_NAMES from '../routes/name';
 import {IS_WEB} from '../config';
+import {getHomeRouteByUserType} from '../helpers';
+const getBaseAuthAPIRouteByUserType = (userType: USER_TYPE) => {
+  switch (userType) {
+    case USER_TYPE.USER:
+      return '/users';
+    case USER_TYPE.SALES_USER:
+      return '/seller/sales-user';
+    default:
+      return '/users';
+  }
+};
 class AuthAction {
   async login(
     userType: USER_TYPE = USER_TYPE.USER,
@@ -32,14 +43,9 @@ class AuthAction {
     signInHook: (data: any) => void,
   ): Promise<IResponse> {
     try {
-      const navigateRouteName =
-        userType === USER_TYPE.SALES_USER
-          ? ROUTE_NAMES.sellerProductView
-          : ROUTE_NAMES.home;
-
+      const navigateRouteName = getHomeRouteByUserType(userType);
       const result = await postService(
-        (userType === USER_TYPE.SALES_USER ? '/seller/sales-user' : '/users') +
-          '/sign-in',
+        getBaseAuthAPIRouteByUserType(userType) + '/sign-in',
         data,
       ).catch((ex) => ex.response);
       const response: IResponse = result.data;
@@ -86,8 +92,7 @@ class AuthAction {
     data: IRegisterAPI,
   ): Promise<IResponse> {
     const result = await postService(
-      (userType === USER_TYPE.SALES_USER ? '/seller/sales-user' : '/users') +
-        '/sign-up',
+      getBaseAuthAPIRouteByUserType(userType) + '/sign-up',
       data,
     ).catch((ex) => ex.response);
     return result.data;
@@ -97,8 +102,7 @@ class AuthAction {
     data: IGenAuthCodeAPI,
   ): Promise<IResponse> {
     const result = await postService(
-      (userType === USER_TYPE.SALES_USER ? '/seller/sales-user' : '/users') +
-        '/generate-otp',
+      getBaseAuthAPIRouteByUserType(userType) + '/generate-otp',
       data,
     ).catch((ex) => ex.response);
     return result.data;
@@ -108,8 +112,7 @@ class AuthAction {
     data: IForgotPasswordAPI,
   ): Promise<IResponse> {
     const result = await postService(
-      (userType === USER_TYPE.SALES_USER ? '/seller/sales-user' : '/users') +
-        '/forgot-password',
+      getBaseAuthAPIRouteByUserType(userType) + '/forgot-password',
       data,
     ).catch((ex) => ex.response);
     return result.data;

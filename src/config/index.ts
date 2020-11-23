@@ -9,6 +9,7 @@ export const IS_IOS = Platform.OS === 'ios';
 export const IS_ANDROID = Platform.OS === 'android';
 export const IS_BIG_SCREEN = Dimensions.get('window').width >= 600;
 export const RAZORPAY_LOGO_URL = 'https://example.com/your_logo';
+export const APP_HEADER = 'V-Cart';
 
 export const API_URL = SERVER_URL + '/api';
 export const IMAGE_UPLOAD_API_URL = API_URL + '/image/upload';

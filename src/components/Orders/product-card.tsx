@@ -1,11 +1,11 @@
 import React from 'react';
-import {IOrderProducts} from '../../../../interfaces/orders';
+import {IOrderProducts} from '../../interfaces/orders';
 import {Text, View, StyleSheet} from 'react-native';
-import {IS_BIG_SCREEN, IS_ANDROID, IS_IOS} from '../../../../config';
+import {IS_BIG_SCREEN, IS_ANDROID, IS_IOS} from '../../config';
 import {Grid, Col, Row} from 'react-native-easy-grid';
 import {Card} from 'react-native-elements';
-import Image from '../../../../components/Image/image';
-import {getImageLink} from '../../../../helpers';
+import Image from '../Image/image';
+import {getImageLink} from '../../helpers';
 
 const leftSideSize = IS_BIG_SCREEN ? 2 : 4;
 interface ProductCardOrderedState {

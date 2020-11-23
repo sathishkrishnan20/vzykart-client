@@ -15,7 +15,12 @@ import {Col, Grid} from 'react-native-easy-grid';
 import {Input, Button} from '../../../components/index';
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
-import {BACKGROUND_IMAGE_URL, IS_BIG_SCREEN} from '../../../config';
+import {
+  BACKGROUND_IMAGE_URL,
+  IS_BIG_SCREEN,
+  APP_HEADER,
+  IS_WEB,
+} from '../../../config';
 import {navigateByProp, getParamsByProp} from '../../../navigation';
 import AuthAction from '../../../actions/auth';
 import {ILoginAPI} from '../../../interfaces/actions/auth';
@@ -23,6 +28,7 @@ import {showToastByResponse} from '../../../components/Toast';
 import {ComponentProp} from '../../../interfaces';
 import ROUTE_NAMES from '../../../routes/name';
 import {AuthContext} from '../../../routes';
+import {getLoginRouteByUserType} from '../../../helpers';
 const screenHeight: number = Dimensions.get('window').height - 60;
 const authAction: AuthAction = new AuthAction();
 
@@ -79,9 +85,19 @@ export function Login(props: ComponentProp) {
   const renderTitle = () => {
     return (
       <View>
-        <Text style={styles.heading}>V-Cart</Text>
+        <Text style={styles.heading}>{APP_HEADER}</Text>
       </View>
     );
+  };
+  const getLabelSwitchUser = (userType: USER_TYPE) => {
+    switch (userType) {
+      case USER_TYPE.USER:
+        return 'Login as Sales User';
+      case USER_TYPE.SALES_USER:
+        return 'Login as User';
+      default:
+        return '';
+    }
   };
 
   const renderInputs = () => {
@@ -92,6 +108,19 @@ export function Login(props: ComponentProp) {
             ? 'Reset your Password'
             : 'Sign in to your account'}
         </Card.Title>
+        <TouchableOpacity
+          style={{alignSelf: 'flex-end', marginTop: -8}}
+          onPress={() => {
+            if (userType === USER_TYPE.USER) {
+              setUserType(USER_TYPE.SALES_USER);
+            } else {
+              setUserType(USER_TYPE.USER);
+            }
+          }}>
+          <Text style={styles.textForgotPassword}>
+            {getLabelSwitchUser(userType)}
+          </Text>
+        </TouchableOpacity>
         <Input
           value={userEntry}
           onChangeText={(userEntry: string) => setUserEntry(userEntry)}

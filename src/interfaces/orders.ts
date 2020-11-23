@@ -1,6 +1,7 @@
 import {IUserAddress} from '.';
 import {VALID_ORDER_STATUS, BOOKING_FROM, PAYMENT_TYPE} from './enums';
 import {IProductImage} from './products';
+import {ViewStyle, StyleProp} from 'react-native';
 export interface IOrderProducts {
   productId: string;
   sellerId: string;
@@ -47,4 +48,24 @@ export interface IOrder extends IOrderCreate {
   _id: string;
   orderId: string;
   invoiceNumber: string;
+}
+
+export interface IOrderStatusUpdateButton {
+  value: VALID_ORDER_STATUS;
+  label: string;
+  style: StyleProp<ViewStyle>;
+  disabled?: boolean;
+}
+
+// Order Card Component
+export interface IOrderCard {
+  orderData: IOrder;
+}
+export interface IStatusUpdateActions {
+  statusUpdateButtons?: IOrderStatusUpdateButton[];
+  onChangeStatus?: (updatedStatus: VALID_ORDER_STATUS) => void;
+}
+export interface IOrderCardState extends IOrderCard, IStatusUpdateActions {
+  onClick: () => void;
+  disabled?: boolean;
 }
