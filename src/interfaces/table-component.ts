@@ -8,6 +8,7 @@ export interface IAddUpdate {
   label: string;
   stateKey: string;
   value: string | object | number | boolean | string[];
+  disabled?: boolean;
   selectionItems?: Item[];
   onSelectedItemsChange?: Function;
   showDatePicker?: boolean;

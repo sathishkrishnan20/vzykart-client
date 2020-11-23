@@ -1,12 +1,14 @@
 import {Item} from 'react-native-picker-select';
 import {IProductImage} from '../products';
+import {CRUD} from '../enums';
+import {IUOM} from '../master';
 
 export interface SellerAddProductsState {
+  productId: string;
   productPrefix: string;
   productName: string;
   productDescription: string;
   mrp: string;
-  tradePrice: string;
   sellingPrice: string;
   discount: string;
   gst: string;
@@ -15,11 +17,15 @@ export interface SellerAddProductsState {
   unit: string;
   categories: string[] | Item[];
   selectedItems: any[];
+  images: IProductImage[];
+
   date: Date;
   showDatePicker: boolean;
   isLoading: boolean;
   alertVisible: boolean;
-  images: IProductImage[];
+  disableInputs: boolean;
+  crudType: CRUD;
+  uomData: Item[];
 }
 
 export interface SellerViewProductsState {

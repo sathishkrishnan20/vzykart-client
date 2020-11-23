@@ -1,35 +1,53 @@
 import React, {Component} from 'react';
 
 import {StyleSheet, View, SafeAreaView} from 'react-native';
-import {Text, Button} from 'react-native-elements';
+import {Text} from 'react-native-elements';
 
 import TableWriteComponent from '../../../components/Table/add-update';
 import {IAddUpdate} from '../../../interfaces/table-component';
-import {INPUT_COMPONENT} from '../../../interfaces/enums';
+import {INPUT_COMPONENT, CRUD} from '../../../interfaces/enums';
 import {
   SellerAddProductsState,
   IProductChangeStateTypes,
 } from '../../../interfaces/classes/seller-add-products';
-import {ICreateProduct} from '../../../interfaces/products';
+import {ICreateProduct, IProduct} from '../../../interfaces/products';
 import ProductAction from '../../../actions/products';
 import {getSellerId} from '../../../services/storage-service';
 import {IResponse} from '../../../interfaces/request-response';
-import {SuccessToast, WarningToast} from '../../../components/Toast';
+import {
+  SuccessToast,
+  WarningToast,
+  showToastByResponse,
+} from '../../../components/Toast';
 import {IS_BIG_SCREEN} from '../../../config';
 import {ScrollView} from 'react-native-gesture-handler';
 import {getMultiSelectValues} from '../../../helpers';
+import {getParamsByProp} from '../../../navigation';
+import {ComponentProp} from '../../../interfaces';
+import {Button} from '../../../components';
+import MasterAction from '../../../actions/master';
+import {IUOM} from '../../../interfaces/master';
+const RU = {
+  VIEW: 'view',
+  UPDATE: 'edit',
+};
+const RUParams = [RU.VIEW, RU.UPDATE];
 
-class SellerAddProducts extends Component<any, SellerAddProductsState> {
+class SellerAddProducts extends Component<
+  ComponentProp,
+  SellerAddProductsState
+> {
   multiSelect: any;
   productAction: ProductAction;
+  masterAction: MasterAction;
   constructor(props: any) {
     super(props);
     this.state = {
+      productId: '',
       productPrefix: '',
       productName: '',
       productDescription: '',
       mrp: '',
-      tradePrice: '',
       sellingPrice: '',
       discount: '',
       gst: '',
@@ -43,76 +61,140 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       showDatePicker: false,
       isLoading: false,
       alertVisible: false,
+      disableInputs: false,
+      crudType: CRUD.CREATE,
+      uomData: [],
     };
     this.productAction = new ProductAction();
-    console.log(this.props);
+    this.masterAction = new MasterAction();
   }
-  componentDidMount() {}
+
+  componentDidMount() {
+    const params = getParamsByProp(this.props);
+    const crudType = params.crudType;
+    this.getUOM();
+    if (RUParams.includes(crudType) && params.productId) {
+      this.getProductById(params.productId, crudType);
+    }
+    if (crudType && crudType === RU.UPDATE) {
+      this.setState({crudType: CRUD.UPDATE});
+    } else if (crudType && crudType === RU.VIEW) {
+      this.setState({crudType: CRUD.VIEW});
+    }
+  }
+  async getUOM() {
+    const masterResponse = await this.masterAction.getUOM();
+    if (masterResponse.success) {
+      const uomData = masterResponse.data.map((item: IUOM) => {
+        return {
+          value: item.uom,
+          label: item.uom,
+        };
+      });
+      this.setState({uomData});
+    }
+  }
+  async getProductById(productId: string, crudType: string) {
+    console.log(productId);
+    const productResponse = await this.productAction.getProductByProductId(
+      productId,
+    );
+    if (productResponse.success) {
+      const productData: IProduct = productResponse.data;
+      this.setState({
+        productId: productData._id,
+        productName: productData.productName,
+        productDescription: productData.productDescription,
+        mrp: String(productData.mrp),
+        sellingPrice: String(productData.sellingPrice),
+        discount: String(productData.discount),
+        gst: String(productData.gst),
+        sellerId: productData.sellerId,
+        uom: productData.uom,
+        unit: productData.unit,
+        categories: productData.categories as string[],
+        images: productData.images || [],
+        disableInputs: crudType === RU.VIEW,
+      });
+    }
+    showToastByResponse(productResponse);
+  }
+
   changeState(key: string, value: IProductChangeStateTypes) {
     // @ts-ignore
     this.setState({[key]: value});
   }
+
   onSelectedItemsChange = (selectedItems: any) => {
     this.setState({selectedItems});
   };
+
   async createProduct() {
     try {
       this.setState({isLoading: true});
-      const {
-        productDescription,
-        productName,
-        mrp,
-        tradePrice,
-        sellingPrice,
-        uom,
-        gst,
-        unit,
-        categories,
-        discount,
-        images,
-      } = this.state;
-      const createProductRequest: ICreateProduct = {
-        sellerId: await getSellerId(),
-        productName,
-        productDescription,
-        mrp: Number(mrp),
-        tradePrice: Number(tradePrice),
-        sellingPrice: Number(sellingPrice),
-        discount: Number(discount),
-        gst: Number(gst),
-        uom,
-        unit,
-        categories: getMultiSelectValues(categories),
-        images,
-      };
-
+      const createProductRequest = await this.getProductRequestData();
       const response: IResponse = await this.productAction.createProduct(
         createProductRequest,
       );
-      console.log(response);
       if (response.success) {
-        SuccessToast({
-          title: 'Success',
-          message: 'Product Created Successfully',
-        });
         this.resetState();
-      } else {
-        WarningToast({
-          title: 'Warning',
-          message: response.message,
-        });
       }
+      showToastByResponse(response);
       this.setState({isLoading: false});
     } catch (error) {
       this.setState({isLoading: false});
     }
   }
+
+  async updateProduct() {
+    try {
+      this.setState({isLoading: true});
+      const productRequest = await this.getProductRequestData();
+      const response: IResponse = await this.productAction.updateProduct(
+        this.state.productId,
+        productRequest,
+      );
+      showToastByResponse(response);
+      this.setState({isLoading: false});
+    } catch (error) {
+      this.setState({isLoading: false});
+    }
+  }
+  async getProductRequestData() {
+    const {
+      productDescription,
+      productName,
+      mrp,
+      sellingPrice,
+      uom,
+      gst,
+      unit,
+      categories,
+      discount,
+      images,
+    } = this.state;
+
+    const productRequest: ICreateProduct = {
+      sellerId: await getSellerId(),
+      productName,
+      productDescription,
+      mrp: Number(mrp),
+      sellingPrice: Number(sellingPrice),
+      discount: Number(discount),
+      gst: Number(gst),
+      uom,
+      unit,
+      categories: getMultiSelectValues(categories),
+      images,
+    };
+    return productRequest;
+  }
+
   resetState() {
     this.setState({
       productName: '',
       productDescription: '',
       mrp: '',
-      tradePrice: '',
       sellingPrice: '',
       discount: '',
       gst: '',
@@ -124,6 +206,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
       images: [],
     });
   }
+
   convertObjectToArray = (array: IAddUpdate[][]) => {
     const finalArray = [];
     for (let index = 0; index < array.length; index++) {
@@ -136,19 +219,28 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
     return finalArray;
   };
 
+  submitHandler() {
+    const {crudType} = this.state;
+    if (crudType === CRUD.CREATE) {
+      this.createProduct();
+    } else if (crudType === CRUD.UPDATE) {
+      this.updateProduct();
+    }
+  }
+
   render() {
     const {
       productDescription,
       productName,
       mrp,
-      tradePrice,
       sellingPrice,
       unit,
       uom,
       categories,
       images,
-
+      uomData,
       isLoading,
+      disableInputs,
     } = this.state;
     const items = [
       {
@@ -196,12 +288,14 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
           label: 'Product Name',
           stateKey: 'productName',
           value: productName,
+          disabled: disableInputs,
         },
         {
           component: INPUT_COMPONENT.TEXT,
           label: 'Product Description',
           stateKey: 'productDescription',
           value: productDescription,
+          disabled: disableInputs,
         },
       ],
       [
@@ -210,18 +304,15 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
           label: 'MRP',
           stateKey: 'mrp',
           value: mrp,
+          disabled: disableInputs,
         },
-        {
-          component: INPUT_COMPONENT.TEXT,
-          label: 'Trading Price',
-          stateKey: 'tradePrice',
-          value: tradePrice,
-        },
+
         {
           component: INPUT_COMPONENT.TEXT,
           label: 'Selling Price',
           stateKey: 'sellingPrice',
           value: sellingPrice,
+          disabled: disableInputs,
         },
       ],
       [
@@ -232,19 +323,22 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
           value: categories,
           selectionItems: items,
           onSelectedItemsChange: this.onSelectedItemsChange.bind(this),
+          disabled: disableInputs,
         },
         {
           component: INPUT_COMPONENT.SINGLE_SELECT,
           label: 'Select Unit of Measurement',
           stateKey: 'uom',
           value: uom,
-          selectionItems: items,
+          selectionItems: uomData,
+          disabled: disableInputs,
         },
         {
           component: INPUT_COMPONENT.TEXT,
-          label: 'Available Quantity',
+          label: 'Unit' + (uom ? ' in ' + uom : ''),
           stateKey: 'unit',
           value: unit,
+          disabled: disableInputs,
         },
       ],
       [
@@ -253,6 +347,7 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
           label: 'image',
           stateKey: 'images',
           value: images,
+          disabled: disableInputs,
         },
       ],
     ];
@@ -276,8 +371,9 @@ class SellerAddProducts extends Component<any, SellerAddProductsState> {
             />
 
             <Button
+              disabled={disableInputs}
               title="Submit"
-              onPress={() => this.createProduct()}
+              onPress={() => this.submitHandler()}
               loading={isLoading}
             />
           </View>

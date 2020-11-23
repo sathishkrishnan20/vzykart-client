@@ -198,6 +198,7 @@ export function Routes() {
       prevState: any,
       action: {type: any; token?: any; userType: USER_TYPE | null | undefined},
     ) => {
+      console.log(action);
       switch (action.type) {
         case 'RESTORE_TOKEN':
           return {
@@ -205,6 +206,7 @@ export function Routes() {
             userType: action.userType,
             userToken: action.token,
             isLoading: false,
+            isTokenRestored: true,
           };
         case 'SIGN_IN':
           return {
@@ -212,6 +214,7 @@ export function Routes() {
             isSignout: false,
             userToken: action.token,
             userType: action.userType,
+            isTokenRestored: true,
           };
         case 'SIGN_OUT':
           return {
@@ -219,6 +222,7 @@ export function Routes() {
             isSignout: true,
             userToken: null,
             userType: null,
+            isTokenRestored: true,
           };
       }
     },
@@ -227,6 +231,7 @@ export function Routes() {
       isSignout: false,
       userToken: null,
       userType: null,
+      isTokenRestored: false,
     },
   );
 
@@ -259,6 +264,7 @@ export function Routes() {
           token: userToken,
         } as never);
       }
+      console.log('userId', userId);
 
       // After restoring token, we may need to validate it in production apps
 
@@ -471,7 +477,7 @@ export function Routes() {
       </AuthContext.Provider>
     );
   };
-
+  console.log('Coming to render', state.isTokenRestored);
   return Platform.OS === 'web' ? (
     <>
       <AuthContext.Provider value={authContext}>
@@ -502,9 +508,11 @@ export function Routes() {
           </div>
           <View style={{marginTop: HEADER_HEIGHT}}>
             {AUTH_ROUTES.map((route, key: number) => (
-              <Route
+              <RedirectHomeRouteIfLoggedIn
                 key={'auth' + key}
                 exact
+                authenticated={state.userToken !== null}
+                userType={state.userType}
                 path={route.routeName}
                 component={route.component}
               />
@@ -517,28 +525,29 @@ export function Routes() {
                 component={route.component}
               />
             ))}
+            {state.isTokenRestored &&
+              USER_AUTHENTICATED_ROUTES.map((route, key: number) => (
+                <PrivateRoute
+                  key={'user-auth' + key}
+                  exact
+                  authenticated={state.userToken !== null}
+                  userType={USER_TYPE.USER}
+                  path={route.routeName}
+                  component={route.component}
+                />
+              ))}
 
-            {USER_AUTHENTICATED_ROUTES.map((route, key: number) => (
-              <PrivateRoute
-                key={'user-auth' + key}
-                exact
-                authenticated={state.userToken !== null}
-                userType={USER_TYPE.USER}
-                path={route.routeName}
-                component={route.component}
-              />
-            ))}
-
-            {SELLER_ROUTES.map((route, key: number) => (
-              <PrivateRoute
-                key={'seller' + key}
-                exact
-                authenticated={state.userToken !== null}
-                userType={USER_TYPE.SALES_USER}
-                path={route.routeName}
-                component={route.component}
-              />
-            ))}
+            {state.isTokenRestored &&
+              SELLER_ROUTES.map((route, key: number) => (
+                <PrivateRoute
+                  key={'seller' + key}
+                  exact
+                  authenticated={state.userToken !== null}
+                  userType={USER_TYPE.SALES_USER}
+                  path={route.routeName}
+                  component={route.component}
+                />
+              ))}
           </View>
         </Router>
       </AuthContext.Provider>
@@ -572,6 +581,35 @@ function PrivateRoute({
               state: {from: props.location},
             }}
           />
+        )
+      }
+    />
+  );
+}
+
+function RedirectHomeRouteIfLoggedIn({
+  component: Component,
+  authenticated,
+  userType,
+  ...rest
+}: any) {
+  console.log('userType on Redirect' + userType);
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        authenticated && userType ? (
+          <Redirect
+            to={{
+              pathname:
+                userType === USER_TYPE.SALES_USER
+                  ? ROUTE_NAMES.sellerProductView
+                  : ROUTE_NAMES.home,
+              state: {from: props.location},
+            }}
+          />
+        ) : (
+          <Component {...props} />
         )
       }
     />

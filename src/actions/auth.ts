@@ -6,7 +6,7 @@ import {
   IForgotPasswordAPI,
   IGenAuthCodeAPI,
 } from '../interfaces/actions/auth';
-import {navigateByProp} from '../navigation';
+import {navigateByProp, replaceByProp} from '../navigation';
 import {ErrorToast, showToastByResponse} from '../components/Toast';
 import {USER_TYPE} from '../interfaces/enums';
 import {store} from '../routes/store';
@@ -44,15 +44,6 @@ class AuthAction {
       ).catch((ex) => ex.response);
       const response: IResponse = result.data;
       if (response.success) {
-        const signInHookRequest = {
-          token: response.data?.token,
-          userType: response.data?.type,
-          userId: response.data?.id,
-        };
-        signInHook(signInHookRequest);
-        if (IS_WEB) {
-          navigateByProp(props, navigateRouteName, navigateParams);
-        }
         if (response.data.type === USER_TYPE.USER) {
           store.dispatch({
             type: AUTH_USER_LOGIN,
@@ -72,6 +63,15 @@ class AuthAction {
         }
         setToken(response.data.token);
         setUserType(response.data.type);
+        const signInHookRequest = {
+          token: response.data?.token,
+          userType: response.data?.type,
+          userId: response.data?.id,
+        };
+        signInHook(signInHookRequest);
+        if (IS_WEB) {
+          replaceByProp(props, navigateRouteName, navigateParams);
+        }
       } else {
         showToastByResponse(response);
       }
@@ -120,7 +120,6 @@ class AuthAction {
     redirectScreenName: string,
     params: any = {},
   ) {
-    console.log('Redirecting to Login');
     const userId = await getUserId();
     const token = await getToken();
     if (!userId || !token) {

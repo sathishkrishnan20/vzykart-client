@@ -12,12 +12,14 @@ const DateTimePicker = ({
   showDatePicker,
   stateKey,
   showDatePickerStateKey,
+  disabled = false
 }) => {
   console.log('showDatePicker on Date Pic', showDatePicker);
   return (
     <View>
       <View>
         <TouchableOpacity
+          disabled={disabled}
           style={{
             borderBottomColor: 'gray',
             borderBottomWidth: 1,
@@ -39,6 +41,7 @@ const DateTimePicker = ({
       </View>
       {showDatePicker && (
         <RNDateTimePicker
+          
           testID="dateTimePicker"
           value={date}
           mode={'datetime'}

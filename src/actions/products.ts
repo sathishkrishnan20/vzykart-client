@@ -1,4 +1,4 @@
-import {postService, getService} from '../services/http-service';
+import {postService, getService, putService} from '../services/http-service';
 import {IResponse} from '../interfaces/request-response';
 class ProductAction {
   async createProduct(productData: any) {
@@ -7,8 +7,21 @@ class ProductAction {
     );
     return result.data;
   }
+  async updateProduct(productId: string, productData: any) {
+    const result = await putService(
+      '/products/' + productId,
+      productData,
+    ).catch((ex) => ex.response);
+    return result.data;
+  }
   async getProductsBySellerId(sellerId: string): Promise<IResponse> {
     const result = await getService('/products/seller/' + sellerId).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
+  async getProductByProductId(productId: string): Promise<IResponse> {
+    const result = await getService('/products/' + productId).catch(
       (ex) => ex.response,
     );
     return result.data;

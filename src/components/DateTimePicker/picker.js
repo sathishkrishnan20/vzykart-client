@@ -10,12 +10,14 @@ const DateTimePicker = ({
   showDatePicker,
   stateKey,
   showDatePickerStateKey,
-  label = 'Select Date'
+  label = 'Select Date',
+  disabled = false
 }) => {
   console.log('showDatePicker on Date Pic', showDatePicker);
   return (
     <View style={{ margin: 8 }}>
       <ReactDatePicker
+        disabled={disabled}
         selected={date}
         onChange={(date) => changeState(stateKey, date)}
         className="red-border"

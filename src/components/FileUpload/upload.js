@@ -20,7 +20,7 @@ import {
     }[]
 */
 class FileUpload extends Component {
-   
+
     onChangeHandler = event => {
         this.setState({
             selectedFile: event.target.files,
@@ -78,16 +78,19 @@ class FileUpload extends Component {
     render() {
         const {
             images,
-            onDeleteImage
+            onDeleteImage,
+            disabled = false
         } = this.props;
         return (<>
-             <input type = "file" className= "form-control" multiple onChange={this.onChangeHandler
-}
-            />
+            {
+                disabled ?  null:
+                <input type = "file" className= "form-control" multiple onChange={this.onChangeHandler}/> 
+              }
            
              <ImageViewer 
-            onDeleteImage={onDeleteImage}
-            images={images}/> 
+                disabled={disabled}
+                onDeleteImage={onDeleteImage}
+                images={images}/> 
            
             </>
         )

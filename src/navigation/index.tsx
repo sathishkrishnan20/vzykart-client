@@ -19,6 +19,17 @@ const navigateByProp = (
   customRouteMobile?: string,
 ) => {
   Platform.OS === 'web'
+    ? props.history.push(routeName)
+    : props.navigation.navigate(customRouteMobile || routeName, params);
+};
+
+const replaceByProp = (
+  props: ComponentProp,
+  routeName: string,
+  params: any = {},
+  customRouteMobile?: string,
+) => {
+  Platform.OS === 'web'
     ? props.history.replace(routeName)
     : props.navigation.navigate(customRouteMobile || routeName, params);
 };
@@ -67,4 +78,5 @@ export {
   getParamsByProp,
   navigateToCheckoutPage,
   getParamForCheckoutPage,
+  replaceByProp,
 };

@@ -1,11 +1,11 @@
 import {IUserAddress} from '.';
 
 export interface ICreateProduct {
+  productId?: string;
   sellerId: string;
   productName: string;
   productDescription: string;
   mrp: number;
-  tradePrice: number;
   sellingPrice: number;
   discount: number;
   gst: number;
@@ -13,7 +13,6 @@ export interface ICreateProduct {
   unit: string;
   categories?: string[];
   images?: IProductImage[];
-
   rupeeSymbol?: string;
 }
 

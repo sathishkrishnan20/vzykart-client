@@ -26,6 +26,7 @@ export default function TableWriteComponent({
                 <Col key={`${index}${componentIndex}`}>
                   {componentItem.component === INPUT_COMPONENT.TEXT ? (
                     <Input
+                      disabled={componentItem.disabled || false}
                       style={{padding: 4}}
                       label={componentItem.label}
                       value={componentItem.value as string}
@@ -54,6 +55,7 @@ export default function TableWriteComponent({
                         {componentItem.label}
                       </Text>
                       <RNPickerSelect
+                        disabled={componentItem.disabled}
                         placeholder={{
                           label: componentItem.label,
                           value: null,
@@ -103,6 +105,7 @@ export default function TableWriteComponent({
 
                   {componentItem.component === INPUT_COMPONENT.MULTI_SELECT ? (
                     <MultiSelect
+                      disabled={componentItem.disabled}
                       items={componentItem.selectionItems || []}
                       stateKey={componentItem.stateKey}
                       onSelectedItemsChange={changeState}
@@ -113,6 +116,7 @@ export default function TableWriteComponent({
 
                   {componentItem.component === INPUT_COMPONENT.DATE_PICKER ? (
                     <DateTimePicker
+                      disabled={componentItem.disabled}
                       date={componentItem.value as Date}
                       stateKey={componentItem.stateKey}
                       showDatePicker={componentItem.showDatePicker || false}
@@ -124,6 +128,7 @@ export default function TableWriteComponent({
                   ) : null}
                   {componentItem.component === INPUT_COMPONENT.FILE_UPLOAD ? (
                     <FileUpload
+                      disabled={componentItem.disabled}
                       type={componentItem.label || 'image'}
                       images={componentItem.value}
                       onDeleteImage={(images: IProductImage[]) =>

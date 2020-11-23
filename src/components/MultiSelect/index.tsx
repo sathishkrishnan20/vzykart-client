@@ -13,6 +13,7 @@ interface IMultiSelect {
   selectedItems: Item[];
   stateKey: string;
   label: string;
+  disabled?: boolean;
 }
 const MultiSelect = ({
   items,
@@ -20,6 +21,7 @@ const MultiSelect = ({
   selectedItems,
   stateKey,
   label = 'Select Items',
+  disabled = false,
 }: IMultiSelect) => {
   return (
     <>
@@ -35,6 +37,7 @@ const MultiSelect = ({
       </Text>
       {IS_WEB ? (
         <Select
+          isDisabled={disabled}
           styles={{
             menuPortal: (base) => ({...base, zIndex: 9999}),
             menu: (provided) => ({...provided, zIndex: 999}),
@@ -54,6 +57,7 @@ const MultiSelect = ({
       ) : (
         <View>
           <SectionedMultiSelect
+            disabled={disabled}
             items={items}
             IconRenderer={Icons as any}
             uniqueKey="value"

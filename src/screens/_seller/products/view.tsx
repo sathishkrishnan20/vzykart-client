@@ -12,6 +12,8 @@ import {TableHeader} from '../../../interfaces/table-component';
 import {CRUD} from '../../../interfaces/enums';
 import {navigateByProp} from '../../../navigation';
 import {ComponentProp} from '../../../interfaces';
+import {Button} from '../../../components/index';
+import ROUTE_NAMES from '../../../routes/name';
 class SellerViewProducts extends Component<
   ComponentProp,
   SellerViewProductsState
@@ -30,10 +32,7 @@ class SellerViewProducts extends Component<
       label: 'MRP',
       node: 'mrp',
     },
-    {
-      label: 'Trading Price',
-      node: 'tradePrice',
-    },
+
     {
       label: 'Selling Price',
       node: 'sellingPrice',
@@ -69,7 +68,6 @@ class SellerViewProducts extends Component<
     this.productAction = new ProductAction();
   }
   componentDidMount() {
-    console.log(this.props);
     this.getProducts();
   }
 
@@ -98,6 +96,18 @@ class SellerViewProducts extends Component<
             style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
             View Product
           </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <Button
+              onPress={() =>
+                navigateByProp(
+                  this.props,
+                  ROUTE_NAMES.sellerProductAdd.replace(':crudType', 'add'),
+                  {crudType: 'add'},
+                )
+              }
+              title="Add Product"></Button>
+          </View>
+
           <ScrollView style={styles.dataWrapper}>
             <TableComponent
               headerData={this.headerData}
@@ -108,14 +118,27 @@ class SellerViewProducts extends Component<
               viewAction={(id: string) => {
                 navigateByProp(
                   this.props,
-                  '/seller/product/view/' + id,
+                  ROUTE_NAMES.sellerProductCrudById
+                    .replace(':crudType', 'view')
+                    .replace(':productId', id),
                   {
                     crudType: 'view',
                     productId: id,
                   },
-                  '/seller/product/add',
                 );
               }}
+              editAction={(id: string) =>
+                navigateByProp(
+                  this.props,
+                  ROUTE_NAMES.sellerProductCrudById
+                    .replace(':crudType', 'edit')
+                    .replace(':productId', id),
+                  {
+                    crudType: 'edit',
+                    productId: id,
+                  },
+                )
+              }
             />
           </ScrollView>
         </View>

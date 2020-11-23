@@ -10,8 +10,13 @@ import {IProductImage} from '../../interfaces/products';
 interface IImageViewer {
   images: IProductImage[];
   onDeleteImage: (images: IProductImage[]) => void;
+  disabled: boolean;
 }
-export const ImageViewer = ({images, onDeleteImage}: IImageViewer) => {
+export const ImageViewer = ({
+  images,
+  onDeleteImage,
+  disabled = false,
+}: IImageViewer) => {
   const deleteImage = (imageIndex: number) => {
     images[imageIndex].active = false;
     onDeleteImage(images);
@@ -33,23 +38,26 @@ export const ImageViewer = ({images, onDeleteImage}: IImageViewer) => {
                 source={{uri: SERVER_URL + item.optimizedDestinationPath}}
                 style={{width: 200, height: 200}}
                 PlaceholderContent={<ActivityIndicator />}>
-                <Icon
-                  style={{
-                    marginLeft: 'auto',
-                    borderWidth: 1,
-                    borderColor: 'rgba(0,0,0,0.2)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 25,
-                    height: 25,
-                    backgroundColor: '#fff',
-                    borderRadius: 50,
-                  }}
-                  name="close"
-                  type="font-awesome"
-                  color="gray"
-                  onPress={() => deleteImage(index)}
-                />
+                {disabled ? null : (
+                  <Icon
+                    disabled={disabled}
+                    style={{
+                      marginLeft: 'auto',
+                      borderWidth: 1,
+                      borderColor: 'rgba(0,0,0,0.2)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 25,
+                      height: 25,
+                      backgroundColor: '#fff',
+                      borderRadius: 50,
+                    }}
+                    name="close"
+                    type="font-awesome"
+                    color="gray"
+                    onPress={() => deleteImage(index)}
+                  />
+                )}
               </Image>
             </View>
           </View>
