@@ -2,6 +2,7 @@
 import Toast from 'react-native-toast-message';
 import {IS_WEB} from '../../config';
 import {IResponse} from '../../interfaces/request-response';
+import {baseToast} from './toast';
 interface IToastOptional {
   duration?: number;
   autoHide?: boolean;
@@ -17,11 +18,6 @@ enum ToastType {
   ERROR = 'error',
   INFO = 'info',
 }
-const commonConfig = {
-  position: IS_WEB ? 'top' : 'bottom',
-  topOffset: IS_WEB ? 150 : 0,
-  bottomOffset: IS_WEB ? 0 : 60,
-};
 export const showToastByResponse = ({
   success,
   message,
@@ -70,21 +66,4 @@ export const InfoToast = ({
   autoHide = true,
 }: IToast) => {
   baseToast(ToastType.INFO, title, message, autoHide, duration);
-};
-
-const baseToast = (
-  type: ToastType,
-  title: string,
-  message: string,
-  autoHide: boolean,
-  duration: number,
-) => {
-  Toast.show({
-    type: type,
-    text1: title,
-    text2: message,
-    autoHide: autoHide,
-    visibilityTime: duration || 3000,
-    ...commonConfig,
-  });
 };

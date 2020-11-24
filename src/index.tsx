@@ -21,6 +21,8 @@ import Zocial from 'react-native-vector-icons/Fonts/Zocial.ttf';
 import Fontisto from 'react-native-vector-icons/Fonts/Fontisto.ttf';
 import Helvetica from './assets/fonts/Helvetica-Light.ttf';
 import {MenuProvider} from 'react-native-popup-menu';
+import {ToastContainer} from 'react-toastify';
+import {IS_WEB} from './config';
 const fonts = [
   {url: AntDesign, fontFamilyName: 'AntDesign'},
   {url: Entypo, fontFamilyName: 'Entypo'},
@@ -74,7 +76,11 @@ export function App() {
       <MenuProvider>
         <ThemeProvider theme={commonTheme}>
           <Routes />
-          <Toast ref={(ref) => Toast.setRef(ref)} />
+          {IS_WEB ? (
+            <ToastContainer containerId="toastId" />
+          ) : (
+            <Toast ref={(ref) => Toast.setRef(ref)} />
+          )}
         </ThemeProvider>
       </MenuProvider>
     </Provider>
