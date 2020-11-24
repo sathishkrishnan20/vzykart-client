@@ -26,6 +26,12 @@ class OrderAction {
     );
     return result.data;
   }
+  async getOrdersByAdminId(): Promise<IResponse> {
+    const result = await getService('/admin/orders/list').catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
   async updateOrdersByOrderId(orderId: string, data: any): Promise<IResponse> {
     const result = await putService('/orders/' + orderId, data).catch(
       (ex) => ex.response,

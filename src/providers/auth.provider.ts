@@ -2,12 +2,14 @@ import {
   AUTH_USER_LOGIN,
   AUTH_SELLER_LOGIN,
   AUTH_LOGOUT,
+  AUTH_ADMIN_LOGIN,
 } from '../providers/constants';
 import {USER_TYPE} from '../interfaces/enums';
 interface IAuthProviderState {
   type?: string;
   isAuthenticated: boolean;
   userId: string;
+  adminId: string;
   sellerId: string;
   userType: USER_TYPE | '';
   token: string;
@@ -22,6 +24,7 @@ export const userInitialState: IAuthProviderState = {
   isAuthenticated: false,
   userId: '',
   userType: '',
+  adminId: '',
   token: '',
   success: false,
   hasLoggedIn: false,
@@ -51,6 +54,17 @@ export default (state = userInitialState, action: IAuthProviderState) => {
         token: action.token,
         userData: action.userData || {},
         userType: USER_TYPE.SALES_USER,
+        success: true,
+        isAuthenticated: true,
+        hasLoggedIn: true,
+      };
+    case AUTH_ADMIN_LOGIN:
+      return {
+        ...state,
+        adminId: action.adminId,
+        token: action.token,
+        userData: action.userData || {},
+        userType: USER_TYPE.ADMIN,
         success: true,
         isAuthenticated: true,
         hasLoggedIn: true,

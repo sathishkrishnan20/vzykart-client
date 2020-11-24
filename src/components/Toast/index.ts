@@ -1,6 +1,3 @@
-// @ts-ignore
-import Toast from 'react-native-toast-message';
-import {IS_WEB} from '../../config';
 import {IResponse} from '../../interfaces/request-response';
 import {baseToast} from './toast';
 interface IToastOptional {

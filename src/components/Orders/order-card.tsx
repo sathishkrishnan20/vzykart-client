@@ -34,8 +34,10 @@ export const OrderCard = ({
               statusUpdateButtons={statusUpdateButtons}
             />
           </Col>
+
           {orderData.deliveryAddress ? (
             <Col>
+              <RenderUserInfo orderData={orderData} />
               <Address data={orderData.deliveryAddress} />
             </Col>
           ) : null}
@@ -45,6 +47,7 @@ export const OrderCard = ({
   ) : (
     <TouchableOpacity disabled={disabled} onPress={onClick}>
       <Card containerStyle={{margin: 4}}>
+        <RenderUserInfo orderData={orderData} />
         <RenderProductData orderData={orderData} />
         <RenderPaymentData orderData={orderData} />
         <RenderOrderStatusData orderData={orderData} />
@@ -57,9 +60,38 @@ export const OrderCard = ({
   );
 };
 
+const RenderUserInfo = ({orderData}: IOrderCard) => {
+  return (
+    <View>
+      <Row>
+        <Text style={[styles.textName, styles.bold]}>Order for:</Text>
+        <Text style={[styles.textName]}>
+          {orderData.userInfo?.firstName} {orderData.userInfo?.lastName}
+        </Text>
+      </Row>
+      <Row>
+        <Text style={[styles.textName, styles.bold]}>Email / Mobile:</Text>
+        <Text style={[styles.textName]}>
+          {orderData.userInfo?.email} {orderData.userInfo?.mobileNumber}
+        </Text>
+      </Row>
+    </View>
+  );
+};
+
 const RenderProductData = ({orderData}: IOrderCard) => {
   return (
     <View>
+      <Row>
+        <Text style={styles.textName} numberOfLines={1}>
+          Created at:
+        </Text>
+        <Text style={[styles.textName, styles.bold]} numberOfLines={1}>
+          {new Date(orderData.createdDate).toLocaleDateString() +
+            ' ' +
+            new Date(orderData.createdDate).toLocaleTimeString()}
+        </Text>
+      </Row>
       <Row>
         <Text style={styles.textName} numberOfLines={1}>
           Invoice Number:

@@ -112,6 +112,8 @@ export const getHomeRouteByUserType = (userType: USER_TYPE) => {
       return ROUTE_NAMES.home;
     case USER_TYPE.SALES_USER:
       return ROUTE_NAMES.sellerOrders;
+    case USER_TYPE.ADMIN:
+      return ROUTE_NAMES.adminOrders;
     default:
       return ROUTE_NAMES.home;
   }

@@ -46,6 +46,8 @@ export function Login(props: ComponentProp) {
     const params = getParamsByProp(props);
     if (params.userType === 'seller') {
       setUserType(USER_TYPE.SALES_USER);
+    } else if (params.userType === 'admin') {
+      setUserType(USER_TYPE.ADMIN);
     }
   }, []);
   const doForgotPassword = async () => {
@@ -90,6 +92,7 @@ export function Login(props: ComponentProp) {
         password,
       };
       await authAction.login(userType, loginAPIRequest, props, {}, signIn);
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
     }

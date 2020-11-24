@@ -48,6 +48,16 @@ export interface IOrder extends IOrderCreate {
   _id: string;
   orderId: string;
   invoiceNumber: string;
+  createdDate: string;
+  updatedDate: string;
+  createdBy: string;
+  updatedBy: string;
+  userInfo?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    mobileNumber: string;
+  };
 }
 
 export interface IOrderStatusUpdateButton {

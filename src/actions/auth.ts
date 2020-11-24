@@ -10,7 +10,11 @@ import {navigateByProp, replaceByProp} from '../navigation';
 import {ErrorToast, showToastByResponse} from '../components/Toast';
 import {USER_TYPE} from '../interfaces/enums';
 import {store} from '../routes/store';
-import {AUTH_USER_LOGIN, AUTH_SELLER_LOGIN} from '../providers/constants';
+import {
+  AUTH_USER_LOGIN,
+  AUTH_SELLER_LOGIN,
+  AUTH_ADMIN_LOGIN,
+} from '../providers/constants';
 import {
   setToken,
   setUserId,
@@ -30,6 +34,9 @@ const getBaseAuthAPIRouteByUserType = (userType: USER_TYPE) => {
       return '/users';
     case USER_TYPE.SALES_USER:
       return '/seller/sales-user';
+    case USER_TYPE.ADMIN:
+      return '/admin';
+
     default:
       return '/users';
   }
@@ -66,6 +73,12 @@ class AuthAction {
           } as never);
           setSalesUserId(response.data.id);
           setSellerId(response.data.sellerId);
+        } else if (response.data.type === USER_TYPE.ADMIN) {
+          store.dispatch({
+            type: AUTH_ADMIN_LOGIN,
+            adminId: response.data.id,
+            token: response.data.token,
+          } as never);
         }
         setToken(response.data.token);
         setUserType(response.data.type);

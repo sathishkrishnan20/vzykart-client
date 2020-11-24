@@ -42,9 +42,23 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {SellerOrders} from '../screens/_seller/orders';
 import {getLoginRouteByUserType, getHomeRouteByUserType} from '../helpers';
 import {SellerOrderDetails} from '../screens/_seller/orders/details';
+import {AdminOrders} from '../screens/_admin/orders';
+import {AdminOrderDetails} from '../screens/_admin/orders/details';
 
 const HEADER_HEIGHT = 70;
 
+const ADMIN_ROUTES = [
+  {
+    routeName: ROUTE_NAMES.adminOrders,
+    component: AdminOrders,
+    name: 'Orders',
+  },
+  {
+    routeName: ROUTE_NAMES.adminOrdersDetails,
+    component: AdminOrderDetails,
+    name: 'Orders Details',
+  },
+];
 const SELLER_ROUTES = [
   {
     routeName: ROUTE_NAMES.sellerOrders,
@@ -549,6 +563,19 @@ export function Routes() {
                   component={route.component}
                 />
               ))}
+
+            {state.isTokenRestored && state.userType === USER_TYPE.ADMIN
+              ? ADMIN_ROUTES.map((route, key: number) => (
+                  <PrivateRoute
+                    key={'seller' + key}
+                    exact
+                    authenticated={state.userToken !== null}
+                    userType={USER_TYPE.SALES_USER}
+                    path={route.routeName}
+                    component={route.component}
+                  />
+                ))
+              : null}
           </View>
         </Router>
       </AuthContext.Provider>

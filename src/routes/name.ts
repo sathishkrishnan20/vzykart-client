@@ -1,6 +1,11 @@
 import {IS_WEB} from '../config';
 
 const ROUTE_NAMES = {
+  // admin
+
+  adminOrders: IS_WEB ? '/admin/orders' : 'Admin-Orders',
+  adminOrdersDetails: IS_WEB ? '/admin/orders/:orderId' : 'Admin-Orders View',
+
   // Seller
   sellerProductAdd: IS_WEB ? '/seller/product/add' : 'Add Product',
   sellerProductView: IS_WEB ? '/seller/product/view' : 'View Products',
