@@ -5,6 +5,7 @@ const ROUTE_NAMES = {
 
   adminOrders: IS_WEB ? '/admin/orders' : 'Admin-Orders',
   adminOrdersDetails: IS_WEB ? '/admin/orders/:orderId' : 'Admin-Orders View',
+  adminViewSellers: IS_WEB ? '/admin/sellers/view' : 'Admin-Sellers View',
 
   // Seller
   sellerProductAdd: IS_WEB ? '/seller/product/add' : 'Add Product',

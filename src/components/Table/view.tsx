@@ -10,21 +10,27 @@ import colors from '../../colors';
 import {IS_WEB} from '../../config';
 
 class TableComponent extends Component<IViewTableComponentProp, {}> {
-  renderValues = (valueObject: any, valueIndex: number) => {
+  renderValues = (valueObject: any, _valueIndex: number) => {
     const {headerData} = this.props;
     return headerData.map((headerItem, headerIndex: number) => {
-      return this.renderCell(
-        valueObject[headerItem.node],
-        valueIndex + headerIndex,
-        false,
-      );
+      return this.renderCell(valueObject[headerItem.node], headerIndex, false);
     });
   };
 
   renderActions = (actionButtons: CRUD[], uniqueId: string) => {
     const {viewAction, editAction, deleteAction} = this.props;
     return (
-      <View style={[styles.row_1, styles.rowDefault, {flexDirection: 'row'}]}>
+      <View
+        style={[
+          styles.row_1,
+          styles.rowDefault,
+          {flexDirection: 'row'},
+          this.props.widthData
+            ? {
+                width: this.props.widthData[this.props.headerData.length],
+              }
+            : {},
+        ]}>
         {actionButtons.includes(CRUD.VIEW)
           ? this.renderActionIcon('eye', uniqueId, viewAction)
           : null}
@@ -56,16 +62,18 @@ class TableComponent extends Component<IViewTableComponentProp, {}> {
     );
   }
 
-  renderCell = (
-    value: React.ReactNode,
-    key: string | number | null | undefined,
-    isHeader: boolean,
-  ) => {
+  renderCell = (value: React.ReactNode, index: number, isHeader: boolean) => {
     return (
-      <View style={[styles.row_1, styles.rowDefault]} key={key}>
+      <View
+        style={[
+          styles.row_1,
+          styles.rowDefault,
+          this.props.widthData ? {width: this.props.widthData[index]} : {},
+        ]}
+        key={index}>
         <Text
           style={isHeader ? {fontWeight: 'bold', color: '#fff'} : {}}
-          key={key}>
+          key={'' + Math.random() + index}>
           {value}
         </Text>
       </View>
@@ -85,11 +93,11 @@ class TableComponent extends Component<IViewTableComponentProp, {}> {
             alignContent: 'center',
           },
         ]}>
-        {headerData.map((item: TableHeader, key: number) =>
-          this.renderCell(item.label, key, true),
+        {headerData.map((item: TableHeader, index: number) =>
+          this.renderCell(item.label, index, true),
         )}
         {showActions && actionButtons
-          ? this.renderCell('', 'action', true)
+          ? this.renderCell('', headerData.length, true)
           : null}
       </View>
     );

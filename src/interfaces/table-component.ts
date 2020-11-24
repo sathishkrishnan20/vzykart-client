@@ -33,6 +33,7 @@ export interface IViewTableComponentProp {
   valueData: any[];
   uniqueIdKeyName: string;
   showActions: boolean;
+  widthData?: number[];
   actionButtons?: CRUD[];
   viewAction?: (id: string) => void;
   editAction?: (id: string) => void;
