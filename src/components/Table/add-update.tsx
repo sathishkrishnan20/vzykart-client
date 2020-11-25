@@ -72,7 +72,11 @@ export default function TableWriteComponent({
                         }}
                         items={componentItem.selectionItems || []}
                         onValueChange={(value) => {
-                          changeState(componentItem.stateKey, value);
+                          if (componentItem.changeState) {
+                            componentItem.changeState(value);
+                          } else {
+                            changeState(componentItem.stateKey, value);
+                          }
                         }}
                         style={{
                           ...pickerSelectStyles,

@@ -1,4 +1,4 @@
-export interface ISalesUser {
+export interface ISalesUserCreateRequest {
   userName: string;
   firstName: string;
   lastName: string;
@@ -6,3 +6,4 @@ export interface ISalesUser {
   mobileNumber: string;
   sellerId: string;
 }
+export interface ISalesUser extends ISalesUserCreateRequest {}

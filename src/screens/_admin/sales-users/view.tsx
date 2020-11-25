@@ -41,7 +41,7 @@ export function AdminViewSalesUsers(props: ComponentProp) {
   return (
     <ScrollView horizontal={true}>
       <SalesUserView
-        onClickAdd={() => navigateByProp(props, ROUTE_NAMES.adminAddSellers)}
+        onClickAdd={() => navigateByProp(props, ROUTE_NAMES.adminAddSalesUsers)}
         salesUserListData={salesUserListData}
         isLoading={isLoading}
       />

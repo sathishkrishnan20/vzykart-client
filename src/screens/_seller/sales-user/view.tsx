@@ -45,7 +45,9 @@ export function SellerViewSalesUsers(props: ComponentProp) {
   return (
     <ScrollView horizontal={true}>
       <SalesUserView
-        onClickAdd={() => navigateByProp(props, ROUTE_NAMES.sellerOrders)}
+        onClickAdd={() =>
+          navigateByProp(props, ROUTE_NAMES.sellerSalesUsersAdd)
+        }
         salesUserListData={salesUserListData}
         isLoading={isLoading}
       />

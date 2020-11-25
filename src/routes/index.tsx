@@ -48,6 +48,8 @@ import {AdminViewSellers} from '../screens/_admin/sellers/view';
 import {WriteSellerData} from '../screens/_admin/sellers/add';
 import {AdminViewSalesUsers} from '../screens/_admin/sales-users/view';
 import {SellerViewSalesUsers} from '../screens/_seller/sales-user/view';
+import {WriteAdminSellerSalesUserData} from '../screens/_admin/sales-users/add';
+import {WriteSellerSalesUserData} from '../screens/_seller/sales-user/add';
 
 const HEADER_HEIGHT = 70;
 
@@ -77,6 +79,11 @@ const ADMIN_ROUTES = [
     component: AdminViewSalesUsers,
     name: 'Admin View Sales User',
   },
+  {
+    routeName: ROUTE_NAMES.adminAddSalesUsers,
+    component: WriteAdminSellerSalesUserData,
+    name: 'Admin Add Sales Users',
+  },
 ];
 const SELLER_ROUTES = [
   {
@@ -93,6 +100,11 @@ const SELLER_ROUTES = [
     routeName: ROUTE_NAMES.sellerSalesUsersView,
     component: SellerViewSalesUsers,
     name: 'Seller View Sales Users',
+  },
+  {
+    routeName: ROUTE_NAMES.sellerSalesUsersAdd,
+    component: WriteSellerSalesUserData,
+    name: 'Seller Add Sales User',
   },
   {
     routeName: ROUTE_NAMES.sellerProductAdd,

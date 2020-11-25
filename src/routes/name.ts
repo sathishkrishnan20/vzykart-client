@@ -10,6 +10,9 @@ const ROUTE_NAMES = {
   adminViewSalesUsers: IS_WEB
     ? '/admin/sellers/sales-user/view'
     : 'Admin-Sales Users View',
+  adminAddSalesUsers: IS_WEB
+    ? '/admin/sellers/sales-user/add'
+    : 'Admin-Sales Users Add',
 
   // Seller
   sellerProductAdd: IS_WEB ? '/seller/product/add' : 'Add Product',
@@ -22,6 +25,9 @@ const ROUTE_NAMES = {
   sellerSalesUsersView: IS_WEB
     ? '/seller/sales-users'
     : 'Seller SalesUsers View',
+  sellerSalesUsersAdd: IS_WEB
+    ? '/seller/sales-users/add'
+    : 'Seller SalesUsers Add',
 
   // Auth
   login: IS_WEB ? '/login' : 'Login',
