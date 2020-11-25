@@ -7,6 +7,10 @@ const ROUTE_NAMES = {
   adminOrdersDetails: IS_WEB ? '/admin/orders/:orderId' : 'Admin-Orders View',
   adminViewSellers: IS_WEB ? '/admin/sellers/view' : 'Admin-Sellers View',
   adminAddSellers: IS_WEB ? '/admin/sellers/add' : 'Admin-Sellers Add',
+  adminViewSalesUsers: IS_WEB
+    ? '/admin/sellers/sales-user/view'
+    : 'Admin-Sales Users View',
+
   // Seller
   sellerProductAdd: IS_WEB ? '/seller/product/add' : 'Add Product',
   sellerProductView: IS_WEB ? '/seller/product/view' : 'View Products',
@@ -15,6 +19,9 @@ const ROUTE_NAMES = {
     : 'Seller Product Details',
   sellerOrders: IS_WEB ? '/seller/orders' : 'Orders',
   sellerOrdersDetails: IS_WEB ? '/seller/orders/:orderId' : 'Orders View',
+  sellerSalesUsersView: IS_WEB
+    ? '/seller/sales-users'
+    : 'Seller SalesUsers View',
 
   // Auth
   login: IS_WEB ? '/login' : 'Login',

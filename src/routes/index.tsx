@@ -46,6 +46,8 @@ import {AdminOrders} from '../screens/_admin/orders';
 import {AdminOrderDetails} from '../screens/_admin/orders/details';
 import {AdminViewSellers} from '../screens/_admin/sellers/view';
 import {WriteSellerData} from '../screens/_admin/sellers/add';
+import {AdminViewSalesUsers} from '../screens/_admin/sales-users/view';
+import {SellerViewSalesUsers} from '../screens/_seller/sales-user/view';
 
 const HEADER_HEIGHT = 70;
 
@@ -70,6 +72,11 @@ const ADMIN_ROUTES = [
     component: WriteSellerData,
     name: 'Admin Add Seller',
   },
+  {
+    routeName: ROUTE_NAMES.adminViewSalesUsers,
+    component: AdminViewSalesUsers,
+    name: 'Admin View Sales User',
+  },
 ];
 const SELLER_ROUTES = [
   {
@@ -82,7 +89,11 @@ const SELLER_ROUTES = [
     component: SellerOrderDetails,
     name: 'Orders Details',
   },
-
+  {
+    routeName: ROUTE_NAMES.sellerSalesUsersView,
+    component: SellerViewSalesUsers,
+    name: 'Seller View Sales Users',
+  },
   {
     routeName: ROUTE_NAMES.sellerProductAdd,
     component: SellerAddProducts,
@@ -202,6 +213,10 @@ const getTabNavMenus = (userType: USER_TYPE | null) => {
         title: 'Add Product',
         navigationLink: ROUTE_NAMES.sellerProductAdd,
       },
+      {
+        title: 'Sales Users',
+        navigationLink: ROUTE_NAMES.sellerSalesUsersView,
+      },
     ];
   } else if (userType === USER_TYPE.ADMIN) {
     return [
@@ -212,6 +227,10 @@ const getTabNavMenus = (userType: USER_TYPE | null) => {
       {
         title: 'Sellers',
         navigationLink: ROUTE_NAMES.adminViewSellers,
+      },
+      {
+        title: 'Sales Users',
+        navigationLink: ROUTE_NAMES.adminViewSalesUsers,
       },
     ];
   } else {
