@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {IAddUpdate} from '../../../interfaces/table-component';
-import {INPUT_COMPONENT} from '../../../interfaces/enums';
+import {INPUT_COMPONENT, INPUT_DATA_TYPE} from '../../../interfaces/enums';
 import {IUserInfo, IUserAddress, ComponentProp} from '../../../interfaces';
 import {useState} from 'react';
 import {IProductChangeStateTypes} from '../../../interfaces/classes/seller-add-products';
@@ -37,7 +37,8 @@ export function WriteSellerData() {
     sellerName: '',
     sellerDescription: '',
     contactName: '',
-    contactNumber: '',
+    email: '',
+    mobileNumber: '',
     location: addressInitialState,
 
     sellerThumbImage: {
@@ -92,10 +93,19 @@ export function WriteSellerData() {
       {
         component: INPUT_COMPONENT.TEXT,
         label: 'Contact Number',
-        stateKey: 'contactNumber',
-        value: sellerInfo.contactNumber || '',
+        stateKey: 'mobileNumber',
+        value: sellerInfo.mobileNumber || '',
         changeState: (value: IProductChangeStateTypes) =>
-          onSellerInfoChange('contactNumber', value as string),
+          onSellerInfoChange('mobileNumber', value as string),
+      },
+      {
+        component: INPUT_COMPONENT.TEXT,
+        label: 'Email',
+        stateKey: 'email',
+        inputDataType: INPUT_DATA_TYPE.EMAIl,
+        value: sellerInfo.email || '',
+        changeState: (value: IProductChangeStateTypes) =>
+          onSellerInfoChange('email', value as string),
       },
     ],
     [
@@ -196,7 +206,9 @@ export function WriteSellerData() {
   };
 
   const callCreateSeller = async (request: ISellerCreateRequest) => {
-    const sellerCreateResponse = await sellerAction.createSeller(request);
+    const sellerCreateResponse = await sellerAction.createSellerByAdminId(
+      request,
+    );
     showToastByResponse(sellerCreateResponse);
     if (sellerCreateResponse.success) {
       resetAddressState();

@@ -36,7 +36,7 @@ export function AdminViewSellers(props: ComponentProp) {
     },
     {
       label: 'Contact Number',
-      node: 'contactNumber',
+      node: 'mobileNumber',
     },
     {
       label: 'Street',

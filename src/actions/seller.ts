@@ -6,7 +6,7 @@ class SellerAction {
     const result = await getService('/seller/list').catch((ex) => ex.response);
     return result.data;
   }
-  async createSeller(data: ISellerCreateRequest): Promise<IResponse> {
+  async createSellerByAdminId(data: ISellerCreateRequest): Promise<IResponse> {
     const result = await postService('/seller', data).catch(
       (ex) => ex.response,
     );

@@ -6,8 +6,9 @@ export interface ISellerCreateRequest {
   sellerDescription: string;
   location: IUserAddress;
   sellerThumbImage: IProductImage;
-  contactNumber: string;
+  mobileNumber: string;
   contactName: string;
+  email: string;
 }
 
 export interface ISeller extends ISellerCreateRequest {
