@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {postService} from '../services/http-service';
 import {IResponse} from '../interfaces/request-response';
 import {
@@ -57,6 +58,7 @@ class AuthAction {
       ).catch((ex) => ex.response);
       const response: IResponse = result.data;
       if (response.success) {
+        axios.defaults.headers.common['authorization'] = response.data.token;
         if (response.data.type === USER_TYPE.USER) {
           store.dispatch({
             type: AUTH_USER_LOGIN,
@@ -94,6 +96,7 @@ class AuthAction {
       } else {
         showToastByResponse(response);
       }
+
       return response;
     } catch (error) {
       ErrorToast({message: error.message});

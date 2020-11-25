@@ -50,6 +50,7 @@ import {AdminViewSalesUsers} from '../screens/_admin/sales-users/view';
 import {SellerViewSalesUsers} from '../screens/_seller/sales-user/view';
 import {WriteAdminSellerSalesUserData} from '../screens/_admin/sales-users/add';
 import {WriteSellerSalesUserData} from '../screens/_seller/sales-user/add';
+import Axios from 'axios';
 
 const HEADER_HEIGHT = 70;
 
@@ -321,6 +322,9 @@ export function Routes() {
       } catch (e) {
         // Restoring token failed
         console.error('exception getting user Token', e);
+      }
+      if (userToken) {
+        Axios.defaults.headers.common['authorization'] = userToken;
       }
       if (userToken && userId && userType === USER_TYPE.USER) {
         store.dispatch({
