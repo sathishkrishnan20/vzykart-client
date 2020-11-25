@@ -1,13 +1,18 @@
 import {IProductImage} from '../products';
 import {IUserAddress} from '..';
 
-export interface ISeller {
-  _id: string;
-  sellerId: string;
+export interface ISellerCreateRequest {
   sellerName: string;
   sellerDescription: string;
   location: IUserAddress;
   sellerThumbImage: IProductImage;
+  contactNumber: string;
+  contactName: string;
+}
+
+export interface ISeller extends ISellerCreateRequest {
+  _id: string;
+  sellerId: string;
 }
 
 export interface ISellerFlatten {

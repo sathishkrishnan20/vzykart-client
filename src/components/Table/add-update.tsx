@@ -11,6 +11,7 @@ import MultiSelect from '../MultiSelect';
 import DateTimePicker from '../DateTimePicker/picker';
 import FileUpload from '../FileUpload/upload';
 import {IProductImage} from '../../interfaces/products';
+import {SectionTitle} from '../Section-Title';
 
 export default function TableWriteComponent({
   componentData,
@@ -41,6 +42,13 @@ export default function TableWriteComponent({
                         }
                       }}
                       //  errorMessage="ENTER A VALID ERROR HERE"
+                    />
+                  ) : null}
+                  {componentItem.component === INPUT_COMPONENT.SUB_HEADER ? (
+                    <SectionTitle
+                      title={
+                        componentItem.label || (componentItem.value as string)
+                      }
                     />
                   ) : null}
                   {componentItem.component === INPUT_COMPONENT.SINGLE_SELECT ? (
@@ -135,9 +143,14 @@ export default function TableWriteComponent({
                       onDeleteImage={(images: IProductImage[]) =>
                         changeState(componentItem.stateKey, images)
                       }
-                      onResult={(images: IProductImage[]) =>
-                        changeState(componentItem.stateKey, images)
-                      }
+                      multi={componentItem.multi}
+                      onResult={(images: IProductImage[]) => {
+                        if (componentItem.changeState) {
+                          componentItem.changeState(images);
+                        } else {
+                          changeState(componentItem.stateKey, images);
+                        }
+                      }}
                     />
                   ) : null}
                 </Col>

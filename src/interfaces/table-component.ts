@@ -8,6 +8,7 @@ export interface IAddUpdate {
   label: string;
   stateKey: string;
   value: string | object | number | boolean | string[];
+  multi?: boolean;
   inputDataType?: INPUT_DATA_TYPE;
   disabled?: boolean;
   selectionItems?: Item[];

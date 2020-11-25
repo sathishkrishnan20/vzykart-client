@@ -26,8 +26,9 @@ class FileUpload extends Component {
             selectedFile: event.target.files,
         })
         const files = event.target.files;
-        if (files.length > 3) {
-            const msg = 'Only 3 images can be uploaded at a time'
+        const maximumImages = this.props.multi === false ? 1 : 3; 
+        if (files.length > maximumImages) {
+            const msg = 'Only' + maximumImages + 'images can be uploaded at a time'
             event.target.value = null // discard selected file
             WarningToast({
                 title: 'Maximum Files',

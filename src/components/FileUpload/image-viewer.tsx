@@ -7,6 +7,7 @@ import {BackHandler, Modal} from 'react-native';
 import {SERVER_URL} from '../../config';
 import {keyExtractor} from '../../helpers/render-helpers';
 import {IProductImage} from '../../interfaces/products';
+import {getImageLink} from '../../helpers';
 interface IImageViewer {
   images: IProductImage[];
   onDeleteImage: (images: IProductImage[]) => void;
@@ -35,7 +36,7 @@ export const ImageViewer = ({
               }}>
               <Image
                 // onPress={() => <ZoomView images={images} />}
-                source={{uri: SERVER_URL + item.optimizedDestinationPath}}
+                source={{uri: getImageLink(item.optimizedDestinationPath)}}
                 style={{width: 200, height: 200}}
                 PlaceholderContent={<ActivityIndicator />}>
                 {disabled ? null : (

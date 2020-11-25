@@ -19,7 +19,7 @@ export interface IUserAddress {
   country: string;
   pin_code: number | string;
   locality?: string;
-  contactNumber: string;
+  contactNumber?: string;
 }
 
 export interface IUserInfo {

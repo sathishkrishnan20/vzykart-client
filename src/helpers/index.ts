@@ -7,6 +7,7 @@ import {IProduct, ICategoryInfo} from '../interfaces/products';
 import {IS_WEB, IMAGE_BASE_URL} from '../config';
 import {USER_TYPE} from '../interfaces/enums';
 import ROUTE_NAMES from '../routes/name';
+import {IAddUpdate} from '../interfaces/table-component';
 
 export const getCategoryValues = (
   array: string[] | Item[],
@@ -128,4 +129,16 @@ export const getLoginRouteByUserType = (userType: USER_TYPE) => {
     default:
       return ROUTE_NAMES.login;
   }
+};
+
+export const convertObjectToArray = (array: IAddUpdate[][]) => {
+  const finalArray = [];
+  for (let index = 0; index < array.length; index++) {
+    const rowElement = array[index];
+    for (let index = 0; index < rowElement.length; index++) {
+      const colElement = rowElement[index];
+      finalArray.push([colElement]);
+    }
+  }
+  return finalArray;
 };

@@ -31,6 +31,14 @@ export function AdminViewSellers(props: ComponentProp) {
       node: 'sellerDescription',
     },
     {
+      label: 'Contact Name',
+      node: 'contactName',
+    },
+    {
+      label: 'Contact Number',
+      node: 'contactNumber',
+    },
+    {
       label: 'Street',
       node: 'location.no_and_street',
     },
@@ -81,13 +89,7 @@ export function AdminViewSellers(props: ComponentProp) {
         </Text>
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
           <Button
-            onPress={() =>
-              navigateByProp(
-                props,
-                ROUTE_NAMES.sellerProductAdd.replace(':crudType', 'add'),
-                {crudType: 'add'},
-              )
-            }
+            onPress={() => navigateByProp(props, ROUTE_NAMES.adminAddSellers)}
             title="Add Sellers"></Button>
         </View>
 
@@ -98,7 +100,7 @@ export function AdminViewSellers(props: ComponentProp) {
             headerData={headerData}
             valueData={sellerListData}
             showActions={false}
-            widthData={[200, 300, 100, 200]}
+            widthData={[200, 300, 200, 200, 100, 200]}
             uniqueIdKeyName={'_id'}
           />
         </ScrollView>
