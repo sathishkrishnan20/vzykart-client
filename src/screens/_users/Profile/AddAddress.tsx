@@ -14,12 +14,17 @@ interface IAddAddress {
   editAddressIndex: number; // -1 for Add rest for Update the particular Index Address
   onResult: (status: boolean) => void;
   defaultData?: IUserAddress;
+  additionalUserInfoToUpdate?: {
+    firstName: string;
+    lastName: string;
+  };
 }
 export function WriteAddress({
   userData,
   onResult,
   editAddressIndex,
   defaultData,
+  additionalUserInfoToUpdate,
 }: IAddAddress) {
   const addressInitialState: IUserAddress = {
     name: '',
@@ -44,17 +49,27 @@ export function WriteAddress({
       setAddressState(defaultData);
     }
   }, []);
+  const getNameValue = () => {
+    if (addressState.name) {
+      return addressState.name;
+    } else if (userData.firstName || userData.lastName) {
+      return `${userData.firstName || ''} ${userData.lastName}`;
+    } else if (
+      additionalUserInfoToUpdate?.firstName ||
+      additionalUserInfoToUpdate?.lastName
+    ) {
+      return `${additionalUserInfoToUpdate.firstName} ${additionalUserInfoToUpdate.lastName}`;
+    } else {
+      return '';
+    }
+  };
   const addressTableComponent: IAddUpdate[][] = [
     [
       {
         component: INPUT_COMPONENT.TEXT,
         label: 'Name',
         stateKey: 'name',
-        value:
-          addressState.name ||
-          (userData.firstName ? userData.firstName : '') +
-            ' ' +
-            (userData.lastName ? userData.lastName : ''),
+        value: getNameValue(),
         changeState: (value: IProductChangeStateTypes) =>
           onAddressChange('name', value as string),
       },
@@ -157,6 +172,7 @@ export function WriteAddress({
     }
     const addressRequestData = {
       address: userAddressData,
+      ...(additionalUserInfoToUpdate || {}),
     };
     const userUpdateResponse = await callUserUpdate(addressRequestData);
     if (userUpdateResponse.success) {

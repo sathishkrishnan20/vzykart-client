@@ -51,6 +51,8 @@ import {SellerViewSalesUsers} from '../screens/_seller/sales-user/view';
 import {WriteAdminSellerSalesUserData} from '../screens/_admin/sales-users/add';
 import {WriteSellerSalesUserData} from '../screens/_seller/sales-user/add';
 import Axios from 'axios';
+import {WriteAdminDeliveryPersonData} from '../screens/_admin/delivery-persons/add';
+import {AdminViewDeliveryPersons} from '../screens/_admin/delivery-persons/view';
 
 const HEADER_HEIGHT = 70;
 
@@ -84,6 +86,16 @@ const ADMIN_ROUTES = [
     routeName: ROUTE_NAMES.adminAddSalesUsers,
     component: WriteAdminSellerSalesUserData,
     name: 'Admin Add Sales Users',
+  },
+  {
+    routeName: ROUTE_NAMES.adminViewDeliveryPerson,
+    component: AdminViewDeliveryPersons,
+    name: 'Admin View Sales User',
+  },
+  {
+    routeName: ROUTE_NAMES.adminAddDeliveryPersons,
+    component: WriteAdminDeliveryPersonData,
+    name: 'Admin Add Delivery Persons',
   },
 ];
 const SELLER_ROUTES = [
@@ -244,6 +256,10 @@ const getTabNavMenus = (userType: USER_TYPE | null) => {
       {
         title: 'Sales Users',
         navigationLink: ROUTE_NAMES.adminViewSalesUsers,
+      },
+      {
+        title: 'Delivery',
+        navigationLink: ROUTE_NAMES.adminViewDeliveryPerson,
       },
     ];
   } else {
@@ -604,7 +620,10 @@ export function Routes() {
                 <PrivateRoute
                   key={'user-auth' + key}
                   exact
-                  authenticated={state.userToken !== null}
+                  authenticated={
+                    state.userToken !== null &&
+                    state.userType === USER_TYPE.USER
+                  }
                   userType={USER_TYPE.USER}
                   path={route.routeName}
                   component={route.component}
@@ -629,7 +648,7 @@ export function Routes() {
                     key={'seller' + key}
                     exact
                     authenticated={state.userToken !== null}
-                    userType={USER_TYPE.SALES_USER}
+                    userType={USER_TYPE.ADMIN}
                     path={route.routeName}
                     component={route.component}
                   />

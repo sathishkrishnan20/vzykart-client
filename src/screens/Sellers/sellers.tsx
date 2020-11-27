@@ -4,6 +4,7 @@ import {Card} from 'react-native-elements';
 import {Row, Col} from 'react-native-easy-grid';
 import {IS_BIG_SCREEN} from '../../config';
 import {ISeller} from '../../interfaces/classes/seller';
+import {getImageLink} from '../../helpers';
 interface ISellerProp {
   data: ISeller;
   onClick: () => void;
@@ -17,9 +18,11 @@ export function Seller({data, onClick}: ISellerProp) {
             <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.rowStyle}>
               <Image
                 source={{
-                  uri:
+                  uri: getImageLink(
                     data.sellerThumbImage &&
-                    data.sellerThumbImage.optimizedDestinationPath,
+                      (data.sellerThumbImage
+                        .optimizedDestinationPath as string),
+                  ),
                 }}
                 resizeMode={'stretch'}
                 style={{

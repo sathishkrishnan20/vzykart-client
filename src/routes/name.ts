@@ -14,6 +14,13 @@ const ROUTE_NAMES = {
     ? '/admin/sellers/sales-user/add'
     : 'Admin-Sales Users Add',
 
+  adminViewDeliveryPerson: IS_WEB
+    ? '/admin/delivery-persons/view'
+    : 'Admin Delivery Person View',
+  adminAddDeliveryPersons: IS_WEB
+    ? '/admin/delivery-persons/add'
+    : 'Admin-Delivery Persons Add',
+
   // Seller
   sellerProductAdd: IS_WEB ? '/seller/product/add' : 'Add Product',
   sellerProductView: IS_WEB ? '/seller/product/view' : 'View Products',

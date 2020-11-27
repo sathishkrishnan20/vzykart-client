@@ -12,7 +12,7 @@ import {View, Dimensions} from 'react-native';
 import {Row, Col} from 'react-native-easy-grid';
 import {Payment} from '../../components/PayButton';
 import {SectionTitle} from '../../components/Section-Title';
-import {CRUD, PAYMENT_TYPE} from '../../interfaces/enums';
+import {CRUD, PAYMENT_TYPE, INPUT_COMPONENT} from '../../interfaces/enums';
 import {
   getUserId,
   getCartItem,
@@ -25,6 +25,8 @@ import {createOrder, getSellingAndDiscountGSTPrice} from './helper';
 import {WarningToast} from '../../components/Toast';
 import {RazorPaySuccess} from '../../interfaces/razorpay';
 import ROUTE_NAMES from '../../routes/name';
+import {IProductChangeStateTypes} from '../../interfaces/classes/seller-add-products';
+import TableWriteComponent from '../../components/Table/add-update';
 
 export function Checkout(props: ComponentProp) {
   const userAction = new UserAction();
@@ -37,6 +39,31 @@ export function Checkout(props: ComponentProp) {
   const [userData, setUserData] = useState({} as IUserInfo);
   const [enableAddressCreate, setEnableAddressCreate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [askNameInputs, setAskNameInputs] = useState(false);
+  const firstNameLastNameInput = [
+    [
+      {
+        component: INPUT_COMPONENT.TEXT,
+        label: 'First Name',
+        stateKey: 'firstName',
+        value: firstName,
+        changeState: (value: IProductChangeStateTypes) =>
+          setFirstName(value as string),
+      },
+    ],
+    [
+      {
+        component: INPUT_COMPONENT.TEXT,
+        label: 'Last Name',
+        stateKey: 'lastName',
+        value: lastName || '',
+        changeState: (value: IProductChangeStateTypes) =>
+          setLastName(value as string),
+      },
+    ],
+  ];
 
   useEffect(() => {
     const checkoutItemsFromProp = getParamForCheckoutPage(props);
@@ -55,6 +82,9 @@ export function Checkout(props: ComponentProp) {
       setIsLoading(false);
       if (userResponse.success) {
         setUserData(userResponse.data);
+        if (!userResponse.data.firstName || !userResponse.data.lastName) {
+          setAskNameInputs(true);
+        }
       }
     } catch (error) {
       setIsLoading(false);
@@ -169,7 +199,7 @@ export function Checkout(props: ComponentProp) {
       </View>
     );
   };
-
+  console.log('ask', askNameInputs);
   return (
     <Container>
       <ScrollView>
@@ -214,16 +244,31 @@ export function Checkout(props: ComponentProp) {
             )}
           />
           {enableAddressCreate ? (
-            <WriteAddress
-              editAddressIndex={-1}
-              userData={userData}
-              onResult={(status: boolean) => {
-                if (status) {
-                  setEnableAddressCreate(false);
-                  getUserProfileData();
-                }
-              }}
-            />
+            <View style={{marginTop: 8}}>
+              {askNameInputs ? (
+                <View style={{marginTop: 8}}>
+                  <TableWriteComponent
+                    changeState={() => console.debug()}
+                    componentData={firstNameLastNameInput}
+                  />
+                </View>
+              ) : null}
+              <View style={{marginTop: 8}}>
+                <WriteAddress
+                  additionalUserInfoToUpdate={
+                    askNameInputs ? {firstName, lastName} : undefined
+                  }
+                  editAddressIndex={-1}
+                  userData={userData}
+                  onResult={(status: boolean) => {
+                    if (status) {
+                      setEnableAddressCreate(false);
+                      getUserProfileData();
+                    }
+                  }}
+                />
+              </View>
+            </View>
           ) : null}
         </View>
       </ScrollView>

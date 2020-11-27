@@ -31,7 +31,8 @@ export function SignUp(props: ComponentProp) {
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState(USER_TYPE.USER as USER_TYPE);
   const [isLoading, setIsLoading] = useState(false);
-  const [useEmail, setUseEmail] = useState(true);
+  const [useEmail, setUseEmail] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   // @ts-ignore
   const {signIn} = React.useContext(AuthContext);
   const doSignUp = async () => {
@@ -68,20 +69,18 @@ export function SignUp(props: ComponentProp) {
       </View>
     );
   };
-  const updateIndex = (selectedIndex: number) => {
-    setUseEmail(selectedIndex === 0);
-  };
+
   const renderInputs = () => {
     return (
       <Card containerStyle={{borderRadius: 10}}>
         <Card.Title>Register account to get Special orders</Card.Title>
 
-        <Radio
+        {/* <Radio
           buttons={['Email', 'Mobile Number']}
           selectedIndex={useEmail ? 0 : 1}
           containerWidth={400}
-          onPress={(index: number) => updateIndex(index)}
-        />
+          onPress={(index: number) =>  setUseEmail(index === 0);}
+        /> */}
         {!useEmail ? (
           <Input
             value={mobileNumber}
@@ -112,7 +111,12 @@ export function SignUp(props: ComponentProp) {
           autoCapitalize="none"
           placeholder="Enter Password"
           blurOnSubmit={false}
-          secureTextEntry={true}
+          rightIcon={{
+            name: 'eye',
+            type: 'font-awesome',
+            onPress: () => setShowPassword(!showPassword),
+          }}
+          secureTextEntry={showPassword ? false : true}
           onSubmitEditing={() => doSignUp()}
         />
         <Button

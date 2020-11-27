@@ -6,13 +6,14 @@ import RazorpayCheckout from 'react-native-razorpay';
 import colors from '../../colors';
 import {postService} from '../../services/http-service';
 import {ErrorToast} from '../Toast';
-import {Row, Col} from 'react-native-easy-grid';
+import {Row, Col, Grid} from 'react-native-easy-grid';
 import {
   RazorPayError,
   RazorPayFailure,
   RazorPaySuccess,
 } from '../../interfaces/razorpay';
 import {PAYMENT_TYPE} from '../../interfaces/enums';
+import {View} from 'react-native';
 interface OptionsProps {
   amount: string;
   name: string;
@@ -146,7 +147,7 @@ export function Payment({
   };
 
   return (
-    <Row>
+    <Row style={{width: '100%'}}>
       <Col>
         <Button title={'Cash On Delivery'} onPress={onCOD}></Button>
       </Col>

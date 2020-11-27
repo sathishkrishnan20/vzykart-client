@@ -207,7 +207,6 @@ export function Login(props: ComponentProp) {
         }}
         style={[styles.imageBg, {height: screenHeight}]}>
         <ScrollView>
-          <Loader visible={isLoading} />
           {IS_BIG_SCREEN ? (
             <Grid>
               <Col>{renderTitle()}</Col>

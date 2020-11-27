@@ -4,25 +4,21 @@ import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-elements';
 
 import {ScrollView} from 'react-native-gesture-handler';
-import {Loader} from '../Loader';
-import {Button} from '../Button';
-import TableComponent from '../Table/view';
-import {TableHeader} from '../../interfaces/table-component';
+import {TableHeader} from '../../../interfaces/table-component';
+import {Button, Loader} from '../../../components';
+import TableComponent from '../../../components/Table/view';
+import {IDeliveryPerson} from '../../../interfaces/classes/delivery-person';
 interface SalesUserViewState {
   onClickAdd: () => void;
   isLoading: boolean;
-  salesUserListData: any[];
+  ListData: IDeliveryPerson[];
 }
-export const SalesUserView = ({
+export const DeliveryPersonView = ({
   onClickAdd,
   isLoading,
-  salesUserListData,
+  ListData,
 }: SalesUserViewState) => {
   const headerData: TableHeader[] = [
-    {
-      label: 'Seller Id',
-      node: 'sellerId',
-    },
     {
       label: 'First Name',
       node: 'firstName',
@@ -44,14 +40,16 @@ export const SalesUserView = ({
       node: 'mobileNumber',
     },
   ];
-  const widthData = [200, 200, 200, 100, 200, 200];
+  const widthData = [200, 200, 200, 250, 200];
   return (
     <View style={styles.container}>
       <Text h4 style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
-        View Sales Users
+        View Delivery Persons
       </Text>
       <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-        <Button onPress={() => onClickAdd()} title="Add Sellers"></Button>
+        <Button
+          onPress={() => onClickAdd()}
+          title="Add Delivery Person"></Button>
       </View>
 
       <Loader visible={isLoading} />
@@ -59,7 +57,7 @@ export const SalesUserView = ({
       <ScrollView style={styles.dataWrapper}>
         <TableComponent
           headerData={headerData}
-          valueData={salesUserListData}
+          valueData={ListData}
           showActions={false}
           widthData={widthData}
           uniqueIdKeyName={'_id'}
