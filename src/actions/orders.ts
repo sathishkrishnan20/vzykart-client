@@ -26,6 +26,14 @@ class OrderAction {
     );
     return result.data;
   }
+  async getOrdersByDeliveryPersonId(
+    deliveryPersonId: string,
+  ): Promise<IResponse> {
+    const result = await getService(
+      '/orders/delivery-person/' + deliveryPersonId,
+    ).catch((ex) => ex.response);
+    return result.data;
+  }
   async getOrdersByAdminId(): Promise<IResponse> {
     const result = await getService('/admin/orders/list').catch(
       (ex) => ex.response,

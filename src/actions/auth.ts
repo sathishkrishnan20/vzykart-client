@@ -24,6 +24,7 @@ import {
   setSalesUserId,
   getUserId,
   getToken,
+  setDeliveryPersonId,
 } from '../services/storage-service';
 import {ComponentProp} from '../interfaces';
 import ROUTE_NAMES from '../routes/name';
@@ -83,6 +84,13 @@ class AuthAction {
             adminId: response.data.id,
             token: response.data.token,
           } as never);
+        } else if (response.data.type === USER_TYPE.DELIVERY_PERSON) {
+          store.dispatch({
+            type: AUTH_ADMIN_LOGIN,
+            deliveryPersonId: response.data.id,
+            token: response.data.token,
+          } as never);
+          setDeliveryPersonId(response.data.id);
         }
         setToken(response.data.token);
         setUserType(response.data.type);

@@ -102,10 +102,7 @@ export const getFollowUpStatusUpdateButtons = (
       default:
         return [];
     }
-  } else if (USER_TYPE.USER) {
-    // for now There is no status Update for USER. even Canceling the Order is not allowed
-    return [];
-  } else if (USER_TYPE.DELIVERY_PERSON) {
+  } else if (userType === USER_TYPE.DELIVERY_PERSON) {
     switch (orderStatus) {
       case VALID_ORDER_STATUS.DELIVERY_BOY_ASSIGNED:
         return [outForDeliveryButton];
@@ -114,6 +111,9 @@ export const getFollowUpStatusUpdateButtons = (
       default:
         return [];
     }
+  } else if (userType === USER_TYPE.USER) {
+    // for now There is no status Update for USER. even Canceling the Order is not allowed
+    return [];
   }
   return [];
 };

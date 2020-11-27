@@ -3,14 +3,14 @@ import {ButtonGroup, CheckBox} from 'react-native-elements';
 
 interface RadioProps {
   buttons: string[];
-  selectedIndex: number;
-  onPress: (selectedIndex: number) => void;
+  selectedItem: string;
+  onPress: (selectedItem: string) => void;
   containerWidth?: number;
 }
 
 export function Radio({
   buttons,
-  selectedIndex,
+  selectedItem,
   onPress,
   containerWidth,
 }: RadioProps) {
@@ -23,10 +23,10 @@ export function Radio({
           borderColor: 'transparent',
         }}
         title={this.item}
-        onPress={() => onPress(this.index)}
+        onPress={() => onPress(this.item)}
         checkedIcon="dot-circle-o"
         uncheckedIcon="circle-o"
-        checked={selectedIndex === this.index}></CheckBox>
+        checked={selectedItem === this.item}></CheckBox>
     );
   }
 
@@ -51,8 +51,8 @@ export function Radio({
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
       }}
-      onPress={onPress}
-      selectedIndex={selectedIndex}
+      onPress={(index: number) => onPress(buttons[index])}
+      selectedIndex={buttons.indexOf(selectedItem)}
       buttons={buttonsComp}
       containerStyle={[
         {

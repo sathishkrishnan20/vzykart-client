@@ -55,5 +55,7 @@ const ROUTE_NAMES = {
   userProfile: IS_WEB ? '/profile' : 'My Profile',
   userOrders: IS_WEB ? '/orders' : 'My Orders',
   userOrderDetails: IS_WEB ? '/orders/:orderId' : 'Order Details',
+
+  deliveryPersonOrders: IS_WEB ? '/delivery-person/orders' : 'Delivery Orders',
 };
 export default ROUTE_NAMES;

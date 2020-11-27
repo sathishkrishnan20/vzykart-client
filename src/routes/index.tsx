@@ -25,6 +25,7 @@ import {
   getSalesUserId,
   getSellerId,
   removeAll,
+  getDeliveryPersonId,
 } from '../services/storage-service';
 import ROUTE_NAMES from './name';
 import {
@@ -53,6 +54,7 @@ import {WriteSellerSalesUserData} from '../screens/_seller/sales-user/add';
 import Axios from 'axios';
 import {WriteAdminDeliveryPersonData} from '../screens/_admin/delivery-persons/add';
 import {AdminViewDeliveryPersons} from '../screens/_admin/delivery-persons/view';
+import {DeliveryPersonOrders} from '../screens/_delivery_person/orders';
 
 const HEADER_HEIGHT = 70;
 
@@ -177,6 +179,13 @@ const PUBLIC_ROUTES = [
     component: ProductDetail,
     name: 'Product Details',
   }, */
+];
+const DELIVERY_PERSON_ORDERS = [
+  {
+    routeName: ROUTE_NAMES.deliveryPersonOrders,
+    component: DeliveryPersonOrders,
+    name: 'Delivery Orders',
+  },
 ];
 const USER_AUTHENTICATED_ROUTES = [
   {
@@ -336,7 +345,10 @@ export function Routes() {
       try {
         userToken = await getToken();
         userType = (await getUserType()) as USER_TYPE;
-        userId = (await getUserId()) || (await getSalesUserId());
+        userId =
+          (await getUserId()) ||
+          (await getSalesUserId()) ||
+          (await getDeliveryPersonId());
       } catch (e) {
         // Restoring token failed
         console.error('exception getting user Token', e);
@@ -651,6 +663,22 @@ export function Routes() {
                     exact
                     authenticated={state.userToken !== null}
                     userType={USER_TYPE.ADMIN}
+                    path={route.routeName}
+                    component={route.component}
+                  />
+                ))
+              : null}
+            {state.isTokenRestored &&
+            state.userType === USER_TYPE.DELIVERY_PERSON
+              ? DELIVERY_PERSON_ORDERS.map((route, key: number) => (
+                  <PrivateRoute
+                    key={'delivery' + key}
+                    exact
+                    authenticated={
+                      state.userToken !== null &&
+                      state.userType === USER_TYPE.DELIVERY_PERSON
+                    }
+                    userType={USER_TYPE.DELIVERY_PERSON}
                     path={route.routeName}
                     component={route.component}
                   />

@@ -8,13 +8,23 @@ const TOKEN_KEY = 'token';
 const USER_TYPE_KEY = 'userType';
 const SALES_USER_KEY = 'salesUserId';
 const CART_KEY = 'cart-{userId}';
+const DELIVERY_PERSON_ID_KEY = 'deliveryPersonId';
 
 export const setSellerId = async (sellerId: string) => {
   set(SELLER_ID_KEY, sellerId);
 };
 export const getSellerId = async () => {
-  return (await get(SELLER_ID_KEY)) || '1';
+  return (await get(SELLER_ID_KEY)) || '';
 };
+
+export const setDeliveryPersonId = async (deliveryPersonId: string) => {
+  set(DELIVERY_PERSON_ID_KEY, deliveryPersonId);
+};
+
+export const getDeliveryPersonId = async () => {
+  return (await get(DELIVERY_PERSON_ID_KEY)) || '';
+};
+
 export const setSalesUserId = async (sellerId: string) => {
   set(SALES_USER_KEY, sellerId);
 };

@@ -25,9 +25,14 @@ import ROUTE_NAMES from '../../../routes/name';
 import {AuthContext} from '../../../routes';
 import {getLoginRouteByUserType} from '../../../helpers';
 import {Loader} from '../../../components';
+import {Radio} from '../../../components/Radio';
 const screenHeight: number = Dimensions.get('window').height - 60;
 const authAction: AuthAction = new AuthAction();
-
+const userTypes: {[x: string]: USER_TYPE} = {
+  User: USER_TYPE.USER,
+  'Sales User': USER_TYPE.SALES_USER,
+  'Delivery Person': USER_TYPE.DELIVERY_PERSON,
+};
 export function Login(props: ComponentProp) {
   let otpInput = useRef();
 
@@ -39,6 +44,7 @@ export function Login(props: ComponentProp) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [enableForgotPassword, setEnableForgotPassword] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(Object.keys(userTypes)[0]);
   // @ts-ignore
   const {signIn} = React.useContext(AuthContext);
 
@@ -126,7 +132,7 @@ export function Login(props: ComponentProp) {
             ? 'Reset your Password'
             : 'Sign in to your account'}
         </Card.Title>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{alignSelf: 'flex-end', marginTop: -8}}
           onPress={() => {
             if (userType === USER_TYPE.USER) {
@@ -138,7 +144,15 @@ export function Login(props: ComponentProp) {
           <Text style={styles.textForgotPassword}>
             {getLabelSwitchUser(userType)}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <Radio
+          buttons={Object.keys(userTypes)}
+          selectedItem={selectedUser}
+          onPress={(selectedItem: string) => {
+            setSelectedUser(selectedItem);
+            setUserType(userTypes[selectedItem]);
+          }}
+        />
         <Input
           value={userEntry}
           onChangeText={(userEntry: string) => setUserEntry(userEntry)}

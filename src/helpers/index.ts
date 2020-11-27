@@ -115,6 +115,8 @@ export const getHomeRouteByUserType = (userType: USER_TYPE) => {
       return ROUTE_NAMES.sellerOrders;
     case USER_TYPE.ADMIN:
       return ROUTE_NAMES.adminOrders;
+    case USER_TYPE.DELIVERY_PERSON:
+      return ROUTE_NAMES.deliveryPersonOrders;
     default:
       return ROUTE_NAMES.home;
   }
@@ -126,6 +128,8 @@ export const getLoginRouteByUserType = (userType: USER_TYPE) => {
       return ROUTE_NAMES.dynamicLogin.replace(':userType', 'user');
     case USER_TYPE.SALES_USER:
       return ROUTE_NAMES.dynamicLogin.replace(':userType', 'seller');
+    case USER_TYPE.DELIVERY_PERSON:
+      return ROUTE_NAMES.dynamicLogin.replace(':userType', 'delivery-person');
     default:
       return ROUTE_NAMES.login;
   }
