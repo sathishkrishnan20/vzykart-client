@@ -48,6 +48,8 @@ export function Login(props: ComponentProp) {
       setUserType(USER_TYPE.SALES_USER);
     } else if (params.userType === 'admin') {
       setUserType(USER_TYPE.ADMIN);
+    } else if (params.userType === 'delivery-person') {
+      setUserType(USER_TYPE.DELIVERY_PERSON);
     }
   }, []);
   const doForgotPassword = async () => {

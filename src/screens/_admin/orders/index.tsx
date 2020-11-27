@@ -4,7 +4,7 @@ import {FlatList} from 'react-native';
 import OrderAction from '../../../actions/orders';
 import {getSellerId} from '../../../services/storage-service';
 import {Container, Loader} from '../../../components';
-import {IOrder} from '../../../interfaces/orders';
+import {IOrder, IOrderOnChangeStatusProp} from '../../../interfaces/orders';
 import {showToastByResponse} from '../../../components/Toast';
 import {keyExtractor} from '../../../helpers/render-helpers';
 import {OrderCard} from '../../../components/Orders/order-card';
@@ -15,9 +15,15 @@ import {SectionTitle} from '../../../components/Section-Title';
 import {getFollowUpStatusUpdateButtons} from '../../../components/Orders/helpers';
 import {USER_TYPE, VALID_ORDER_STATUS} from '../../../interfaces/enums';
 import {store} from '../../../routes/store';
+import DeliveryPersonAction from '../../../actions/delivery-person';
+import {Item} from 'react-native-picker-select';
 
 export function AdminOrders(props: ComponentProp) {
   const orderAction = new OrderAction();
+  const deliveryPersonAction = new DeliveryPersonAction();
+  const [deliveryPersonListAsItem, setDeliveryPersonListAsItem] = useState(
+    [] as Item[],
+  );
   const [orders, setOrders] = useState([] as IOrder[]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -39,11 +45,11 @@ export function AdminOrders(props: ComponentProp) {
   };
   const updateOrderByOrderId = async (
     orderId: string,
-    orderStatus: VALID_ORDER_STATUS,
+    updatedNodes: IOrderOnChangeStatusProp,
   ) => {
     const adminId = store.getState().auth.adminId;
     const orderUpdateRequestData = {
-      orderStatus: orderStatus,
+      ...updatedNodes,
       updatedBy: adminId,
       updatedUserType: USER_TYPE.ADMIN,
     };
@@ -57,6 +63,14 @@ export function AdminOrders(props: ComponentProp) {
       showToastByResponse(orderResponse);
     }
   };
+  const getDeliveryUsers = async () => {
+    try {
+      const items = await deliveryPersonAction.getAllDeliveryPersonsAsItem();
+      setDeliveryPersonListAsItem(items);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
   return (
     <Container>
       <Loader visible={isLoading} />
@@ -66,13 +80,14 @@ export function AdminOrders(props: ComponentProp) {
         ListHeaderComponent={<SectionTitle title="Orders" />}
         renderItem={({item}) => (
           <OrderCard
+            deliveryPersonList={deliveryPersonListAsItem}
             orderData={item}
             statusUpdateButtons={getFollowUpStatusUpdateButtons(
               item.orderStatus,
               USER_TYPE.SALES_USER,
             )}
-            onChangeStatus={(updatedStatus: VALID_ORDER_STATUS) =>
-              updateOrderByOrderId(item._id, updatedStatus)
+            onChangeStatus={(updatedValue: IOrderOnChangeStatusProp) =>
+              updateOrderByOrderId(item._id, updatedValue)
             }
             onClick={() =>
               navigateByProp(

@@ -28,7 +28,7 @@ export function AdminViewDeliveryPersons(props: ComponentProp) {
   const getSalesUserData = async () => {
     try {
       setIsLoading(true);
-      const sellerDataResponse = await deliveryPersonAction.getAllDeliveryPersonByAdmin();
+      const sellerDataResponse = await deliveryPersonAction.getAllDeliveryPersons();
       if (sellerDataResponse.success && isRendered.current) {
         const sellerList: IDeliveryPerson[] = sellerDataResponse.data;
         setDeliveryPersonData(sellerList);

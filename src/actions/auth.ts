@@ -37,6 +37,8 @@ const getBaseAuthAPIRouteByUserType = (userType: USER_TYPE) => {
       return '/seller/sales-user';
     case USER_TYPE.ADMIN:
       return '/admin';
+    case USER_TYPE.DELIVERY_PERSON:
+      return '/delivery-person';
 
     default:
       return '/users';

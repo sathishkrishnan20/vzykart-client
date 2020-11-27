@@ -7,7 +7,6 @@ import {OrderCard} from './order-card';
 import {SectionTitle} from '../Section-Title';
 import {IS_BIG_SCREEN} from '../../config';
 import {IOrder, IStatusUpdateActions} from '../../interfaces/orders';
-import {Row} from 'react-native-easy-grid';
 
 interface OrderOverViewState extends IStatusUpdateActions {
   orderData: IOrder;
@@ -17,11 +16,13 @@ const OrderOverView = ({
   orderData,
   onChangeStatus,
   statusUpdateButtons = [],
+  deliveryPersonList = [],
 }: OrderOverViewState) => {
   return (
     <>
       <SectionTitle title={'Order Overview'} />
       <OrderCard
+        deliveryPersonList={deliveryPersonList}
         orderData={orderData}
         statusUpdateButtons={statusUpdateButtons}
         onChangeStatus={onChangeStatus}
@@ -38,7 +39,6 @@ const OrderOverView = ({
           />
         </View>
       )}
-      <SectionTitle title={'Products'} />
     </>
   );
 };

@@ -63,7 +63,7 @@ export const getFollowUpStatusUpdateButtons = (
     },
   };
   const deliveryBoyAssignedButton: IOrderStatusUpdateButton = {
-    label: 'Delivery Boy Assigned',
+    label: 'Assign Delivery Person',
     value: VALID_ORDER_STATUS.DELIVERY_BOY_ASSIGNED,
     style: {
       backgroundColor: colors.green,

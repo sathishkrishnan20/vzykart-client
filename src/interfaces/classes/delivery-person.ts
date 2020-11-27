@@ -5,4 +5,6 @@ export interface IDeliveryPersonCreateRequest {
   email: string;
   mobileNumber: string;
 }
-export interface IDeliveryPerson extends IDeliveryPersonCreateRequest {}
+export interface IDeliveryPerson extends IDeliveryPersonCreateRequest {
+  _id: string;
+}

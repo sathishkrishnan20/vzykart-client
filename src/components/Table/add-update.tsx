@@ -121,7 +121,9 @@ export default function TableWriteComponent({
                       disabled={componentItem.disabled}
                       items={componentItem.selectionItems || []}
                       stateKey={componentItem.stateKey}
-                      onSelectedItemsChange={changeState}
+                      onSelectedItemsChange={(value: Item[] | string[]) =>
+                        changeState(componentItem.stateKey, value)
+                      }
                       selectedItems={(componentItem.value as Item[]) || []}
                       label={componentItem.label}
                     />

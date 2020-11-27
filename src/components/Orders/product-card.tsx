@@ -6,6 +6,7 @@ import {Grid, Col, Row} from 'react-native-easy-grid';
 import {Card} from 'react-native-elements';
 import Image from '../Image/image';
 import {getImageLink} from '../../helpers';
+import {SectionTitle} from '../Section-Title';
 
 const leftSideSize = IS_BIG_SCREEN ? 2 : 4;
 interface ProductCardOrderedState {
@@ -18,36 +19,18 @@ export const ProductCardsOrdered = ({productInfo}: ProductCardOrderedState) => {
 
 const ProductSummary = ({productInfo}: ProductCardOrderedState) => {
   return (
-    <View
-      style={[
-        IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob,
-        styles.container,
-      ]}>
-      {IS_BIG_SCREEN ? (
-        <Grid>
-          <Col size={leftSideSize}>
-            {renderImage(
-              productInfo.image && productInfo.image.optimizedDestinationPath,
-            )}
-          </Col>
-          <Col size={12 - leftSideSize} style={{justifyContent: 'flex-start'}}>
-            {renderProductInfo({
-              productInfo,
-            })}
-          </Col>
-        </Grid>
-      ) : (
-        <Card
-          containerStyle={{
-            padding: 1,
-            margin: 3,
-          }}
-          wrapperStyle={{padding: 0}}>
-          <Row size={12}>
+    <View style={{marginTop: 8}}>
+      <SectionTitle title={'Products'} />
+      <View
+        style={[
+          IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob,
+          styles.container,
+        ]}>
+        {IS_BIG_SCREEN ? (
+          <Grid>
             <Col size={leftSideSize}>
               {renderImage(
-                productInfo.image &&
-                  productInfo.image?.optimizedDestinationPath,
+                productInfo.image && productInfo.image.optimizedDestinationPath,
               )}
             </Col>
             <Col
@@ -57,9 +40,32 @@ const ProductSummary = ({productInfo}: ProductCardOrderedState) => {
                 productInfo,
               })}
             </Col>
-          </Row>
-        </Card>
-      )}
+          </Grid>
+        ) : (
+          <Card
+            containerStyle={{
+              padding: 1,
+              margin: 3,
+            }}
+            wrapperStyle={{padding: 0}}>
+            <Row size={12}>
+              <Col size={leftSideSize}>
+                {renderImage(
+                  productInfo.image &&
+                    productInfo.image?.optimizedDestinationPath,
+                )}
+              </Col>
+              <Col
+                size={12 - leftSideSize}
+                style={{justifyContent: 'flex-start'}}>
+                {renderProductInfo({
+                  productInfo,
+                })}
+              </Col>
+            </Row>
+          </Card>
+        )}
+      </View>
     </View>
   );
 };
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
     elevation: 16,
     marginBottom: 8,
     marginLeft: 8,
-    marginTop: 2,
+    marginTop: 8,
   },
   viewContainerMob: {
     marginTop: 0,

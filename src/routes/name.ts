@@ -29,6 +29,7 @@ const ROUTE_NAMES = {
     : 'Seller Product Details',
   sellerOrders: IS_WEB ? '/seller/orders' : 'Orders',
   sellerOrdersDetails: IS_WEB ? '/seller/orders/:orderId' : 'Orders View',
+
   sellerSalesUsersView: IS_WEB
     ? '/seller/sales-users'
     : 'Seller SalesUsers View',

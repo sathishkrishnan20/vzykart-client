@@ -2,6 +2,7 @@ import {IUserAddress} from '.';
 import {VALID_ORDER_STATUS, BOOKING_FROM, PAYMENT_TYPE} from './enums';
 import {IProductImage} from './products';
 import {ViewStyle, StyleProp} from 'react-native';
+import {Item} from 'react-native-picker-select';
 export interface IOrderProducts {
   productId: string;
   sellerId: string;
@@ -71,9 +72,15 @@ export interface IOrderStatusUpdateButton {
 export interface IOrderCard {
   orderData: IOrder;
 }
+export interface IOrderOnChangeStatusProp {
+  orderStatus: VALID_ORDER_STATUS;
+  deliveryPersonId?: string;
+  deliveryBoyAssignedDate?: Date;
+}
 export interface IStatusUpdateActions {
   statusUpdateButtons?: IOrderStatusUpdateButton[];
-  onChangeStatus?: (updatedStatus: VALID_ORDER_STATUS) => void;
+  onChangeStatus?: (value: IOrderOnChangeStatusProp) => void;
+  deliveryPersonList?: Item[];
 }
 export interface IOrderCardState extends IOrderCard, IStatusUpdateActions {
   onClick: () => void;

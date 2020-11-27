@@ -4,7 +4,7 @@ import {FlatList} from 'react-native';
 import OrderAction from '../../../actions/orders';
 import {getSellerId} from '../../../services/storage-service';
 import {Container, Loader} from '../../../components';
-import {IOrder} from '../../../interfaces/orders';
+import {IOrder, IOrderOnChangeStatusProp} from '../../../interfaces/orders';
 import {showToastByResponse} from '../../../components/Toast';
 import {keyExtractor} from '../../../helpers/render-helpers';
 import {OrderCard} from '../../../components/Orders/order-card';
@@ -14,13 +14,21 @@ import {navigateByProp} from '../../../navigation';
 import {SectionTitle} from '../../../components/Section-Title';
 import {getFollowUpStatusUpdateButtons} from '../../../components/Orders/helpers';
 import {USER_TYPE, VALID_ORDER_STATUS} from '../../../interfaces/enums';
+import DeliveryPersonAction from '../../../actions/delivery-person';
+import {Item} from 'react-native-picker-select';
+import {IDeliveryPerson} from '../../../interfaces/classes/delivery-person';
 
 export function SellerOrders(props: ComponentProp) {
   const orderAction = new OrderAction();
+  const deliveryPersonAction = new DeliveryPersonAction();
   const [orders, setOrders] = useState([] as IOrder[]);
+  const [deliveryPersonListAsItem, setDeliveryPersonListAsItem] = useState(
+    [] as Item[],
+  );
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     getOrders();
+    getDeliveryUsers();
   }, []);
   const getOrders = async () => {
     try {
@@ -37,13 +45,21 @@ export function SellerOrders(props: ComponentProp) {
       setIsLoading(false);
     }
   };
+  const getDeliveryUsers = async () => {
+    try {
+      const items = await deliveryPersonAction.getAllDeliveryPersonsAsItem();
+      setDeliveryPersonListAsItem(items);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
   const updateOrderByOrderId = async (
     orderId: string,
-    orderStatus: VALID_ORDER_STATUS,
+    updatedNodes: IOrderOnChangeStatusProp,
   ) => {
     const userId = (await getSellerId()) as string;
     const orderUpdateRequestData = {
-      orderStatus: orderStatus,
+      ...updatedNodes,
       updatedBy: userId,
       updatedUserType: USER_TYPE.SALES_USER,
     };
@@ -66,13 +82,14 @@ export function SellerOrders(props: ComponentProp) {
         ListHeaderComponent={<SectionTitle title="Orders" />}
         renderItem={({item}) => (
           <OrderCard
+            deliveryPersonList={deliveryPersonListAsItem}
             orderData={item}
             statusUpdateButtons={getFollowUpStatusUpdateButtons(
               item.orderStatus,
               USER_TYPE.SALES_USER,
             )}
-            onChangeStatus={(updatedStatus: VALID_ORDER_STATUS) =>
-              updateOrderByOrderId(item._id, updatedStatus)
+            onChangeStatus={(updatedNodes: IOrderOnChangeStatusProp) =>
+              updateOrderByOrderId(item._id, updatedNodes)
             }
             onClick={() =>
               navigateByProp(

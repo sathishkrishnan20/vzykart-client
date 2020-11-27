@@ -67,6 +67,7 @@ const ADMIN_ROUTES = [
     component: AdminOrderDetails,
     name: 'Orders Details',
   },
+
   {
     routeName: ROUTE_NAMES.adminViewSellers,
     component: AdminViewSellers,
@@ -170,6 +171,7 @@ const PUBLIC_ROUTES = [
     component: ProductList,
     name: 'Product List',
   },
+
   /* {
     routeName: ROUTE_NAMES.productDetails,
     component: ProductDetail,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import {
   IOrderCard,
@@ -11,6 +11,10 @@ import {IS_BIG_SCREEN} from '../../config';
 import {getUserMessageByOrderStatus, getColorByOrderStatus} from './helpers';
 import Address from '../Address';
 import {Button} from '../Button';
+import {VALID_ORDER_STATUS} from '../../interfaces/enums';
+import MultiSelect from '../MultiSelect';
+import {Item} from 'react-native-picker-select';
+import {WarningToast} from '../Toast';
 
 export const OrderCard = ({
   orderData,
@@ -18,6 +22,7 @@ export const OrderCard = ({
   disabled = false,
   statusUpdateButtons = [],
   onChangeStatus,
+  deliveryPersonList,
 }: IOrderCardState) => {
   return IS_BIG_SCREEN ? (
     <TouchableOpacity disabled={disabled} onPress={onClick}>
@@ -30,6 +35,7 @@ export const OrderCard = ({
           <Col>
             <RenderPaymentData orderData={orderData} />
             <RenderActionButtons
+              deliveryPersonList={deliveryPersonList}
               onChangeStatus={onChangeStatus}
               statusUpdateButtons={statusUpdateButtons}
             />
@@ -52,6 +58,7 @@ export const OrderCard = ({
         <RenderPaymentData orderData={orderData} />
         <RenderOrderStatusData orderData={orderData} />
         <RenderActionButtons
+          deliveryPersonList={deliveryPersonList}
           onChangeStatus={onChangeStatus}
           statusUpdateButtons={statusUpdateButtons}
         />
@@ -165,26 +172,87 @@ const RenderOrderStatusData = ({orderData}: IOrderCard) => {
   );
 };
 
-const RenderActionButtons = ({
+function RenderActionButtons({
   statusUpdateButtons,
   onChangeStatus,
-}: IStatusUpdateActions) => {
+  deliveryPersonList = [],
+}: IStatusUpdateActions) {
+  const [selectedDeliveryPerson, setSelectedDeliveryPerson] = useState(
+    [] as Item[] | string[],
+  );
+  const getDeliveryPersonId = (): string => {
+    if (selectedDeliveryPerson && selectedDeliveryPerson[0]) {
+      if (typeof selectedDeliveryPerson[0] === 'string') {
+        return selectedDeliveryPerson[0];
+      } else {
+        return selectedDeliveryPerson[0].value;
+      }
+    } else {
+      WarningToast({message: 'Please Select Delivery Person'});
+      return '';
+    }
+  };
   return (
     <Row>
       {typeof onChangeStatus === 'function' &&
-        statusUpdateButtons?.map((item) => (
-          <Col>
-            <Button
-              disabled={item.disabled || false}
-              onPress={() => onChangeStatus(item.value)}
-              buttonStyle={item.style}
-              title={item.label}
-            />
-          </Col>
-        ))}
+        statusUpdateButtons?.map((item) =>
+          item.value === VALID_ORDER_STATUS.DELIVERY_BOY_ASSIGNED ? (
+            <Grid>
+              <Row style={{marginTop: IS_BIG_SCREEN ? 8 : 4}}>
+                <TouchableOpacity
+                  onPress={(e) => e.preventDefault()}
+                  style={{width: '90%'}}>
+                  <MultiSelect
+                    disableLabelOnWeb={true}
+                    label={'Select Delivery Person'}
+                    items={deliveryPersonList}
+                    onSelectedItemsChange={(value: Item[] | string[]) => {
+                      console.log(value);
+                      setSelectedDeliveryPerson(value);
+                    }}
+                    singleSelect={true}
+                    selectedItems={selectedDeliveryPerson}
+                  />
+                </TouchableOpacity>
+              </Row>
+              <Row
+                style={{
+                  marginTop: IS_BIG_SCREEN ? -48 : 0,
+                  width: '90%',
+                }}>
+                <TouchableOpacity>
+                  <Button
+                    disabled={item.disabled || false}
+                    onPress={() => {
+                      const deliveryPersonId = getDeliveryPersonId();
+                      if (deliveryPersonId) {
+                        onChangeStatus({
+                          orderStatus: item.value,
+                          deliveryPersonId: deliveryPersonId,
+                          deliveryBoyAssignedDate: new Date(),
+                        });
+                      }
+                    }}
+                    buttonStyle={[item.style]}
+                    title={item.label}
+                  />
+                </TouchableOpacity>
+              </Row>
+            </Grid>
+          ) : (
+            <Col>
+              <Button
+                disabled={item.disabled || false}
+                onPress={() => onChangeStatus({orderStatus: item.value})}
+                buttonStyle={item.style}
+                title={item.label}
+              />
+            </Col>
+          ),
+        )}
     </Row>
   );
-};
+}
 
 const styles = StyleSheet.create({
   textName: {
