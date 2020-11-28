@@ -9,6 +9,9 @@ import SellerAction from '../../actions/seller';
 import {ISeller} from '../../interfaces/classes/seller';
 import {showToastByResponse} from '../../components/Toast';
 import ROUTE_NAMES from '../../routes/name';
+import {SectionTitle} from '../../components/Section-Title';
+import colors from '../../colors';
+import {Dimensions} from 'react-native';
 const sellerAction = new SellerAction();
 export function SellersList() {
   let isRendered = useRef(false);
@@ -41,34 +44,42 @@ export function SellersList() {
       setIsLoading(false);
     }
   };
-
+  const sellerContainerCountForRow = Math.floor(
+    Dimensions.get('window').width / 170,
+  );
   return (
-    <Container>
-      <HeaderSearchBar onChangeText={setSearch} value={search} />
+    <>
+      {/* <HeaderSearchBar onChangeText={setSearch} value={search} /> */}
+      <SectionTitle
+        backgroundStyle={{backgroundColor: colors.white}}
+        textStyle={{color: colors.black}}
+        title={'Shop by Sellers'}
+      />
       <Loader visible={isLoading} />
       {sellerListData?.length === 0 ? null : (
         <FlatList
           data={sellerListData}
           horizontal={false}
-          numColumns={getNoOfColumns()}
+          numColumns={Number(sellerContainerCountForRow)}
           keyExtractor={keyExtractor}
           renderItem={({item}) => (
             <Seller
               data={item}
+              rowCount={sellerContainerCountForRow}
               onClick={() =>
                 navigate(
                   navigation,
-                  ROUTE_NAMES.productListBySellerId.replace(
-                    ':sellerId',
-                    item._id,
+                  ROUTE_NAMES.productListFilters.replace(
+                    ':filters',
+                    JSON.stringify({filterParams: {sellerId: item._id}}),
                   ),
-                  {sellerId: item._id},
+                  {filterParams: {sellerId: item._id}},
                 )
               }
             />
           )}
         />
       )}
-    </Container>
+    </>
   );
 }

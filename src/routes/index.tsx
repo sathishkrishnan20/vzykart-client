@@ -55,6 +55,7 @@ import Axios from 'axios';
 import {WriteAdminDeliveryPersonData} from '../screens/_admin/delivery-persons/add';
 import {AdminViewDeliveryPersons} from '../screens/_admin/delivery-persons/view';
 import {DeliveryPersonOrders} from '../screens/_delivery_person/orders';
+import {Home} from '../screens/Home';
 
 const HEADER_HEIGHT = 70;
 
@@ -159,17 +160,22 @@ const AUTH_ROUTES = [
 
 const PUBLIC_ROUTES = [
   {
+    routeName: '/Dashboard',
+    component: Home,
+    name: 'Home List',
+  },
+  {
     routeName: '/',
-    component: SellersList,
+    component: Home,
     name: 'Home',
   },
   {
     routeName: ROUTE_NAMES.home,
-    component: SellersList,
+    component: Home,
     name: 'Home',
   },
   {
-    routeName: ROUTE_NAMES.productListBySellerId,
+    routeName: ROUTE_NAMES.productListFilters,
     component: ProductList,
     name: 'Product List',
   },
@@ -446,7 +452,7 @@ export function Routes() {
           inactiveTintColor: 'gray',
           keyboardHidesTabBar: true,
         }}>
-        <Tab.Screen name={ROUTE_NAMES.home} component={SellersList} />
+        <Tab.Screen name={ROUTE_NAMES.home} component={Home} />
         <Tab.Screen name={ROUTE_NAMES.userOrders} component={MyOrders} />
         <Tab.Screen name={ROUTE_NAMES.userCart} component={Cart} />
         <Tab.Screen name={ROUTE_NAMES.userProfile} component={Profile} />
@@ -529,7 +535,7 @@ export function Routes() {
               {/* User Public Routes */}
               <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
               <Stack.Screen
-                name={ROUTE_NAMES.productListBySellerId}
+                name={ROUTE_NAMES.productListFilters}
                 component={ProductList}
               />
 

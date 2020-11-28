@@ -15,6 +15,7 @@ import {VALID_ORDER_STATUS} from '../../interfaces/enums';
 import MultiSelect from '../MultiSelect';
 import {Item} from 'react-native-picker-select';
 import {WarningToast} from '../Toast';
+import colors from '../../colors';
 
 export const OrderCard = ({
   orderData,
@@ -257,7 +258,7 @@ function RenderActionButtons({
 const styles = StyleSheet.create({
   textName: {
     fontSize: IS_BIG_SCREEN ? 18 : 14,
-    color: '#4B5164',
+    color: colors.textGray,
     fontWeight: '400',
     marginLeft: IS_BIG_SCREEN ? 8 : 4,
     marginBottom: IS_BIG_SCREEN ? 8 : 4,

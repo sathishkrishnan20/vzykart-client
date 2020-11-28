@@ -14,6 +14,14 @@ class ProductAction {
     ).catch((ex) => ex.response);
     return result.data;
   }
+
+  async getProductsByFilters(filtersData: any): Promise<IResponse> {
+    const result = await postService('/products/filters', filtersData).catch(
+      (ex) => ex.response,
+    );
+    return result.data;
+  }
+
   async getProductsBySellerId(sellerId: string): Promise<IResponse> {
     const result = await getService('/products/seller/' + sellerId).catch(
       (ex) => ex.response,

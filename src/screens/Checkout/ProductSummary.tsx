@@ -11,6 +11,7 @@ import {
   calculateTotalMRPAmountWithGST,
   getImageLink,
 } from '../../helpers';
+import colors from '../../colors';
 const leftSideSize = IS_WEB ? 2 : 4;
 
 interface IProductSummary {
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
   },
   textName: {
     fontSize: IS_WEB ? 18 : 14,
-    color: '#4B5164',
+    color: colors.textGray,
     fontWeight: '600',
     marginLeft: IS_WEB ? 8 : 4,
     marginBottom: IS_WEB ? 8 : 4,

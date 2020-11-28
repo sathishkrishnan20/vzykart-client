@@ -7,6 +7,7 @@ import {Card} from 'react-native-elements';
 import Image from '../Image/image';
 import {getImageLink} from '../../helpers';
 import {SectionTitle} from '../Section-Title';
+import colors from '../../colors';
 
 const leftSideSize = IS_BIG_SCREEN ? 2 : 4;
 interface ProductCardOrderedState {
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   },
   textName: {
     fontSize: IS_BIG_SCREEN ? 18 : 14,
-    color: '#4B5164',
+    color: colors.textGray,
     fontWeight: '600',
     marginLeft: IS_BIG_SCREEN ? 8 : 4,
     marginBottom: IS_BIG_SCREEN ? 8 : 4,

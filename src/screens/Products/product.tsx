@@ -1,7 +1,8 @@
 import React from 'react';
 import {ActivityIndicator, Text, StyleSheet, View} from 'react-native';
 
-import {Image, Button} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Image, Button, withBadge} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IProduct} from '../../interfaces/products';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
@@ -21,6 +22,7 @@ interface IRenderBuyCart {
   productInfo: IProduct;
   onClickAddToCart: (productId: string) => void;
   onClickBuy: (productInfo: IProduct, productId: string) => void;
+  productCountOnCart?: number;
 }
 interface IProductCard extends IProductInfo, IRenderBuyCart {}
 
@@ -34,6 +36,10 @@ export const Product = ({
   onClickBuy,
 }: IProductCard) => {
   const leftSideSize = 5;
+  const cartItemLength =
+    cartProducts.find((item) => item.productId === productInfo._id)?.quantity ||
+    0;
+
   return (
     <>
       <View
@@ -60,6 +66,7 @@ export const Product = ({
                 cartQtyRefreshCount,
               })}
               {renderCartBuyButtons({
+                productCountOnCart: cartItemLength,
                 productInfo,
                 onClickAddToCart,
                 onClickBuy,
@@ -89,6 +96,7 @@ export const Product = ({
             </Row>
             <Row size={3}>
               {renderCartBuyButtons({
+                productCountOnCart: cartItemLength,
                 productInfo,
                 onClickAddToCart,
                 onClickBuy,
@@ -175,7 +183,10 @@ const renderCartBuyButtons = ({
   productInfo,
   onClickAddToCart,
   onClickBuy,
+  productCountOnCart,
 }: IRenderBuyCart) => {
+  const CartIcon: any = withBadge(productCountOnCart)(Icon);
+
   return (
     <Row>
       <Col>
@@ -190,10 +201,19 @@ const renderCartBuyButtons = ({
       </Col>
       <Col>
         <Button
-          icon={{
-            name: 'shopping-cart',
-            size: 15,
-            color: 'white',
+          icon={
+            productCountOnCart ? (
+              <CartIcon size={15} name="cart" color={colors.white} />
+            ) : (
+              {
+                name: 'shopping-cart',
+                size: 15,
+                color: colors.white,
+              }
+            )
+          }
+          titleStyle={{
+            marginLeft: productCountOnCart ? 16 : 0,
           }}
           onPress={() => onClickAddToCart(productInfo._id)}
           buttonStyle={styles.add2CartButton}
@@ -241,7 +261,7 @@ const styles = StyleSheet.create({
   },
   textName: {
     fontSize: IS_BIG_SCREEN ? 18 : 14,
-    color: '#4B5164',
+    color: colors.textGray,
     fontWeight: '600',
     marginLeft: IS_BIG_SCREEN ? 8 : 4,
     marginBottom: IS_BIG_SCREEN ? 8 : 4,

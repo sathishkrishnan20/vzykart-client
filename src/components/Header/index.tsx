@@ -32,10 +32,17 @@ export function Header({
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <Text
+              onPress={() => history.push(ROUTE_NAMES.home)}
               accessibilityRole="header"
               aria-level="3"
               style={styles.title}>
               {title}
+            </Text>
+            <Text
+              accessibilityRole="header"
+              aria-level="3"
+              style={[styles.titleOrder]}>
+              {'Order at 8883334889'}
             </Text>
           </View>
 
@@ -163,6 +170,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontStyle: 'italic',
     marginLeft: 20,
+  },
+  titleOrder: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: 'white',
+    fontStyle: 'italic',
+    marginLeft: 40,
   },
   navText: {
     marginLeft: 20,

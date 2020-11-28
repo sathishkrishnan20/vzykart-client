@@ -1,11 +1,20 @@
 // @ts-nocheck
 import React from 'react';
-import {AppRegistry, Platform} from 'react-native';
+import {
+  AppRegistry,
+  Platform,
+  TouchableOpacity,
+  StyleSheet,
+  Linking,
+} from 'react-native';
 import {Provider} from 'react-redux';
 import {store} from './routes/store';
 import {ThemeProvider} from 'react-native-elements';
 import Toast from 'react-native-toast-message';
 import {Routes} from './routes';
+import {WHATSAPP_NUMBER} from './config';
+import {Icon} from 'react-native-elements';
+
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
 import Entypo from 'react-native-vector-icons/Fonts/Entypo.ttf';
 import EvilIcons from 'react-native-vector-icons/Fonts/EvilIcons.ttf';
@@ -23,6 +32,8 @@ import Helvetica from './assets/fonts/Helvetica-Light.ttf';
 import {MenuProvider} from 'react-native-popup-menu';
 import {ToastContainer} from 'react-toastify';
 import {IS_WEB} from './config';
+import colors from './colors';
+console.disableYellowBox = true;
 const fonts = [
   {url: AntDesign, fontFamilyName: 'AntDesign'},
   {url: Entypo, fontFamilyName: 'Entypo'},
@@ -39,15 +50,6 @@ const fonts = [
   {url: Fontisto, fontFamilyName: 'Fontisto'},
   {url: Helvetica, fontFamilyName: 'Helvetica'},
 ];
-const colors = {
-  white: '#FFF',
-  primary: '#F34C42',
-  blazeOrange: '#FE6301',
-  mantis: '#69C779',
-  alto: '#D8D8D8',
-  dustyGray: '#979797',
-  lightSkyBlue: '#87CEFA',
-};
 
 const commonTheme = {
   colors: {
@@ -56,6 +58,7 @@ const commonTheme = {
   Text: {
     style: {
       fontFamily: 'Helvetica-Light',
+      color: colors.textGray,
     },
   },
   Button: {
@@ -70,12 +73,73 @@ const commonTheme = {
     },
   },
 };
+
 export function App() {
+  const message = `Please Fill the Below Details and Send it with us, \n\nProducts: \nQuantity: \nSellerName if Specific `;
+  const openWhatsApp = () => {
+    Linking.openURL(`whatsapp://send?text=${message}&phone=${WHATSAPP_NUMBER}`);
+  };
   return (
     <Provider store={store} key="provider">
       <MenuProvider>
         <ThemeProvider theme={commonTheme}>
           <Routes />
+          {IS_WEB ? (
+            <div
+              style={{
+                borderWidth: 1,
+                borderColor: 'rgba(0,0,0,0.2)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'fixed',
+                bottom: 20,
+                right: 20,
+                width: 80,
+                height: 80,
+                backgroundColor: 'transparent',
+                borderRadius: 100,
+              }}>
+              <a
+                style={{textDecoration: 'none'}}
+                target="_blank"
+                href={`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`}>
+                <Icon
+                  raised
+                  size={35}
+                  style={{alignSelf: 'center', justifyContent: 'center'}}
+                  reverse
+                  name="logo-whatsapp"
+                  type="ionicon"
+                  color="#23D755"
+                />
+              </a>
+            </div>
+          ) : (
+            <TouchableOpacity
+              onPress={() => openWhatsApp()}
+              style={{
+                borderWidth: 1,
+                borderColor: 'rgba(0,0,0,0.2)',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 65,
+                position: 'absolute',
+                bottom: 60,
+                right: 10,
+                height: 65,
+                backgroundColor: '#fff',
+                borderRadius: 100,
+              }}>
+              <Icon
+                raised
+                reverse
+                name="logo-whatsapp"
+                type="ionicon"
+                color="#23D755"
+              />
+            </TouchableOpacity>
+          )}
+
           {IS_WEB ? (
             <ToastContainer containerId="toastId" />
           ) : (
@@ -123,3 +187,19 @@ if (Platform.OS === 'web') {
     rootTag: document.getElementById('root'),
   });
 }
+
+const styles = StyleSheet.create({
+  fabWhatsApp: {
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+    position: 'absolute',
+    bottom: 60,
+    right: 10,
+    height: 70,
+    backgroundColor: '#fff',
+    borderRadius: 100,
+  },
+});

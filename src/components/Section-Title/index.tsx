@@ -7,23 +7,27 @@ import {Text} from 'react-native-elements';
 export const SectionTitle = ({
   title,
   textStyle = {},
+  backgroundStyle = {},
 }: {
   title: string;
   textStyle?: StyleProp<TextStyle>;
+  backgroundStyle?: StyleProp<TextStyle>;
 }) => {
   return (
     <View
-      style={{
-        backgroundColor: colors.themePrimary,
-        justifyContent: 'center',
-        height: 40,
-        borderRadius: 10,
-        margin: IS_WEB ? 8 : 4,
-        marginBottom: IS_WEB ? 0 : -2,
-      }}>
+      style={[
+        {
+          backgroundColor: colors.themePrimary,
+          justifyContent: 'center',
+          height: 40,
+          borderRadius: 10,
+          margin: IS_WEB ? 8 : 4,
+          marginBottom: IS_WEB ? 0 : -2,
+        },
+        backgroundStyle,
+      ]}>
       <Text
         style={[
-          textStyle,
           {
             fontSize: IS_WEB ? 18 : 14,
             color: colors.white,
@@ -31,6 +35,7 @@ export const SectionTitle = ({
             alignSelf: 'center',
             fontWeight: 'bold',
           },
+          textStyle,
         ]}>
         {title}
       </Text>

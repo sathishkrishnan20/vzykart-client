@@ -54,7 +54,7 @@ export default StyleSheet.create({
   },
   textSignIn: {
     fontSize: 18,
-    color: '#4B5164',
+    color: colors.textGray,
     fontFamily: 'open-sans, sans-serif',
   },
   userNameInput: {
@@ -96,46 +96,4 @@ export default StyleSheet.create({
     fontSize: 14.5,
     fontFamily: 'open-sans, sans-serif',
   },
-  /*
- 
-  
-
-  loginErrorMsg: {
-    marginTop: 5,
-    marginLeft: '5rem',
-    fontSize: 15,
-    color: 'red',
-    fontFamily: 'open-sans, sans-serif',
-    textAlign: 'center',
-  },
-  
-  
- 
-  textUserNameInput: {
-    fontFamily: 'open-sans, sans-serif',
-    fontSize: '17.5px',
-    fontWeight: 600,
-    marginBottom: '-0.5px',
-    marginTop: '20px',
-    marginRight: '40px',
-    color: '#4B5164',
-  },
-  
-  
-  
-  loginOtpButton: {
-    gridRowStart: 8,
-    gridRowEnd: 10,
-    marginTop: '20px',
-    marginBottom: '1em',
-    backgroundColor: 'white',
-    height: 41,
-    width: 300,
-    borderRadius: 4,
-    borderWidth: 3,
-    borderColor: '#F8712F',
-    fontFamily: 'open-sans, sans-serif',
-    color: '#F8712F',
-  },
-  */
 });

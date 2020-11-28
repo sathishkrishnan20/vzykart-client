@@ -6,6 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {CART_INC_DEC} from '../../interfaces/enums';
 import {IS_WEB} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
+import colors from '../../colors';
 
 interface State {
   productId: string;
@@ -83,8 +84,8 @@ const RenderQtyComponent = ({
     <Row style={{margin: marginSize}}>
       <TouchableOpacity
         onPress={() => qtyHandler(CART_INC_DEC.DECREMENT)}
-        style={{borderWidth: 1, maxHeight: 25, borderColor: '#cccccc'}}>
-        <MaterialIcons name="remove" size={25} color="#cccccc" />
+        style={{borderWidth: 1, maxHeight: 25, borderColor: colors.gray80}}>
+        <MaterialIcons name="remove" size={25} color={colors.gray80} />
       </TouchableOpacity>
       <TouchableOpacity
         disabled={true}
@@ -92,14 +93,14 @@ const RenderQtyComponent = ({
           borderWidth: 1,
           maxHeight: 25,
           justifyContent: 'center',
-          borderColor: '#cccccc',
+          borderColor: colors.gray80,
           paddingLeft: 8,
           paddingRight: 8,
           alignItems: 'center',
         }}>
         <Text
           style={{
-            color: '#4B5164',
+            color: colors.textGray,
           }}>
           {quantity}
         </Text>
@@ -107,8 +108,8 @@ const RenderQtyComponent = ({
 
       <TouchableOpacity
         onPress={() => qtyHandler(CART_INC_DEC.INCREMENT)}
-        style={{borderWidth: 1, maxHeight: 25, borderColor: '#cccccc'}}>
-        <MaterialIcons name="add" size={25} color="#cccccc" />
+        style={{borderWidth: 1, maxHeight: 25, borderColor: colors.gray80}}>
+        <MaterialIcons name="add" size={25} color={colors.gray80} />
       </TouchableOpacity>
     </Row>
   );

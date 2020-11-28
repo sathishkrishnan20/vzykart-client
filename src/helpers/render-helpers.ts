@@ -9,13 +9,13 @@ const getNoOfColumns = () => {
   } else if (width > 600 && width <= 900) {
     return 3;
   } else if (width > 900 && width <= 1600) {
-    return 4;
+    return 7;
   } else if (width > 1600 && width <= 2000) {
-    return 5;
+    return 7;
   } else if (width < 2000) {
-    return 6;
+    return 8;
   }
-  return 6;
+  return 8;
 };
 const keyExtractor = (
   item: any,

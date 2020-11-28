@@ -4,7 +4,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import {keyExtractor} from '../../helpers/render-helpers';
 import {updateCartDataOnStorage} from '../../helpers';
 import {Product} from './product';
-import {IS_BIG_SCREEN} from '../../config';
+import {IS_BIG_SCREEN, IS_WEB} from '../../config';
 import {IProduct} from '../../interfaces/products';
 import {
   useNavigation,
@@ -29,14 +29,19 @@ export function ProductList(props: ComponentProp) {
   const navigation = useNavigation();
   useEffect(() => {
     const params = getParamsByProp(props);
-    getProductDataBySellerId(params.sellerId);
+    console.log(params);
+    const filterParams = IS_WEB ? JSON.parse(params.filters) : params.filters;
+    console.log(filterParams);
+    getProductData(filterParams.filterParams || {});
     getCartItem().then((cartData) => setCartProducts(cartData));
   }, []);
 
-  const getProductDataBySellerId = async (sellerId: string) => {
+  const getProductData = async (filterParams: any) => {
     setIsLoading(true);
 
-    const productResponse = await productAction.getProductsBySellerId(sellerId);
+    const productResponse = await productAction.getProductsByFilters(
+      filterParams,
+    );
     setIsLoading(true);
     if (productResponse.success) {
       setProductData(productResponse.data);

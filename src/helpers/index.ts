@@ -44,29 +44,37 @@ export const getMultiSelectCategoryValues = (
   }) as Item[] | string[];
 };
 
-export const updateCartOnStorage = async (productId: string, qty: number) => {
+export const updateCartOnStorageByProductId = async (productId: string) => {
   const cartDataOnStorage = (await getCartItem()) as ICartItem[];
-  const productDataIndexOnStorage = cartDataOnStorage.findIndex(
+  const index = cartDataOnStorage.findIndex(
     (item) => item.productId === productId,
   );
-  if (productDataIndexOnStorage === -1) {
+  if (index === -1) {
     cartDataOnStorage.push({
       productId,
-      quantity: qty,
+      quantity: 1,
       checked: 1,
     });
   } else {
-    if (qty === 0) {
-      // cartDataOnStorage.splice(productDataIndexOnStorage, 1);
-    } else {
-      cartDataOnStorage[productDataIndexOnStorage].quantity = qty;
-    }
+    cartDataOnStorage[index].quantity = cartDataOnStorage[index].quantity + 1;
   }
   setCartItem(cartDataOnStorage);
   store.dispatch({
     type: USER_CART,
     cartItems: cartDataOnStorage,
   } as never);
+};
+
+export const getCartItemCountByProductId = async (productId: string) => {
+  const cartDataOnStorage = (await getCartItem()) as ICartItem[];
+  const itemData = cartDataOnStorage.find(
+    (item) => item.productId === productId,
+  );
+  if (!itemData) {
+    return 0;
+  } else {
+    return itemData.quantity;
+  }
 };
 
 export const updateCartDataOnStorage = async (cartItems: ICartItem[]) => {

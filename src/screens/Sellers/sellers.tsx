@@ -1,47 +1,87 @@
 import React from 'react';
-import {Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import {Card} from 'react-native-elements';
+import {
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  Dimensions,
+} from 'react-native';
+import {Card, Avatar} from 'react-native-elements';
 import {Row, Col} from 'react-native-easy-grid';
 import {IS_BIG_SCREEN} from '../../config';
 import {ISeller} from '../../interfaces/classes/seller';
 import {getImageLink} from '../../helpers';
+import colors from '../../colors';
 interface ISellerProp {
   data: ISeller;
   onClick: () => void;
+  rowCount: number;
 }
-export function Seller({data, onClick}: ISellerProp) {
+const marginWidth = 12;
+export function Seller({data, onClick, rowCount}: ISellerProp) {
+  const screenWidth = Dimensions.get('window').width;
+  const avatarSize = Math.ceil(
+    (screenWidth - (rowCount * marginWidth + marginWidth)) / rowCount,
+  );
   return (
-    <Row size={12} style={{margin: 4}}>
-      <Col size={12}>
-        <TouchableOpacity onPress={onClick}>
-          <Card containerStyle={{borderRadius: 2, margin: 2}}>
-            <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.rowStyle}>
-              <Image
-                source={{
-                  uri: getImageLink(
-                    data.sellerThumbImage &&
-                      (data.sellerThumbImage
-                        .optimizedDestinationPath as string),
-                  ),
-                }}
-                resizeMode={'stretch'}
-                style={{
-                  width: '100%',
-                  height: 200,
-                  alignItems: 'center',
-                }}
-              />
-            </Row>
-            <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.secondRow}>
-              <Col size={IS_BIG_SCREEN ? 12 : 0}>
-                <Text style={styles.mainText}>{data.sellerName}</Text>
-                <Text style={styles.subText}>{data.sellerDescription}</Text>
-              </Col>
-            </Row>
-          </Card>
-        </TouchableOpacity>
-      </Col>
-    </Row>
+    <View>
+      <Avatar
+        onPress={onClick}
+        size={avatarSize}
+        source={{
+          uri: getImageLink(
+            data.sellerThumbImage &&
+              (data.sellerThumbImage.optimizedDestinationPath as string),
+          ),
+        }}
+        containerStyle={{
+          flex: 2,
+          marginLeft: IS_BIG_SCREEN ? 12 : 12,
+          marginTop: 8,
+        }}
+      />
+      <Row size={IS_BIG_SCREEN ? 12 : 0}>
+        <Col size={IS_BIG_SCREEN ? 12 : 0}>
+          <Text style={styles.mainText}>{data.sellerName}</Text>
+          <Text numberOfLines={1} style={styles.subText}>
+            {data.sellerDescription}
+          </Text>
+        </Col>
+      </Row>
+    </View>
+
+    // <Row size={12} style={{margin: 4}}>
+    //   <Col size={12}>
+    //     <TouchableOpacity onPress={onClick}>
+    //       <Card containerStyle={{borderRadius: 2, margin: 2}}>
+    //         <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.rowStyle}>
+    //           <Image
+    //             source={{
+    //               uri: getImageLink(
+    //                 data.sellerThumbImage &&
+    //                   (data.sellerThumbImage
+    //                     .optimizedDestinationPath as string),
+    //               ),
+    //             }}
+    //             resizeMode={'stretch'}
+    //             style={{
+    //               width: '100%',
+    //               height: 200,
+    //               alignItems: 'center',
+    //             }}
+    //           />
+    //         </Row>
+    //         <Row size={IS_BIG_SCREEN ? 12 : 0} style={styles.secondRow}>
+    //           <Col size={IS_BIG_SCREEN ? 12 : 0}>
+    //             <Text style={styles.mainText}>{data.sellerName}</Text>
+    //             <Text style={styles.subText}>{data.sellerDescription}</Text>
+    //           </Col>
+    //         </Row>
+    //       </Card>
+    //     </TouchableOpacity>
+    //   </Col>
+    // </Row>
   );
 }
 
@@ -65,13 +105,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainText: {
-    fontSize: 10,
+    marginTop: IS_BIG_SCREEN ? 8 : 4,
+    fontSize: 14,
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: 'bold',
+
+    color: colors.gray,
   },
   subText: {
     fontSize: 10,
     marginTop: 5,
+    alignSelf: 'center',
     textAlign: 'center',
+    color: colors.gray,
   },
 });

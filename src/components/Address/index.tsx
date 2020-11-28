@@ -12,6 +12,7 @@ import {IS_BIG_SCREEN} from '../../config';
 import {Row, Col} from 'react-native-easy-grid';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CRUD} from '../../interfaces/enums';
+import colors from '../../colors';
 interface AddressInfo {
   data: IUserAddress;
   containerStyle?: StyleProp<ViewStyle>;
@@ -107,14 +108,14 @@ const Address = ({
 const styles = StyleSheet.create({
   textName: {
     fontSize: IS_BIG_SCREEN ? 18 : 14,
-    color: '#4B5164',
+    color: colors.textGray,
     fontWeight: '400',
     marginLeft: IS_BIG_SCREEN ? 8 : 4,
     marginBottom: IS_BIG_SCREEN ? 8 : 4,
   },
   textNameLight: {
     fontSize: IS_BIG_SCREEN ? 14 : 12,
-    color: 'gray',
+    color: colors.gray,
     fontWeight: '200',
     marginLeft: IS_BIG_SCREEN ? 8 : 4,
     marginBottom: IS_BIG_SCREEN ? 8 : 4,

@@ -132,19 +132,6 @@ export function Login(props: ComponentProp) {
             ? 'Reset your Password'
             : 'Sign in to your account'}
         </Card.Title>
-        {/* <TouchableOpacity
-          style={{alignSelf: 'flex-end', marginTop: -8}}
-          onPress={() => {
-            if (userType === USER_TYPE.USER) {
-              setUserType(USER_TYPE.SALES_USER);
-            } else {
-              setUserType(USER_TYPE.USER);
-            }
-          }}>
-          <Text style={styles.textForgotPassword}>
-            {getLabelSwitchUser(userType)}
-          </Text>
-        </TouchableOpacity> */}
         <Radio
           buttons={Object.keys(userTypes)}
           selectedItem={selectedUser}
