@@ -48,7 +48,7 @@ const ROUTE_NAMES = {
     ? '/product-list/seller/:sellerId'
     : 'Product List',
 
-  productListFilters: IS_WEB ? '/product-list/:filters' : 'Product List',
+  productListFilters: IS_WEB ? '/product-list/:filterParams' : 'Product List',
   productDetails: IS_WEB ? '/product-details' : 'Product Details',
 
   // User Authenticated

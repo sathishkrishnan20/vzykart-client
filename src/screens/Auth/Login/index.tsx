@@ -30,7 +30,7 @@ const screenHeight: number = Dimensions.get('window').height - 60;
 const authAction: AuthAction = new AuthAction();
 const userTypes: {[x: string]: USER_TYPE} = {
   User: USER_TYPE.USER,
-  'Sales User': USER_TYPE.SALES_USER,
+  'Seller': USER_TYPE.SALES_USER,
   'Delivery Person': USER_TYPE.DELIVERY_PERSON,
 };
 export function Login(props: ComponentProp) {
@@ -135,6 +135,11 @@ export function Login(props: ComponentProp) {
         <Radio
           buttons={Object.keys(userTypes)}
           selectedItem={selectedUser}
+          containerCustomStyle={{
+            width: '100%',
+            marginLeft: 0
+          }}
+         
           onPress={(selectedItem: string) => {
             setSelectedUser(selectedItem);
             setUserType(userTypes[selectedItem]);

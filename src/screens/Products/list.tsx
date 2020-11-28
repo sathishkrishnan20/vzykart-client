@@ -29,8 +29,10 @@ export function ProductList(props: ComponentProp) {
   const navigation = useNavigation();
   useEffect(() => {
     const params = getParamsByProp(props);
-    const filterParams = IS_WEB ? JSON.parse(params.filters) : params.filters;
-    getProductData(filterParams.filterParams || {});
+    const filterParams = IS_WEB
+      ? JSON.parse(params.filterParams)
+      : params.filterParams;
+    getProductData(filterParams || {});
     getCartItem().then((cartData) => setCartProducts(cartData));
   }, []);
 

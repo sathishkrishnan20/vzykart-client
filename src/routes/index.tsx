@@ -429,7 +429,7 @@ export function Routes() {
   };
 
   const CartIcon: any = withBadge(cartProductsLength)(Icon);
-  const NotificationIcon: any = withBadge(0)(Icon);
+  // const NotificationIcon: any = withBadge(0)(Icon);
 
   const TabNavigator = () => {
     return (
@@ -488,7 +488,7 @@ export function Routes() {
                       name="cart"
                     />
                   </View>
-                  <View style={{marginLeft: 4, marginRight: 4}}>
+                  {/* <View style={{marginLeft: 4, marginRight: 4}}>
                     <NotificationIcon
                       style={{marginRight: 5, marginTop: 10}}
                       size={24}
@@ -496,7 +496,7 @@ export function Routes() {
                       color={'#FFF'}
                       name="notifications"
                     />
-                  </View>
+                  </View> */}
                   <View style={{marginLeft: 4, marginRight: 4}}>
                     <Icon
                       onPress={() => logout()}

@@ -14,13 +14,12 @@ export function Header({
   hasLoggedIn,
   title,
   menus,
-  notificationCount,
   onLogout,
   cartLength,
   userType,
 }: any) {
   const CartIcon: any = withBadge(cartLength)(Icon);
-  const NotificationIcon: any = withBadge(notificationCount)(Icon);
+  // const NotificationIcon: any = withBadge(notificationCount)(Icon);
   const history = useHistory();
   return (
     <SafeAreaView>
@@ -81,7 +80,7 @@ export function Header({
                     />
                   </NavLink>
                 ) : null}
-                <NavLink
+                {/* <NavLink
                   exact
                   activeClassName="active"
                   to="/Notification"
@@ -93,7 +92,7 @@ export function Header({
                     type="ionicon"
                     name="notifications"
                   />
-                </NavLink>
+                </NavLink> */}
                 <Icon
                   onPress={() => {
                     const loginRoute = getLoginRouteByUserType(userType);

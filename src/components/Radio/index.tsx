@@ -1,26 +1,28 @@
 import React from 'react';
 import {ButtonGroup, CheckBox} from 'react-native-elements';
-
+import { Row, Col, Grid } from 'react-native-easy-grid'
 interface RadioProps {
   buttons: string[];
   selectedItem: string;
   onPress: (selectedItem: string) => void;
-  containerWidth?: number;
+  containerCustomStyle?: any;
 }
 
 export function Radio({
   buttons,
   selectedItem,
   onPress,
-  containerWidth,
+  containerCustomStyle = {},
 }: RadioProps) {
   function component1(this: any) {
     return (
+      
       <CheckBox
         containerStyle={{
           backgroundColor: 'transparent',
           borderWidth: 0,
           borderColor: 'transparent',
+          marginLeft: 0,
         }}
         title={this.item}
         onPress={() => onPress(this.item)}
@@ -37,19 +39,15 @@ export function Radio({
   });
 
   return (
+   
     <ButtonGroup
       containerBorderRadius={0}
       buttonContainerStyle={{
         borderColor: 'transparent',
-        borderWidth: 0,
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
       }}
       buttonStyle={{
         borderColor: 'transparent',
         borderWidth: 0,
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
       }}
       onPress={(index: number) => onPress(buttons[index])}
       selectedIndex={buttons.indexOf(selectedItem)}
@@ -58,13 +56,12 @@ export function Radio({
         {
           borderColor: 'transparent',
           borderWidth: 0,
-          alignItems: 'flex-start',
-          justifyContent: 'flex-start',
         },
-        containerWidth ? {width: containerWidth} : {},
+        containerCustomStyle,
       ]}
       selectedButtonStyle={{backgroundColor: 'transparent'}}
       innerBorderStyle={{color: 'transparent', width: 0}}
     />
+   
   );
 }

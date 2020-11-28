@@ -70,8 +70,8 @@ export function SellersList() {
                 navigate(
                   navigation,
                   ROUTE_NAMES.productListFilters.replace(
-                    ':filters',
-                    JSON.stringify({filterParams: {sellerId: item._id}}),
+                    ':filterParams',
+                    JSON.stringify({sellerId: item._id}),
                   ),
                   {filterParams: {sellerId: item._id}},
                 )

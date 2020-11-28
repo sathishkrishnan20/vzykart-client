@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {IS_WEB} from '../config';
 import {ICartItem} from '../interfaces/classes/cart';
 
@@ -13,6 +13,7 @@ const DELIVERY_PERSON_ID_KEY = 'deliveryPersonId';
 export const setSellerId = async (sellerId: string) => {
   set(SELLER_ID_KEY, sellerId);
 };
+
 export const getSellerId = async () => {
   return (await get(SELLER_ID_KEY)) || '';
 };

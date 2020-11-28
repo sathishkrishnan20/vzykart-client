@@ -45,8 +45,8 @@ export function Categories() {
                   navigate(
                     navigation,
                     ROUTE_NAMES.productListFilters.replace(
-                      ':filters',
-                      JSON.stringify({filterParams: {categories: item._id}}),
+                      ':filterParams',
+                      JSON.stringify({categories: item._id}),
                     ),
                     {filterParams: {categories: item._id}},
                   )
