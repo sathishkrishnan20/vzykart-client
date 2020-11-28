@@ -6,7 +6,7 @@ interface IState {
   position: number;
   interval: any;
 }
-interface ImageOnPress {
+export interface ImageOnPress {
   image: {
     title?: string;
     caption?: string;
@@ -14,19 +14,21 @@ interface ImageOnPress {
   };
   index: number;
 }
+export interface ImageSliderDataSource {
+  title?: string;
+  caption?: string;
+  url: string;
+}
 
 interface IProp {
-  dataSource: {
-    title?: string;
-    caption?: string;
-    url: string;
-  }[];
+  dataSource: ImageSliderDataSource[];
   height?: number;
   scrollEnabled?: boolean;
   overlay?: boolean;
   containerStyle?: boolean;
   onPress?: (value: ImageOnPress) => void;
 }
+
 export class ImageSlider extends Component<IProp, IState> {
   constructor(props: any) {
     super(props);

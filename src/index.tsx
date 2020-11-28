@@ -33,7 +33,12 @@ import {MenuProvider} from 'react-native-popup-menu';
 import {ToastContainer} from 'react-toastify';
 import {IS_WEB} from './config';
 import colors from './colors';
+import {YellowBox} from 'react-native';
+YellowBox.ignoreWarnings([
+  'scrollTo(y, x, animated)` is deprecated. Use `scrollTo({x: 5, y: 5, animated: true})` instead.',
+]);
 console.disableYellowBox = true;
+
 const fonts = [
   {url: AntDesign, fontFamilyName: 'AntDesign'},
   {url: Entypo, fontFamilyName: 'Entypo'},

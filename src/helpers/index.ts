@@ -5,9 +5,10 @@ import {store} from '../routes/store';
 import {USER_CART} from '../providers/constants';
 import {IProduct, ICategoryInfo} from '../interfaces/products';
 import {IS_WEB, IMAGE_BASE_URL} from '../config';
-import {USER_TYPE} from '../interfaces/enums';
+import {USER_TYPE, SLIDER_IMAGE_ACTION} from '../interfaces/enums';
 import ROUTE_NAMES from '../routes/name';
 import {IAddUpdate} from '../interfaces/table-component';
+import {ISlider} from '../interfaces/master';
 
 export const getCategoryValues = (
   array: string[] | Item[],
@@ -153,4 +154,24 @@ export const convertObjectToArray = (array: IAddUpdate[][]) => {
     }
   }
   return finalArray;
+};
+
+export const getNavigationPramsFromImageSlider = (value: ISlider) => {
+  let routeName: string = '';
+  let navigationParams: any = {};
+
+  if (value.imageOnClickAction === SLIDER_IMAGE_ACTION.NAVIGATION) {
+    // @ts-ignore
+    routeName = ROUTE_NAMES[value.navigationRouteKey] as string;
+    if (routeName) {
+      navigationParams = value.navigationParams;
+      Object.keys(navigationParams).forEach((paramKey) => {
+        routeName = routeName.replace(
+          `:${paramKey}`,
+          JSON.stringify(navigationParams[paramKey]),
+        );
+      });
+    }
+  }
+  return {routeName, navigationParams};
 };

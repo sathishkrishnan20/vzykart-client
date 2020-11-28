@@ -50,3 +50,8 @@ export enum INPUT_DATA_TYPE {
   NUMBER = 'numeric',
   EMAIl = 'email-address',
 }
+
+export enum SLIDER_IMAGE_ACTION {
+  NAVIGATION = 'NAVIGATION',
+  NO_ACTION = 'NO_ACTION',
+}

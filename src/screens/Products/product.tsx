@@ -192,7 +192,6 @@ function RenderCartBuyButtons({
     }
     getItemSize();
   }, [productCountOnCart]);
-  console.log('Rendering the Cart Buy Buttton');
   const CartIcon: any = withBadge(count)(Icon);
 
   return (

@@ -380,7 +380,6 @@ export function Routes() {
           token: userToken,
         } as never);
       }
-      console.log('userId', userId);
 
       // After restoring token, we may need to validate it in production apps
 
@@ -590,7 +589,6 @@ export function Routes() {
       </AuthContext.Provider>
     );
   };
-  console.log('Coming to render', state.isTokenRestored);
   return Platform.OS === 'web' ? (
     <>
       <AuthContext.Provider value={authContext}>
@@ -735,7 +733,6 @@ function RedirectHomeRouteIfLoggedIn({
   userType,
   ...rest
 }: any) {
-  console.log('userType on Redirect' + userType);
   return (
     <Route
       {...rest}
