@@ -26,6 +26,7 @@ import {
   getSellerId,
   removeAll,
   getDeliveryPersonId,
+  getCartItem,
 } from '../services/storage-service';
 import ROUTE_NAMES from './name';
 import {
@@ -368,6 +369,8 @@ export function Routes() {
           userId: userId,
           token: userToken,
         } as never);
+        const cartProducts = await getCartItem();
+        setCartProductsLength(cartProducts.length);
       } else if (userToken && userId && userType === USER_TYPE.SALES_USER) {
         const sellerId = await getSellerId();
         store.dispatch({

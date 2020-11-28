@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Text, StyleSheet, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,7 +9,7 @@ import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
 import colors from '../../colors';
-import {getImageLink} from '../../helpers';
+import {getImageLink, getCartItemCountByProductId} from '../../helpers';
 
 interface IProductInfo {
   cartProducts: ICartItem[];
@@ -39,7 +39,6 @@ export const Product = ({
   const cartItemLength =
     cartProducts.find((item) => item.productId === productInfo._id)?.quantity ||
     0;
-
   return (
     <>
       <View
@@ -65,12 +64,12 @@ export const Product = ({
                 onUpdateCartProducts,
                 cartQtyRefreshCount,
               })}
-              {renderCartBuyButtons({
-                productCountOnCart: cartItemLength,
-                productInfo,
-                onClickAddToCart,
-                onClickBuy,
-              })}
+              <RenderCartBuyButtons
+                productCountOnCart={cartItemLength}
+                productInfo={productInfo}
+                onClickAddToCart={onClickAddToCart}
+                onClickBuy={onClickBuy}
+              />
             </Col>
           </Grid>
         ) : (
@@ -95,12 +94,12 @@ export const Product = ({
               </Col>
             </Row>
             <Row size={3}>
-              {renderCartBuyButtons({
-                productCountOnCart: cartItemLength,
-                productInfo,
-                onClickAddToCart,
-                onClickBuy,
-              })}
+              <RenderCartBuyButtons
+                productCountOnCart={cartItemLength}
+                productInfo={productInfo}
+                onClickAddToCart={onClickAddToCart}
+                onClickBuy={onClickBuy}
+              />
             </Row>
           </Grid>
         )}
@@ -179,13 +178,22 @@ const renderProductInfo = ({
   );
 };
 
-const renderCartBuyButtons = ({
+function RenderCartBuyButtons({
   productInfo,
   onClickAddToCart,
   onClickBuy,
   productCountOnCart,
-}: IRenderBuyCart) => {
-  const CartIcon: any = withBadge(productCountOnCart)(Icon);
+}: IRenderBuyCart) {
+  const [count, setCount] = useState(productCountOnCart);
+  useEffect(() => {
+    async function getItemSize() {
+      const itemSize = await getCartItemCountByProductId(productInfo._id);
+      setCount(itemSize);
+    }
+    getItemSize();
+  }, [productCountOnCart]);
+  console.log('Rendering the Cart Buy Buttton');
+  const CartIcon: any = withBadge(count)(Icon);
 
   return (
     <Row>
@@ -221,7 +229,7 @@ const renderCartBuyButtons = ({
       </Col>
     </Row>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

@@ -56,7 +56,10 @@ export function ProductList(props: ComponentProp) {
     );
   };
 
-  const updateCartProducts = (productId: string) => {
+  const updateCartProducts = (
+    productId: string,
+    increaseQty: boolean = false,
+  ) => {
     const index = cartProducts.findIndex(
       (item) => item.productId === productId,
     );
@@ -67,7 +70,11 @@ export function ProductList(props: ComponentProp) {
         checked: 1,
       });
     }
+    if (increaseQty && index !== -1) {
+      cartProducts[index].quantity = cartProducts[index].quantity + 1;
+    }
     setCartProducts(cartProducts);
+
     setCartQtyRefreshCount(cartQtyRefreshCount + 1);
     return cartProducts;
   };
@@ -102,7 +109,7 @@ export function ProductList(props: ComponentProp) {
             }
             onClickBuy={onClickBuy}
             onClickAddToCart={(productId: string) => {
-              updateCartProducts(productId);
+              updateCartProducts(productId, true);
               updateCartDataOnStorage(cartProducts);
             }}
             productInfo={item}
