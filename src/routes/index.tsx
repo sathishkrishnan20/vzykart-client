@@ -58,6 +58,7 @@ import {AdminViewDeliveryPersons} from '../screens/_admin/delivery-persons/view'
 import {DeliveryPersonOrders} from '../screens/_delivery_person/orders';
 import {Home} from '../screens/Home';
 import colors from '../colors';
+import {APP_HEADER} from '../config';
 
 const HEADER_HEIGHT = 70;
 
@@ -398,7 +399,7 @@ export function Routes() {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
-        // In the example, we'll use a dummy token
+        // In the ex, we'll use a dummy token
         dispatch({
           type: 'SIGN_IN',
           token: data.token,
@@ -609,7 +610,7 @@ export function Routes() {
               zIndex: 99,
             }}>
             <Header
-              title="V-Cart"
+              title={APP_HEADER}
               userType={state.userType}
               onLogout={() => logout()}
               hasLoggedIn={state.userToken !== null}

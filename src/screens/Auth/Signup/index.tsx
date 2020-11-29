@@ -14,7 +14,7 @@ import {Input, Loader} from '../../../components/index';
 
 import {USER_TYPE} from '../../../interfaces/enums';
 import styles from '../styles';
-import {IS_BIG_SCREEN, BACKGROUND_IMAGE_URL} from '../../../config';
+import {IS_BIG_SCREEN, BACKGROUND_IMAGE_URL, APP_HEADER} from '../../../config';
 import {navigateByProp} from '../../../navigation';
 import {Radio} from '../../../components/Radio';
 import AuthAction from '../../../actions/auth';
@@ -65,7 +65,7 @@ export function SignUp(props: ComponentProp) {
   const renderTitle = () => {
     return (
       <View>
-        <Text style={styles.heading}>V-Cart</Text>
+        <Text style={styles.heading}>{APP_HEADER}</Text>
       </View>
     );
   };

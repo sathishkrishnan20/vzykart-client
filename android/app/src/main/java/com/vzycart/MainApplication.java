@@ -1,4 +1,4 @@
-package com.example;
+package com.vzycart;
 
 import android.app.Application;
 import android.content.Context;
@@ -24,7 +24,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
+          // Packages that cannot be autolinked yet can be added manually here, for 
           // packages.add(new MyReactNativePackage());
           return packages;
         }
@@ -62,7 +62,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.example.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.vzycart.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

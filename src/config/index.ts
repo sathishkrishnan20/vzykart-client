@@ -11,7 +11,7 @@ export const IS_ANDROID = Platform.OS === 'android';
 export const IS_BIG_SCREEN = Dimensions.get('window').width >= 600;
 export const RAZORPAY_LOGO_URL =
   'http://ec2-52-14-174-212.us-east-2.compute.amazonaws.com:3000/logo192.png';
-export const APP_HEADER = 'V-Cart';
+export const APP_HEADER = 'Vzy Cart';
 export const WHATSAPP_NUMBER = '918883334889';
 
 export const API_URL = SERVER_URL + '/api';

@@ -157,7 +157,7 @@ export function App() {
   );
 }
 
-AppRegistry.registerComponent('example', () => App);
+AppRegistry.registerComponent('vzycart', () => App);
 if (Platform.OS === 'web') {
   for (var i = 0; i < fonts.length; i++) {
     const iconFontStyles = `@font-face {
@@ -189,7 +189,7 @@ if (Platform.OS === 'web') {
   // style.appendChild(document.createTextNode(antDesignIconFontStyles));
   // document.head.appendChild(style);
 
-  AppRegistry.runApplication('example', {
+  AppRegistry.runApplication('vzycart', {
     rootTag: document.getElementById('root'),
   });
 }
