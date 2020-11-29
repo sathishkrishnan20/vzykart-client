@@ -236,7 +236,11 @@ export function Checkout(props: ComponentProp) {
               <View>
                 <Address
                   onClickAdd={() => setEnableAddressCreate(true)}
-                  buttons={[CRUD.SELECT, CRUD.CREATE]}
+                  buttons={
+                    index === (userData.address && userData.address.length - 1)
+                      ? [CRUD.SELECT, CRUD.CREATE]
+                      : [CRUD.SELECT]
+                  }
                   onSelect={() => setDeliveryAddressIndex(index)}
                   checked={index === deliveryAddressIndex}
                   containerStyle={{margin: 6}}

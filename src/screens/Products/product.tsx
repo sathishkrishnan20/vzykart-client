@@ -198,7 +198,13 @@ function RenderCartBuyButtons({
     }
     getItemSize();
   }, [productCountOnCart]);
-  const CartIcon: any = withBadge(count)(Icon);
+  const CartIcon: any = withBadge(count, {
+    badgeStyle: {
+      backgroundColor: colors.themeGradient[1],
+      marginTop: -4,
+      marginRight: 2,
+    },
+  })(Icon);
 
   return (
     <Row>

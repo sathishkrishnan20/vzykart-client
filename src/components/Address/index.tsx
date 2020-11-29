@@ -104,7 +104,7 @@ const Address = ({
                   reverse
                   name="plus-circle"
                   type="font-awesome"
-                  color={colors.green}
+                  color={'#1BAF99'}
                   onPress={onClickAdd}
                 />
               </Col>

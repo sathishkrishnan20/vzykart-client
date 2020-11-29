@@ -429,7 +429,11 @@ export function Routes() {
     return;
   };
 
-  const CartIcon: any = withBadge(cartProductsLength)(Icon);
+  const CartIcon: any = withBadge(cartProductsLength, {
+    badgeStyle: {
+      backgroundColor: colors.cartBadgeColor,
+    },
+  })(Icon);
   // const NotificationIcon: any = withBadge(0)(Icon);
 
   const TabNavigator = () => {

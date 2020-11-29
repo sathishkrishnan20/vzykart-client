@@ -19,7 +19,11 @@ export function Header({
   cartLength,
   userType,
 }: any) {
-  const CartIcon: any = withBadge(cartLength)(Icon);
+  const CartIcon: any = withBadge(cartLength, {
+    badgeStyle: {
+      backgroundColor: colors.cartBadgeColor,
+    },
+  })(Icon);
   // const NotificationIcon: any = withBadge(notificationCount)(Icon);
   const history = useHistory();
   return (
@@ -74,7 +78,7 @@ export function Header({
                     style={{textDecoration: 'none', marginLeft: 20}}>
                     <CartIcon
                       size={24}
-                      status="success"
+                      status="primary"
                       color={'#FFF'}
                       type="ionicon"
                       name="cart"
