@@ -136,10 +136,14 @@ const renderProductInfo = ({
         {'Seller: ' + productInfo.sellerInfo?.sellerName}
       </Text>
       <Row>
-        <Text style={[styles.textName, {textDecorationLine: 'line-through'}]}>
-          MRP: ₹{productInfo.mrp}
-        </Text>
         <Text
+          style={[
+            styles.textName,
+            {textDecorationLine: 'line-through', color: colors.gray},
+          ]}>
+          MRP: ₹{productInfo.mrp + productInfo.gst}
+        </Text>
+        {/* <Text
           style={[
             styles.textName,
             {textDecorationLine: 'line-through', marginTop: 0},
@@ -149,14 +153,16 @@ const renderProductInfo = ({
         <Text
           style={[styles.textNameGray, {textDecorationLine: 'line-through'}]}>
           ₹{productInfo.gst} (GST)
-        </Text>
+        </Text> */}
       </Row>
 
       <Row>
         <Text style={styles.textName}>
-          Offer: ₹{productInfo.sellingPrice} +{' '}
+          Offer: ₹{productInfo.sellingPrice + productInfo.gst}
         </Text>
-        <Text style={styles.textNameGray}>₹{productInfo.gst} (GST)</Text>
+
+        {/* <Text style={styles.textNameGray}>₹{productInfo.gst} (GST)</Text>
+         */}
       </Row>
 
       <Text numberOfLines={1} style={styles.textName}>

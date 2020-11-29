@@ -9,6 +9,7 @@ import {IS_BIG_SCREEN} from '../../config';
 import HeaderMenu from './material-header';
 import {USER_TYPE} from '../../interfaces/enums';
 import {getLoginRouteByUserType} from '../../helpers';
+import colors from '../../colors';
 
 export function Header({
   hasLoggedIn,
@@ -24,7 +25,7 @@ export function Header({
   return (
     <SafeAreaView>
       <LinearGradient
-        colors={['#F02245', '#F68535']}
+        colors={colors.themeGradient}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         style={styles.headerContainer}>
@@ -135,7 +136,7 @@ export function Header({
 const styles = StyleSheet.create({
   headerContainer: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ff4e3f',
+    borderBottomColor: colors.themeGradient[0],
     backgroundColor: '#F68535',
   },
   header: {

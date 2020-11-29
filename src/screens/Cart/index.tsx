@@ -242,7 +242,7 @@ export default class Cart extends React.Component<
                         <Text
                           numberOfLines={1}
                           style={[styles.text, styles.marginTopSmall]}>
-                          Price{' ='}
+                          Price:{' '}
                         </Text>
                         <Text
                           numberOfLines={1}
@@ -252,9 +252,9 @@ export default class Cart extends React.Component<
                             styles.strikeThrough,
                           ]}>
                           {' ₹'}
-                          {item.mrp}{' '}
+                          {item.mrp + item.gst}
                         </Text>
-                        <Text
+                        {/* <Text
                           numberOfLines={1}
                           style={[
                             styles.textLight,
@@ -263,13 +263,13 @@ export default class Cart extends React.Component<
                             {fontSize: 12, alignSelf: 'center'},
                           ]}>
                           {' + '}₹{item.gst}(GST)
-                        </Text>
+                        </Text> */}
                       </Row>
                       <Row>
                         <Text style={[styles.text, styles.marginTopSmall]}>
-                          Offer = ₹{item.sellingPrice}{' '}
+                          Offer: ₹{item.sellingPrice + item.gst}
                         </Text>
-                        <Text
+                        {/* <Text
                           numberOfLines={1}
                           style={[
                             styles.text,
@@ -277,11 +277,11 @@ export default class Cart extends React.Component<
                             {fontSize: 12, alignSelf: 'center'},
                           ]}>
                           {' + '}₹{item.gst}(GST)
-                        </Text>
+                        </Text> */}
                       </Row>
                       <Row>
                         <Text style={{color: '#333333', marginTop: 5}}>
-                          Total = {item.quantity} * ₹
+                          Total: {item.quantity} * ₹
                           {item.sellingPrice + item.gst} = ₹
                           {calculateTotalSellingAmountWithGST(
                             item,

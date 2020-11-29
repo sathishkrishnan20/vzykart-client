@@ -69,7 +69,8 @@ const commonTheme = {
   Button: {
     buttonStyle: {
       fontFamily: 'Helvetica-Light',
-      backgroundColor: '#F34742',
+      backgroundColor: colors.buttonColor,
+      borderColor: colors.themeGradient[1],
       borderWidth: 1,
       borderRadius: 10,
     },

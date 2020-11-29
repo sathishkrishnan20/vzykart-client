@@ -197,7 +197,7 @@ class SellerAddProducts extends Component<
       productDescription,
       mrp: Number(mrp),
       sellingPrice: Number(sellingPrice),
-      discount: Number(discount),
+      discount: Number(mrp) - Number(sellingPrice),
       gst: Number(gst),
       uom,
       unit,

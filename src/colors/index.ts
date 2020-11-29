@@ -1,8 +1,9 @@
 const colors = {
   white: '#fff',
   black: '#000',
-  themePrimary: '#F45940',
-  themeGradient: ['#F02245', '#F68535'],
+  themePrimary: '#3399ff',
+  themeGradient: ['#3399ff', '#0080ff'], // ['#4d79ff', '#0040ff'], // ['#336600', '#73e600'],
+  buttonColor: '#0080ff',
   gray: 'gray',
   green: '#008000',
   red: '#FF0000',
