@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button} from 'react-native-elements';
+import {Button} from '../Button';
 import {IS_WEB, RAZORPAY_KEY, RAZORPAY_LOGO_URL} from '../../config';
 //@ts-ignore
 import RazorpayCheckout from 'react-native-razorpay';
@@ -149,11 +149,17 @@ export function Payment({
   return (
     <Row style={{width: '100%'}}>
       <Col>
-        <Button title={'Cash On Delivery'} onPress={onCOD}></Button>
+        <Button
+          buttonStyle={{backgroundColor: colors.blazeOrange}}
+          title={'Cash On Delivery'}
+          onPress={onCOD}></Button>
       </Col>
 
       <Col>
-        <Button title={'Pay Online'} onPress={onHandler}></Button>
+        <Button
+          buttonStyle={{backgroundColor: colors.green}}
+          title={'Pay Online'}
+          onPress={onHandler}></Button>
       </Col>
     </Row>
   );

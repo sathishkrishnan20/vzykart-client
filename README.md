@@ -1,5 +1,14 @@
 # React Native Web with TypeScript
 
+Android Build Issue
+To Fix
+
+```
+ 1. /usr/libexec/java_home -V | grep jdk
+ 2. export JAVA_HOME=Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+ 3. export PATH=$JAVA_HOME/bin:$PATH
+```
+
 Babel Issue
 
 {

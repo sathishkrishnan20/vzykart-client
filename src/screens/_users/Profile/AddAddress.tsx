@@ -31,9 +31,9 @@ export function WriteAddress({
     no_and_street: '',
     address_line_1: '',
     city: '',
-    district: '',
-    state: '',
-    country: '',
+    district: 'Tirunelveli',
+    state: 'Tamilnadu',
+    country: 'India',
     pin_code: '',
     locality: '',
     type: 'Point',
@@ -162,6 +162,7 @@ export function WriteAddress({
       coordinates: [1, 2],
       type: 'Point',
       ...addressState,
+      name: getNameValue(),
     };
     if (editAddressIndex === -1) {
       // New Address

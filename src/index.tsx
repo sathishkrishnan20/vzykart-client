@@ -58,7 +58,7 @@ const fonts = [
 
 const commonTheme = {
   colors: {
-    primary: colors.primary,
+    primary: colors.buttonColor,
   },
   Text: {
     style: {

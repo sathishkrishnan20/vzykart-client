@@ -222,7 +222,8 @@ export function Checkout(props: ComponentProp) {
               <SectionTitle title={'Delivery Address'} />
             )}
             ListFooterComponent={() =>
-              enableAddressCreate === false ? (
+              enableAddressCreate === false &&
+              (!userData.address || userData.address?.length === 0) ? (
                 <Button
                   onPress={() => setEnableAddressCreate(true)}
                   title="Add New Address"
@@ -234,7 +235,8 @@ export function Checkout(props: ComponentProp) {
             renderItem={({item, index}) => (
               <View>
                 <Address
-                  buttons={[CRUD.SELECT]}
+                  onClickAdd={() => setEnableAddressCreate(true)}
+                  buttons={[CRUD.SELECT, CRUD.CREATE]}
                   onSelect={() => setDeliveryAddressIndex(index)}
                   checked={index === deliveryAddressIndex}
                   containerStyle={{margin: 6}}

@@ -21,6 +21,7 @@ interface AddressInfo {
   buttons?: CRUD[];
   onClickUpdate?: () => void;
   onClickDelete?: () => void;
+  onClickAdd?: () => void;
 }
 
 const Address = ({
@@ -32,6 +33,7 @@ const Address = ({
   onClickUpdate,
   onClickDelete,
   containerStyle = {},
+  onClickAdd,
 }: AddressInfo) => {
   let leftRowSize = buttons.includes(CRUD.SELECT)
     ? IS_BIG_SCREEN
@@ -88,6 +90,25 @@ const Address = ({
             <Row>
               <Text style={styles.textNameLight}>{data.locality}</Text>
             </Row>
+          ) : null}
+          {buttons.includes(CRUD.CREATE) ? (
+            <View
+              style={{
+                justifyContent: 'flex-end',
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                marginTop: -50,
+              }}>
+              <Col size={100 - (100 - leftRowSize)}>
+                <Icon
+                  reverse
+                  name="plus-circle"
+                  type="font-awesome"
+                  color={colors.green}
+                  onPress={onClickAdd}
+                />
+              </Col>
+            </View>
           ) : null}
         </Col>
         {buttons.includes(CRUD.UPDATE) || buttons.includes(CRUD.DELETE) ? (

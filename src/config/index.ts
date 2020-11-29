@@ -1,6 +1,7 @@
 import {Platform, Dimensions} from 'react-native';
 
-export const SERVER_URL = 'http://ec2-52-14-174-212.us-east-2.compute.amazonaws.com:8050';
+export const SERVER_URL =
+  'http://ec2-52-14-174-212.us-east-2.compute.amazonaws.com:8050';
 export const IMAGE_BASE_URL = SERVER_URL;
 export const RAZORPAY_KEY = 'rzp_test_HoaTilDmiHfZnE';
 
@@ -8,7 +9,8 @@ export const IS_WEB = Platform.OS === 'web';
 export const IS_IOS = Platform.OS === 'ios';
 export const IS_ANDROID = Platform.OS === 'android';
 export const IS_BIG_SCREEN = Dimensions.get('window').width >= 600;
-export const RAZORPAY_LOGO_URL = 'http://ec2-52-14-174-212.us-east-2.compute.amazonaws.com:3000/logo192.png';
+export const RAZORPAY_LOGO_URL =
+  'http://ec2-52-14-174-212.us-east-2.compute.amazonaws.com:3000/logo192.png';
 export const APP_HEADER = 'V-Cart';
 export const WHATSAPP_NUMBER = '918883334889';
 

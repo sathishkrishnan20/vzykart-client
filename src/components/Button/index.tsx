@@ -3,6 +3,7 @@ import {TouchableOpacity} from 'react-native';
 import {IS_WEB, IS_IOS} from '../../config';
 import {Button as RNButton, ButtonProps} from 'react-native-elements';
 import {TouchableHighlight} from 'react-native-gesture-handler';
+import colors from '../../colors';
 class Touchable extends React.Component {
   render() {
     return (

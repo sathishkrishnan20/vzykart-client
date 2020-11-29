@@ -57,6 +57,7 @@ import {WriteAdminDeliveryPersonData} from '../screens/_admin/delivery-persons/a
 import {AdminViewDeliveryPersons} from '../screens/_admin/delivery-persons/view';
 import {DeliveryPersonOrders} from '../screens/_delivery_person/orders';
 import {Home} from '../screens/Home';
+import colors from '../colors';
 
 const HEADER_HEIGHT = 70;
 
@@ -469,7 +470,7 @@ export function Routes() {
             gestureEnabled: true,
             gestureDirection: 'horizontal',
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            headerStyle: {backgroundColor: '#F02245'},
+            headerStyle: {backgroundColor: colors.themeGradient[0]},
             headerTintColor: 'white',
             headerRight: () => {
               return (

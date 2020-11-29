@@ -92,7 +92,7 @@ export default StyleSheet.create({
   textForgotPassword: {
     marginTop: 1,
     marginLeft: 7,
-    color: '#FF7E40',
+    color: colors.themePrimary,
     fontSize: 14.5,
     fontFamily: 'open-sans, sans-serif',
   },

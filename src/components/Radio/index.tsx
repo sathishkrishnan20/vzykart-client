@@ -1,6 +1,5 @@
 import React from 'react';
 import {ButtonGroup, CheckBox} from 'react-native-elements';
-import { Row, Col, Grid } from 'react-native-easy-grid'
 interface RadioProps {
   buttons: string[];
   selectedItem: string;
@@ -16,7 +15,6 @@ export function Radio({
 }: RadioProps) {
   function component1(this: any) {
     return (
-      
       <CheckBox
         containerStyle={{
           backgroundColor: 'transparent',
@@ -39,7 +37,6 @@ export function Radio({
   });
 
   return (
-   
     <ButtonGroup
       containerBorderRadius={0}
       buttonContainerStyle={{
@@ -62,6 +59,5 @@ export function Radio({
       selectedButtonStyle={{backgroundColor: 'transparent'}}
       innerBorderStyle={{color: 'transparent', width: 0}}
     />
-   
   );
 }
