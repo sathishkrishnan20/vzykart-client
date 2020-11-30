@@ -3,7 +3,12 @@ import {Card, Text, withBadge} from 'react-native-elements';
 import {Button} from '../../../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {StyleSheet} from 'react-native';
-import {getImageLink, getCartItemCountByProductId} from '../../../helpers';
+import {
+  getImageLink,
+  getCartItemCountByProductId,
+  calculateTotalMRPAmountWithGST,
+  calculateTotalSellingAmountWithGST,
+} from '../../../helpers';
 import colors from '../../../colors';
 import {IS_BIG_SCREEN} from '../../../config';
 import {Row} from 'react-native-easy-grid';
@@ -70,14 +75,14 @@ export function ProductCard({
       <Text style={[styles.textName]}>{`Unit: ${item.unit} ${item.uom}`}</Text>
       <Row>
         <Text style={[styles.textName]}>
-          MRP: ₹{item.sellingPrice + item.gst}
+          MRP: ₹{calculateTotalMRPAmountWithGST(item, 1)}
         </Text>
         <Text
           style={[
             styles.textName,
             {textDecorationLine: 'line-through', marginBottom: 4},
           ]}>
-          ₹{item.mrp + item.gst}
+          ₹{calculateTotalSellingAmountWithGST(item, 1)}
         </Text>
       </Row>
 

@@ -11,7 +11,7 @@ export interface SellerAddProductsState {
   mrp: string;
   sellingPrice: string;
   discount: string;
-  gst: string;
+  gstPercentage: string;
   sellerId: string;
   uom: string;
   unit: string;

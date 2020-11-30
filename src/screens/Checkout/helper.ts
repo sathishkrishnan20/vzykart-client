@@ -23,25 +23,31 @@ export const createOrder = async (
   result: RazorPayFailure | RazorPaySuccess,
 ) => {
   const {
-    totalSellingPrice,
-    totalGstPrice,
-    totalDiscountPrice,
-    totalPriceToBePaid,
+    totalMRPAmountWithoutGST,
+    totalMRPAmountWithGST,
+    totalSellingAmountWithoutGST,
+    totalSellingAmountWithGST,
+    totalGstAmountForMRPPrice,
+    totalGstAmountForSellingPrice,
+    totalPayable,
     orderItems,
+    totalDiscountAmount,
   } = getSellingAndDiscountGSTPrice(items, deliveryCharge);
   const orderCreateRequest: IOrderCreate = {
     userId: (await getUserId()) as string,
     deliveryAddress: deliveryAddress,
     orderStatus: VALID_ORDER_STATUS.CREATED,
-    amount: totalSellingPrice,
-    gstAmount: totalGstPrice,
-    discountAmount: totalDiscountPrice,
+    totalMRPAmountWithGST,
+    totalMRPAmountWithoutGST,
+    totalSellingAmountWithGST,
+    totalSellingAmountWithoutGST,
+    totalGstAmountForMRPPrice,
+    totalGstAmountForSellingPrice,
+    totalDiscountAmount,
     deliveryCharge: deliveryCharge,
-    totalAmount: totalPriceToBePaid,
-    totalAmountPaid:
-      paymentType === PAYMENT_TYPE.ONLINE ? totalPriceToBePaid : 0,
-    totalAmountDue:
-      paymentType === PAYMENT_TYPE.ONLINE ? 0 : totalPriceToBePaid,
+    totalPayableAmount: totalPayable,
+    totalAmountPaid: paymentType === PAYMENT_TYPE.ONLINE ? totalPayable : 0,
+    totalAmountDue: paymentType === PAYMENT_TYPE.ONLINE ? 0 : totalPayable,
     paymentMode: paymentType,
     booking_from: IS_WEB ? BOOKING_FROM.WEB : BOOKING_FROM.APPLICATION,
     orderItems: orderItems,
@@ -65,23 +71,38 @@ export const getSellingAndDiscountGSTPrice = (
   items: ProductAndCart[],
   deliveryCharge: number,
 ) => {
-  let totalSellingPrice = 0;
-  let totalGstPrice = 0;
-  let totalMRPPrice = 0;
+  let totalMRPAmountWithoutGST = 0;
+  let totalMRPAmountWithGST = 0;
+  let totalSellingAmountWithoutGST = 0;
+  let totalSellingAmountWithGST = 0;
+
+  let totalGstAmountForMRPPrice: number = 0;
+  let totalGstAmountForSellingPrice: number = 0;
+  let totalDiscountAmount: number = 0;
   const orderItems: IOrderProducts[] = [];
 
   items.forEach((productItem) => {
-    totalSellingPrice += calculateTotalSellingAmountWithGST(
+    const MRPAmountWithoutGST = productItem.mrp * productItem.quantity;
+    const MRPAmountWithGST = calculateTotalMRPAmountWithGST(
       productItem,
       productItem.quantity,
     );
-    totalMRPPrice += calculateTotalMRPAmountWithGST(
-      productItem,
-      productItem.quantity,
-    );
+    totalMRPAmountWithoutGST += MRPAmountWithoutGST;
+    totalMRPAmountWithGST += MRPAmountWithGST;
+    totalGstAmountForMRPPrice += MRPAmountWithGST - MRPAmountWithoutGST;
 
-    totalGstPrice += productItem.quantity * productItem.gst;
-    // totalDiscountPrice += productItem.quantity * (productItem.mrp - productItem.sellingPrice);
+    const sellingAmountWithoutGST =
+      productItem.sellingPrice * productItem.quantity;
+    const sellingAmountWithGST = calculateTotalSellingAmountWithGST(
+      productItem,
+      productItem.quantity,
+    );
+    totalSellingAmountWithoutGST += sellingAmountWithoutGST;
+    totalSellingAmountWithGST += sellingAmountWithGST;
+    totalGstAmountForSellingPrice +=
+      sellingAmountWithGST - sellingAmountWithoutGST;
+
+    totalDiscountAmount += productItem.quantity * productItem.discount;
     const orderItem: IOrderProducts = {
       productId: productItem._id,
       sellerId: productItem.sellerId,
@@ -94,7 +115,7 @@ export const getSellingAndDiscountGSTPrice = (
         productItem.quantity,
       ),
       quantity: productItem.quantity,
-      gstAmount: productItem.gst,
+      gstPercentage: productItem.gstPercentage,
       uom: productItem.uom,
       unit: productItem.unit,
       image: productItem.images && productItem.images[0],
@@ -102,12 +123,15 @@ export const getSellingAndDiscountGSTPrice = (
     orderItems.push(orderItem);
   });
   return {
-    totalSellingPrice,
-    totalMRPPrice,
-    totalGstPrice,
-    totalDiscountPrice: totalMRPPrice - totalSellingPrice,
-    totalPriceToBePaid: totalSellingPrice + deliveryCharge,
+    totalMRPAmountWithoutGST,
+    totalMRPAmountWithGST,
+    totalSellingAmountWithoutGST,
+    totalSellingAmountWithGST,
+    totalGstAmountForMRPPrice,
+    totalGstAmountForSellingPrice,
+    totalPayable: totalSellingAmountWithGST + deliveryCharge,
     orderItems,
+    totalDiscountAmount,
   };
 };
 
@@ -122,4 +146,8 @@ const getPaymentId = (
     // @ts-ignore
     return result.razorpay_payment_id;
   }
+};
+
+const calculatePercentageAmount = (amount: number, percentage: number) => {
+  return (amount * percentage) / 100;
 };

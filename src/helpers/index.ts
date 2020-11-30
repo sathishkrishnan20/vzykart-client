@@ -90,14 +90,17 @@ export const calculateTotalSellingAmountWithGST = (
   productItem: IProduct,
   quantity: number,
 ) => {
-  return quantity * (productItem.sellingPrice + productItem.gst || 0);
+  const gstAmount =
+    (productItem.sellingPrice * productItem.gstPercentage) / 100; // GST Amount Calculation
+  return quantity * (productItem.sellingPrice + gstAmount || 0);
 };
 
 export const calculateTotalMRPAmountWithGST = (
   productItem: IProduct,
   quantity: number,
 ) => {
-  return quantity * (productItem.mrp + productItem.gst || 0);
+  const gstAmount = (productItem.mrp * productItem.gstPercentage) / 100;
+  return quantity * (productItem.mrp + gstAmount || 0);
 };
 
 export const getImageLink = (url?: string) => {

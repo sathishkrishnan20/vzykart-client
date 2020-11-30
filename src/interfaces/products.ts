@@ -11,7 +11,7 @@ export interface ICreateProduct {
   mrp: number;
   sellingPrice: number;
   discount: number;
-  gst: number;
+  gstPercentage: number;
   uom: string;
   unit: string;
   categories?: ICategoryInfo[];

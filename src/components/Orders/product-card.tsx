@@ -102,13 +102,13 @@ const renderProductInfo = ({productInfo}: ProductCardOrderedState) => {
       <Text style={styles.textNameLight}>
         {'Price: ₹' + productInfo.amount}
       </Text>
-      <Text style={styles.textNameLight}>
+      {/* <Text style={styles.textNameLight}>
         {'GST Price: ₹' + productInfo.gstAmount}
       </Text>
       <Text style={styles.textNameLight}>
         {'Total Price: ₹' +
           productInfo.quantity * (productInfo.amount + productInfo.gstAmount)}
-      </Text>
+      </Text> */}
     </View>
   );
 };

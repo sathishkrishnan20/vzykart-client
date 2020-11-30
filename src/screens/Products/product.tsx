@@ -9,7 +9,12 @@ import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {ICartItem} from '../../interfaces/classes/cart';
 import colors from '../../colors';
-import {getImageLink, getCartItemCountByProductId} from '../../helpers';
+import {
+  getImageLink,
+  getCartItemCountByProductId,
+  calculateTotalMRPAmountWithGST,
+  calculateTotalSellingAmountWithGST,
+} from '../../helpers';
 
 interface IProductInfo {
   cartProducts: ICartItem[];
@@ -141,7 +146,7 @@ const renderProductInfo = ({
             styles.textName,
             {textDecorationLine: 'line-through', color: colors.gray},
           ]}>
-          MRP: ₹{productInfo.mrp + productInfo.gst}
+          MRP: ₹{calculateTotalMRPAmountWithGST(productInfo, 1)}
         </Text>
         {/* <Text
           style={[
@@ -158,7 +163,7 @@ const renderProductInfo = ({
 
       <Row>
         <Text style={styles.textName}>
-          Offer: ₹{productInfo.sellingPrice + productInfo.gst}
+          Offer: ₹{calculateTotalSellingAmountWithGST(productInfo, 1)}
         </Text>
 
         {/* <Text style={styles.textNameGray}>₹{productInfo.gst} (GST)</Text>

@@ -90,8 +90,8 @@ const renderImage = (
 export const SubTotalComponent = ({
   sellingPrice,
   deliveryCharge,
-  totalMRPPrice,
   totalGstPrice,
+  discountPrice,
 }: ISubTotalComponent) => {
   return (
     <Card containerStyle={{margin: 4}}>
@@ -146,7 +146,7 @@ export const SubTotalComponent = ({
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
           <Text style={{textDecorationLine: 'line-through', color: 'gray'}}>
-            ₹{totalMRPPrice - sellingPrice}
+            ₹{discountPrice}
           </Text>
         </Col>
       </Row>
@@ -165,7 +165,7 @@ export const SubTotalComponent = ({
             <Text style={styles.bold}> Total Payable </Text>
           </Col>
           <Col style={{alignItems: 'flex-end'}}>
-            <Text style={styles.bold}> {sellingPrice + deliveryCharge} </Text>
+            <Text style={styles.bold}> ₹{sellingPrice + deliveryCharge} </Text>
           </Col>
         </Row>
       </Row>
@@ -186,29 +186,36 @@ const renderProductInfo = ({productInfo}: {productInfo: ProductAndCart}) => {
       <Row>
         <Text style={[styles.textNameLight]}>Price:</Text>
         <Text style={[styles.textNameLight, styles.strikeThrough]}>
-          {productInfo.quantity} * ( ₹{productInfo.mrp}
+          {productInfo.quantity} *{' '}
+          {calculateTotalMRPAmountWithGST(productInfo, 1)} ={' ₹'}
+          {calculateTotalMRPAmountWithGST(productInfo, productInfo.quantity)}
         </Text>
-        <Text style={[styles.textNameLight, styles.strikeThrough]}>
+        {/* <Text style={[styles.textNameLight, styles.strikeThrough]}>
           + ₹{productInfo.gst}
         </Text>
         <Text style={[styles.textNameLight, styles.strikeThrough]}>
           ) = ₹
           {calculateTotalMRPAmountWithGST(productInfo, productInfo.quantity)}
-        </Text>
+        </Text> */}
       </Row>
       <Row>
         <Text style={[styles.textName]}>Offer:</Text>
         <Text style={[styles.textName]}>
-          {productInfo.quantity} * ( ₹{productInfo.sellingPrice}
+          {productInfo.quantity} *{' '}
+          {calculateTotalSellingAmountWithGST(productInfo, 1)} ={' ₹'}
+          {calculateTotalSellingAmountWithGST(
+            productInfo,
+            productInfo.quantity,
+          )}
         </Text>
-        <Text style={[styles.textName]}>+ ₹{productInfo.gst}</Text>
+        {/* <Text style={[styles.textName]}>+ ₹{productInfo.gst}</Text>
         <Text style={[styles.textName]}>
           ) = ₹
           {calculateTotalSellingAmountWithGST(
             productInfo,
             productInfo.quantity,
           )}
-        </Text>
+        </Text> */}
       </Row>
     </View>
   );

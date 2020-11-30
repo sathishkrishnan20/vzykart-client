@@ -4,5 +4,6 @@ module.exports = {
   env: {
     jest: true,
   },
+  code: 240,
   ignorePatterns: ['node_modules/', 'coverage/', 'android/', 'ios/'],
 };

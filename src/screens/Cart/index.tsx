@@ -251,8 +251,8 @@ export default class Cart extends React.Component<
                             styles.marginTopSmall,
                             styles.strikeThrough,
                           ]}>
-                          {' ₹'}
-                          {item.mrp + item.gst}
+                          {'₹'}
+                          {calculateTotalMRPAmountWithGST(item, 1)}
                         </Text>
                         {/* <Text
                           numberOfLines={1}
@@ -267,7 +267,7 @@ export default class Cart extends React.Component<
                       </Row>
                       <Row>
                         <Text style={[styles.text, styles.marginTopSmall]}>
-                          Offer: ₹{item.sellingPrice + item.gst}
+                          Offer: ₹{calculateTotalSellingAmountWithGST(item, 1)}
                         </Text>
                         {/* <Text
                           numberOfLines={1}
@@ -282,11 +282,11 @@ export default class Cart extends React.Component<
                       <Row>
                         <Text style={{color: '#333333', marginTop: 5}}>
                           Total: {item.quantity} * ₹
-                          {item.sellingPrice + item.gst} = ₹
+                          {calculateTotalSellingAmountWithGST(item, 1)} = ₹
                           {calculateTotalSellingAmountWithGST(
                             item,
                             item.quantity,
-                          )}{' '}
+                          )}
                         </Text>
                         <Text
                           style={[

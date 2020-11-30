@@ -1,7 +1,6 @@
 import {Platform, Dimensions} from 'react-native';
 
-export const SERVER_URL =
-  'http://ec2-52-14-174-212.us-east-2.compute.amazonaws.com:8050';
+export const SERVER_URL = 'http://localhost:8050';
 export const IMAGE_BASE_URL = SERVER_URL;
 export const RAZORPAY_KEY = 'rzp_test_HoaTilDmiHfZnE';
 

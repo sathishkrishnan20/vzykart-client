@@ -107,18 +107,18 @@ export function Checkout(props: ComponentProp) {
 
   const renderSubTotalComp = () => {
     const {
-      totalDiscountPrice,
-      totalSellingPrice,
-      totalMRPPrice,
-      totalGstPrice,
+      totalGstAmountForSellingPrice,
+      totalSellingAmountWithGST,
+      totalDiscountAmount,
+      totalMRPAmountWithGST,
     } = getSellingAndDiscountPrice();
     return (
       <SubTotalComponent
-        totalGstPrice={totalGstPrice}
-        sellingPrice={totalSellingPrice}
-        discountPrice={totalDiscountPrice}
+        totalMRPPrice={totalMRPAmountWithGST}
+        sellingPrice={totalSellingAmountWithGST}
+        totalGstPrice={totalGstAmountForSellingPrice}
+        discountPrice={totalDiscountAmount}
         deliveryCharge={deliveryCharge}
-        totalMRPPrice={totalMRPPrice}
       />
     );
   };
@@ -170,7 +170,7 @@ export function Checkout(props: ComponentProp) {
     setCartItem(updatedCartItems);
   };
   const renderPaymentComp = () => {
-    const {totalPriceToBePaid} = getSellingAndDiscountPrice();
+    const {totalPayable} = getSellingAndDiscountPrice();
     console.log(userData);
     return (
       <View
@@ -184,7 +184,7 @@ export function Checkout(props: ComponentProp) {
         }}>
         <Payment
           name={userData.firstName + ' ' + userData.lastName}
-          amount={String(totalPriceToBePaid * 100)}
+          amount={String(totalPayable * 100)}
           description={
             'Order of ' + checkoutProducts.length + ' Items for ' + userData._id
           }

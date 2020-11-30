@@ -10,7 +10,7 @@ export interface IOrderProducts {
   quantity: number;
   productDescription: string;
   amount: number; // amount without Discount and tax details
-  gstAmount: number;
+  gstPercentage: number;
   discountAmount: number;
   totalAmount: number; // // amount with Discount and tax details
   uom: string;
@@ -28,12 +28,20 @@ export interface IOrderCreate {
   userId: string;
   deliveryAddress: IUserAddress;
   orderStatus: VALID_ORDER_STATUS;
-  amount: number; // amount without Discount and tax details
-  gstAmount: number;
-  discountAmount: number;
-  deliveryCharge: number;
-  totalAmount: number; // amount with Discount and tax details
 
+  totalMRPAmountWithoutGST: number; //  or selling +discount
+  totalMRPAmountWithGST: number; // or selling +discount +gst
+
+  totalSellingAmountWithoutGST: number;
+  totalSellingAmountWithGST: number;
+
+  totalGstAmountForMRPPrice: number;
+  totalGstAmountForSellingPrice: number;
+
+  totalDiscountAmount: number;
+
+  deliveryCharge: number;
+  totalPayableAmount: number;
   // PAYMENTS
   paymentId: string;
   totalAmountPaid: number;
