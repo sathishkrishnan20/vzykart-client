@@ -1,38 +1,15 @@
 import {ProductAndCart} from '../../interfaces/classes/cart';
 import {IUserAddress} from '../../interfaces';
-import {
-  PAYMENT_TYPE,
-  VALID_ORDER_STATUS,
-  BOOKING_FROM,
-} from '../../interfaces/enums';
+import {PAYMENT_TYPE, VALID_ORDER_STATUS, BOOKING_FROM} from '../../interfaces/enums';
 import {RazorPaySuccess, RazorPayFailure} from '../../interfaces/razorpay';
 import {IOrderCreate, IOrderProducts} from '../../interfaces/orders';
 import {getUserId} from '../../services/storage-service';
 import {IS_WEB} from '../../config';
-import {
-  calculateTotalSellingAmountWithGST,
-  calculateTotalMRPAmountWithGST,
-} from '../../helpers';
+import {calculateTotalSellingAmountWithGST, calculateTotalMRPAmountWithGST} from '../../helpers';
 import OrderAction from '../../actions/orders';
 import {showToastByResponse} from '../../components/Toast';
-export const createOrder = async (
-  items: ProductAndCart[],
-  deliveryAddress: IUserAddress,
-  deliveryCharge: number,
-  paymentType: PAYMENT_TYPE,
-  result: RazorPayFailure | RazorPaySuccess,
-) => {
-  const {
-    totalMRPAmountWithoutGST,
-    totalMRPAmountWithGST,
-    totalSellingAmountWithoutGST,
-    totalSellingAmountWithGST,
-    totalGstAmountForMRPPrice,
-    totalGstAmountForSellingPrice,
-    totalPayable,
-    orderItems,
-    totalDiscountAmount,
-  } = getSellingAndDiscountGSTPrice(items, deliveryCharge);
+export const createOrder = async (items: ProductAndCart[], deliveryAddress: IUserAddress, deliveryCharge: number, paymentType: PAYMENT_TYPE, result: RazorPayFailure | RazorPaySuccess) => {
+  const {totalMRPAmountWithoutGST, totalMRPAmountWithGST, totalSellingAmountWithoutGST, totalSellingAmountWithGST, totalGstAmountForMRPPrice, totalGstAmountForSellingPrice, totalPayable, orderItems, totalDiscountAmount} = getSellingAndDiscountGSTPrice(items, deliveryCharge);
   const orderCreateRequest: IOrderCreate = {
     userId: (await getUserId()) as string,
     deliveryAddress: deliveryAddress,
@@ -60,17 +37,12 @@ export const createOrder = async (
     isPaymentError: result.error ? true : false,
   };
   const orderAction = new OrderAction();
-  const orderCreateResponse = await orderAction.createNewOrder(
-    orderCreateRequest,
-  );
+  const orderCreateResponse = await orderAction.createNewOrder(orderCreateRequest);
   showToastByResponse(orderCreateResponse);
   return orderCreateResponse;
 };
 
-export const getSellingAndDiscountGSTPrice = (
-  items: ProductAndCart[],
-  deliveryCharge: number,
-) => {
+export const getSellingAndDiscountGSTPrice = (items: ProductAndCart[], deliveryCharge: number) => {
   let totalMRPAmountWithoutGST = 0;
   let totalMRPAmountWithGST = 0;
   let totalSellingAmountWithoutGST = 0;
@@ -83,39 +55,40 @@ export const getSellingAndDiscountGSTPrice = (
 
   items.forEach((productItem) => {
     const MRPAmountWithoutGST = productItem.mrp * productItem.quantity;
-    const MRPAmountWithGST = calculateTotalMRPAmountWithGST(
-      productItem,
-      productItem.quantity,
-    );
+    const MRPAmountWithGST = calculateTotalMRPAmountWithGST(productItem, productItem.quantity);
     totalMRPAmountWithoutGST += MRPAmountWithoutGST;
     totalMRPAmountWithGST += MRPAmountWithGST;
     totalGstAmountForMRPPrice += MRPAmountWithGST - MRPAmountWithoutGST;
 
-    const sellingAmountWithoutGST =
-      productItem.sellingPrice * productItem.quantity;
-    const sellingAmountWithGST = calculateTotalSellingAmountWithGST(
-      productItem,
-      productItem.quantity,
-    );
+    const sellingAmountWithoutGST = productItem.sellingPrice * productItem.quantity;
+    const sellingAmountWithGST = calculateTotalSellingAmountWithGST(productItem, productItem.quantity);
     totalSellingAmountWithoutGST += sellingAmountWithoutGST;
     totalSellingAmountWithGST += sellingAmountWithGST;
-    totalGstAmountForSellingPrice +=
-      sellingAmountWithGST - sellingAmountWithoutGST;
+    totalGstAmountForSellingPrice += sellingAmountWithGST - sellingAmountWithoutGST;
 
     totalDiscountAmount += productItem.quantity * productItem.discount;
+
+    const mrpAmountWithGSTPerQuantity = calculateTotalMRPAmountWithGST(productItem, 1);
+    const mrpAmountWithoutGSTPerQuantity = productItem.mrp * 1;
+
+    const sellingAmountWithGSTPerQuantity = calculateTotalSellingAmountWithGST(productItem, 1);
+    const sellingAmountWithoutGSTPerQuantity = productItem.sellingPrice * 1;
+
     const orderItem: IOrderProducts = {
       productId: productItem._id,
       sellerId: productItem.sellerId,
       productName: productItem.productName,
       productDescription: productItem.productDescription,
-      amount: productItem.sellingPrice,
-      discountAmount: productItem.mrp - productItem.sellingPrice,
-      totalAmount: calculateTotalSellingAmountWithGST(
-        productItem,
-        productItem.quantity,
-      ),
+
+      mrpAmountWithGSTPerQty: mrpAmountWithGSTPerQuantity,
+      mrpAmountWithoutGSTPerQty: mrpAmountWithoutGSTPerQuantity,
+      sellingAmountWithGSTPerQty: sellingAmountWithGSTPerQuantity,
+      sellingAmountWithoutGSTPerQty: sellingAmountWithoutGSTPerQuantity,
+      gstAmountForMPRPricePerQty: mrpAmountWithGSTPerQuantity - mrpAmountWithoutGSTPerQuantity,
+      gstAmountForSellingPricePerQty: sellingAmountWithGSTPerQuantity - sellingAmountWithoutGSTPerQuantity,
       quantity: productItem.quantity,
       gstPercentage: productItem.gstPercentage,
+
       uom: productItem.uom,
       unit: productItem.unit,
       image: productItem.images && productItem.images[0],
@@ -135,10 +108,7 @@ export const getSellingAndDiscountGSTPrice = (
   };
 };
 
-const getPaymentId = (
-  result: RazorPayFailure | RazorPaySuccess,
-  paymentType: PAYMENT_TYPE,
-) => {
+const getPaymentId = (result: RazorPayFailure | RazorPaySuccess, paymentType: PAYMENT_TYPE) => {
   // @ts-ignore
   if (result.error) {
     return `err_${paymentType.toLocaleLowerCase()}_${new Date().getTime()}`;

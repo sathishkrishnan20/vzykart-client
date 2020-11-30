@@ -22,21 +22,11 @@ const ProductSummary = ({productInfo}: ProductCardOrderedState) => {
   return (
     <View style={{marginTop: 8}}>
       <SectionTitle title={'Products'} />
-      <View
-        style={[
-          IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob,
-          styles.container,
-        ]}>
+      <View style={[IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob, styles.container]}>
         {IS_BIG_SCREEN ? (
           <Grid>
-            <Col size={leftSideSize}>
-              {renderImage(
-                productInfo.image && productInfo.image.optimizedDestinationPath,
-              )}
-            </Col>
-            <Col
-              size={12 - leftSideSize}
-              style={{justifyContent: 'flex-start'}}>
+            <Col size={leftSideSize}>{renderImage(productInfo.image && productInfo.image.optimizedDestinationPath)}</Col>
+            <Col size={12 - leftSideSize} style={{justifyContent: 'flex-start'}}>
               {renderProductInfo({
                 productInfo,
               })}
@@ -50,15 +40,8 @@ const ProductSummary = ({productInfo}: ProductCardOrderedState) => {
             }}
             wrapperStyle={{padding: 0}}>
             <Row size={12}>
-              <Col size={leftSideSize}>
-                {renderImage(
-                  productInfo.image &&
-                    productInfo.image?.optimizedDestinationPath,
-                )}
-              </Col>
-              <Col
-                size={12 - leftSideSize}
-                style={{justifyContent: 'flex-start'}}>
+              <Col size={leftSideSize}>{renderImage(productInfo.image && productInfo.image?.optimizedDestinationPath)}</Col>
+              <Col size={12 - leftSideSize} style={{justifyContent: 'flex-start'}}>
                 {renderProductInfo({
                   productInfo,
                 })}
@@ -71,9 +54,7 @@ const ProductSummary = ({productInfo}: ProductCardOrderedState) => {
   );
 };
 
-const renderImage = (
-  imageUrl = 'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png',
-) => {
+const renderImage = (imageUrl = 'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png') => {
   return (
     <Image
       resizeMode="cover"
@@ -89,26 +70,17 @@ const renderProductInfo = ({productInfo}: ProductCardOrderedState) => {
   return (
     <View>
       <Text style={styles.textName}>{productInfo.productName}</Text>
-      <Text style={styles.textNameLight}>
-        {productInfo.unit + ' ' + productInfo.uom}
-      </Text>
-      <Text style={styles.textNameLight}>
-        {'Seller: ' + productInfo.sellerInfo?.sellerName}
-      </Text>
+      <Text style={styles.textNameLight}>{productInfo.unit + ' ' + productInfo.uom}</Text>
+      <Text style={styles.textNameLight}>{'Seller: ' + productInfo.sellerInfo?.sellerName}</Text>
 
-      <Text style={styles.textNameLight}>
-        {'Quantity: ' + productInfo.quantity}
+      <Text style={styles.textNameLight}>{'Quantity: ' + productInfo.quantity}</Text>
+      <Text style={[styles.textNameLight, styles.strikeThrough]}>
+        {'List Price: ₹'} {productInfo.mrpAmountWithGSTPerQty * productInfo.quantity}
       </Text>
       <Text style={styles.textNameLight}>
-        {'Price: ₹' + productInfo.amount}
+        {'Selling Price: ₹'}
+        {productInfo.sellingAmountWithGSTPerQty * productInfo.quantity}
       </Text>
-      {/* <Text style={styles.textNameLight}>
-        {'GST Price: ₹' + productInfo.gstAmount}
-      </Text>
-      <Text style={styles.textNameLight}>
-        {'Total Price: ₹' +
-          productInfo.quantity * (productInfo.amount + productInfo.gstAmount)}
-      </Text> */}
     </View>
   );
 };

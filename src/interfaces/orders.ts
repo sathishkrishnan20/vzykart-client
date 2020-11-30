@@ -9,10 +9,20 @@ export interface IOrderProducts {
   productName: string;
   quantity: number;
   productDescription: string;
-  amount: number; // amount without Discount and tax details
+
+  mrpAmountWithGSTPerQty: number;
+  mrpAmountWithoutGSTPerQty: number;
+  sellingAmountWithGSTPerQty: number;
+  sellingAmountWithoutGSTPerQty: number;
+  gstAmountForMPRPricePerQty: number;
+  gstAmountForSellingPricePerQty: number;
   gstPercentage: number;
-  discountAmount: number;
-  totalAmount: number; // // amount with Discount and tax details
+
+  // amount: number; // amount without Discount and tax details
+  // gstPercentage: number;
+  // discountAmount: number;
+  // totalAmount: number; // // amount with Discount and tax details
+
   uom: string;
   unit: string;
   image?: IProductImage;
