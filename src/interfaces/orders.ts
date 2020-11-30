@@ -17,6 +17,7 @@ export interface IOrderProducts {
   gstAmountForMPRPricePerQty: number;
   gstAmountForSellingPricePerQty: number;
   gstPercentage: number;
+  discountAmount: number;
 
   // amount: number; // amount without Discount and tax details
   // gstPercentage: number;

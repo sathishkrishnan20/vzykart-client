@@ -66,7 +66,7 @@ export const getSellingAndDiscountGSTPrice = (items: ProductAndCart[], deliveryC
     totalSellingAmountWithGST += sellingAmountWithGST;
     totalGstAmountForSellingPrice += sellingAmountWithGST - sellingAmountWithoutGST;
 
-    totalDiscountAmount += productItem.quantity * productItem.discount;
+    totalDiscountAmount += MRPAmountWithGST - sellingAmountWithGST;
 
     const mrpAmountWithGSTPerQuantity = calculateTotalMRPAmountWithGST(productItem, 1);
     const mrpAmountWithoutGSTPerQuantity = productItem.mrp * 1;
@@ -86,6 +86,7 @@ export const getSellingAndDiscountGSTPrice = (items: ProductAndCart[], deliveryC
       sellingAmountWithoutGSTPerQty: sellingAmountWithoutGSTPerQuantity,
       gstAmountForMPRPricePerQty: mrpAmountWithGSTPerQuantity - mrpAmountWithoutGSTPerQuantity,
       gstAmountForSellingPricePerQty: sellingAmountWithGSTPerQuantity - sellingAmountWithoutGSTPerQuantity,
+      discountAmount: mrpAmountWithGSTPerQuantity - sellingAmountWithGSTPerQuantity,
       quantity: productItem.quantity,
       gstPercentage: productItem.gstPercentage,
 
