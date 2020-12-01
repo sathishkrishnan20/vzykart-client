@@ -61,6 +61,10 @@ export interface IOrderCreate {
   isPaymentError: boolean;
   paymentErrorMessage: string;
   paymentMode: PAYMENT_TYPE;
+  promoCodeInfo?: {
+    discountAmount: number;
+    promoCode: string;
+  };
   orderItems: IOrderProducts[];
 }
 

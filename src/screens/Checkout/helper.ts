@@ -8,8 +8,13 @@ import {IS_WEB} from '../../config';
 import {calculateTotalSellingAmountWithGST, calculateTotalMRPAmountWithGST} from '../../helpers';
 import OrderAction from '../../actions/orders';
 import {showToastByResponse} from '../../components/Toast';
-export const createOrder = async (items: ProductAndCart[], deliveryAddress: IUserAddress, deliveryCharge: number, paymentType: PAYMENT_TYPE, result: RazorPayFailure | RazorPaySuccess) => {
-  const {totalMRPAmountWithoutGST, totalMRPAmountWithGST, totalSellingAmountWithoutGST, totalSellingAmountWithGST, totalGstAmountForMRPPrice, totalGstAmountForSellingPrice, totalPayable, orderItems, totalDiscountAmount} = getSellingAndDiscountGSTPrice(items, deliveryCharge);
+interface PromoCodeInfo {
+  discountAmount: number;
+  promoCode: string;
+}
+
+export const createOrder = async (items: ProductAndCart[], deliveryAddress: IUserAddress, deliveryCharge: number, promoCodeInfo: PromoCodeInfo, paymentType: PAYMENT_TYPE, result: RazorPayFailure | RazorPaySuccess) => {
+  const {totalMRPAmountWithoutGST, totalMRPAmountWithGST, totalSellingAmountWithoutGST, totalSellingAmountWithGST, totalGstAmountForMRPPrice, totalGstAmountForSellingPrice, totalPayable, orderItems, totalDiscountAmount} = getSellingAndDiscountGSTPrice(items, deliveryCharge, promoCodeInfo.discountAmount);
   const orderCreateRequest: IOrderCreate = {
     userId: (await getUserId()) as string,
     deliveryAddress: deliveryAddress,
@@ -36,13 +41,16 @@ export const createOrder = async (items: ProductAndCart[], deliveryAddress: IUse
     // @ts-ignore
     isPaymentError: result.error ? true : false,
   };
+  if (promoCodeInfo.discountAmount && promoCodeInfo.promoCode) {
+    orderCreateRequest.promoCodeInfo = promoCodeInfo;
+  }
   const orderAction = new OrderAction();
   const orderCreateResponse = await orderAction.createNewOrder(orderCreateRequest);
   showToastByResponse(orderCreateResponse);
   return orderCreateResponse;
 };
 
-export const getSellingAndDiscountGSTPrice = (items: ProductAndCart[], deliveryCharge: number) => {
+export const getSellingAndDiscountGSTPrice = (items: ProductAndCart[], deliveryCharge: number, promoCodeDiscountAmount: number) => {
   let totalMRPAmountWithoutGST = 0;
   let totalMRPAmountWithGST = 0;
   let totalSellingAmountWithoutGST = 0;
@@ -103,7 +111,7 @@ export const getSellingAndDiscountGSTPrice = (items: ProductAndCart[], deliveryC
     totalSellingAmountWithGST,
     totalGstAmountForMRPPrice,
     totalGstAmountForSellingPrice,
-    totalPayable: totalSellingAmountWithGST + deliveryCharge,
+    totalPayable: totalSellingAmountWithGST + deliveryCharge - promoCodeDiscountAmount,
     orderItems,
     totalDiscountAmount,
   };

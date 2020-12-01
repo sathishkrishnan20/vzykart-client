@@ -1,21 +1,24 @@
-import React from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 
-import {Card} from 'react-native-elements';
+import {Card, Input, Text} from 'react-native-elements';
 import {Col, Grid, Row} from 'react-native-easy-grid';
 import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import {ProductAndCart} from '../../interfaces/classes/cart';
 import Image from '../../components/Image/image';
-import {
-  calculateTotalSellingAmountWithGST,
-  calculateTotalMRPAmountWithGST,
-  getImageLink,
-} from '../../helpers';
+import {calculateTotalSellingAmountWithGST, calculateTotalMRPAmountWithGST, getImageLink} from '../../helpers';
 import colors from '../../colors';
+import {Button} from '../../components';
+import PromoCodeAction from '../../actions/promocodes';
+import {getUserType, getUserId} from '../../services/storage-service';
 const leftSideSize = IS_WEB ? 2 : 4;
 
 interface IProductSummary {
   productInfo: ProductAndCart;
+}
+interface IPromoCodeState {
+  amountToApplyPromoCode: number;
+  onSuccess: (promoCode: string, promoCodeDiscountValue: number) => void;
 }
 interface ISubTotalComponent {
   sellingPrice: number;
@@ -23,22 +26,15 @@ interface ISubTotalComponent {
   totalMRPPrice: number;
   deliveryCharge: number;
   totalGstPrice: number;
+  totalPayablePrice: number;
+  promoCodeDiscountAmount: number;
 }
 export const ProductSummary = ({productInfo}: IProductSummary) => {
   return (
-    <View
-      style={[
-        IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob,
-        styles.container,
-      ]}>
+    <View style={[IS_BIG_SCREEN ? styles.viewContainerWeb : styles.viewContainerMob, styles.container]}>
       {IS_BIG_SCREEN ? (
         <Grid>
-          <Col size={leftSideSize}>
-            {renderImage(
-              productInfo.images &&
-                productInfo.images[0]?.optimizedDestinationPath,
-            )}
-          </Col>
+          <Col size={leftSideSize}>{renderImage(productInfo.images && productInfo.images[0]?.optimizedDestinationPath)}</Col>
           <Col size={12 - leftSideSize} style={{justifyContent: 'flex-start'}}>
             {renderProductInfo({
               productInfo,
@@ -53,15 +49,8 @@ export const ProductSummary = ({productInfo}: IProductSummary) => {
           }}
           wrapperStyle={{padding: 0}}>
           <Row size={12}>
-            <Col size={leftSideSize}>
-              {renderImage(
-                productInfo.images &&
-                  productInfo.images[0]?.optimizedDestinationPath,
-              )}
-            </Col>
-            <Col
-              size={12 - leftSideSize}
-              style={{justifyContent: 'flex-start'}}>
+            <Col size={leftSideSize}>{renderImage(productInfo.images && productInfo.images[0]?.optimizedDestinationPath)}</Col>
+            <Col size={12 - leftSideSize} style={{justifyContent: 'flex-start'}}>
               {renderProductInfo({
                 productInfo,
               })}
@@ -73,9 +62,7 @@ export const ProductSummary = ({productInfo}: IProductSummary) => {
   );
 };
 
-const renderImage = (
-  imageUrl = 'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png',
-) => {
+const renderImage = (imageUrl = 'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png') => {
   return (
     <Image
       resizeMode="cover"
@@ -87,12 +74,45 @@ const renderImage = (
   );
 };
 
-export const SubTotalComponent = ({
-  sellingPrice,
-  deliveryCharge,
-  totalGstPrice,
-  discountPrice,
-}: ISubTotalComponent) => {
+export function PromoCodeComponent({amountToApplyPromoCode, onSuccess}: IPromoCodeState) {
+  const [promoCode, setPromoCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPromoCodeSuccess, setIsPromoCodeSuccess] = useState(false);
+  const [promoCodeMessage, setPromoCodeMessage] = useState('');
+  const validatePromoCode = async () => {
+    try {
+      setIsLoading(true);
+      const promoCodeAction = new PromoCodeAction();
+      const requestData = {
+        promoCode: promoCode,
+        userType: await getUserType(),
+        userId: (await getUserId()) as string,
+        amountToApplyPromoCode: amountToApplyPromoCode,
+      };
+      const validatedResponse = await promoCodeAction.validatePromoCode(requestData);
+      setIsLoading(false);
+      if (validatedResponse.success) {
+        onSuccess(promoCode, validatedResponse.data.promoCodeDiscountAmount);
+      }
+      setIsPromoCodeSuccess(validatedResponse.success);
+      setPromoCodeMessage(validatedResponse.message);
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    }
+  };
+  return (
+    <Card containerStyle={{margin: 4}}>
+      <Card.Title> Promo Code </Card.Title>
+      <Card.Divider></Card.Divider>
+      <Input value={promoCode} onChangeText={(promoCode) => setPromoCode(promoCode)} placeholder="Promo Code" />
+      {promoCodeMessage ? <Text style={{marginLeft: IS_BIG_SCREEN ? 8 : 4, color: isPromoCodeSuccess ? colors.green : colors.red}}>{promoCodeMessage}</Text> : null}
+      <Button style={{marginTop: promoCodeMessage ? 4 : 0}} title="Apply" onPress={validatePromoCode} loading={isLoading} />
+    </Card>
+  );
+}
+
+export const SubTotalComponent = ({sellingPrice, deliveryCharge, totalGstPrice, discountPrice, totalPayablePrice, promoCodeDiscountAmount}: ISubTotalComponent) => {
   return (
     <Card containerStyle={{margin: 4}}>
       <Card.Title> Price Details </Card.Title>
@@ -103,10 +123,7 @@ export const SubTotalComponent = ({
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
           <Row>
-            <Text style={[styles.textName]}>
-              {' '}
-              ₹{sellingPrice - totalGstPrice}{' '}
-            </Text>
+            <Text style={[styles.textName]}> ₹{sellingPrice - totalGstPrice} </Text>
           </Row>
         </Col>
       </Row>
@@ -120,7 +137,6 @@ export const SubTotalComponent = ({
           </Row>
         </Col>
       </Row>
-
       <Row>
         <Col>
           <Text> Price + GST</Text>
@@ -128,14 +144,6 @@ export const SubTotalComponent = ({
         <Col style={{alignItems: 'flex-end'}}>
           <Row>
             <Text style={[styles.textName]}> ₹{sellingPrice} </Text>
-            {/* <Text
-              style={[
-                styles.strikeThrough,
-                styles.textNameLight,
-                styles.marginTopSmall,
-              ]}>
-              ₹{totalMRPPrice}{' '}
-            </Text> */}
           </Row>
         </Col>
       </Row>
@@ -145,11 +153,21 @@ export const SubTotalComponent = ({
           <Text style={{color: 'gray'}}> Discount Price </Text>
         </Col>
         <Col style={{alignItems: 'flex-end'}}>
-          <Text style={{textDecorationLine: 'line-through', color: 'gray'}}>
-            ₹{discountPrice}
-          </Text>
+          <Text style={{textDecorationLine: 'line-through', color: 'gray'}}>₹{discountPrice}</Text>
         </Col>
       </Row>
+
+      {promoCodeDiscountAmount ? (
+        <Row style={{marginTop: 8}}>
+          <Col>
+            <Text style={{color: 'gray'}}> PromoCode Discount Price </Text>
+          </Col>
+          <Col style={{alignItems: 'flex-end'}}>
+            <Text style={{textDecorationLine: 'line-through', color: 'gray'}}>-₹{promoCodeDiscountAmount}</Text>
+          </Col>
+        </Row>
+      ) : null}
+
       <Row style={{marginTop: 10}}>
         <Col>
           <Text> Delivery Charges </Text>
@@ -165,7 +183,7 @@ export const SubTotalComponent = ({
             <Text style={styles.bold}> Total Payable </Text>
           </Col>
           <Col style={{alignItems: 'flex-end'}}>
-            <Text style={styles.bold}> ₹{sellingPrice + deliveryCharge} </Text>
+            <Text style={styles.bold}> ₹{totalPayablePrice} </Text>
           </Col>
         </Row>
       </Row>
@@ -177,17 +195,12 @@ const renderProductInfo = ({productInfo}: {productInfo: ProductAndCart}) => {
   return (
     <View>
       <Text style={styles.textName}>{productInfo.productName}</Text>
-      <Text style={styles.textNameLight}>
-        {productInfo.unit + ' ' + productInfo.uom}
-      </Text>
-      <Text style={styles.textNameLight}>
-        {'Seller: ' + productInfo.sellerInfo?.sellerName}
-      </Text>
+      <Text style={styles.textNameLight}>{productInfo.unit + ' ' + productInfo.uom}</Text>
+      <Text style={styles.textNameLight}>{'Seller: ' + productInfo.sellerInfo?.sellerName}</Text>
       <Row>
         <Text style={[styles.textNameLight]}>Price:</Text>
         <Text style={[styles.textNameLight, styles.strikeThrough]}>
-          {productInfo.quantity} *{' '}
-          {calculateTotalMRPAmountWithGST(productInfo, 1)} ={' ₹'}
+          {productInfo.quantity} * {calculateTotalMRPAmountWithGST(productInfo, 1)} ={' ₹'}
           {calculateTotalMRPAmountWithGST(productInfo, productInfo.quantity)}
         </Text>
         {/* <Text style={[styles.textNameLight, styles.strikeThrough]}>
@@ -201,12 +214,8 @@ const renderProductInfo = ({productInfo}: {productInfo: ProductAndCart}) => {
       <Row>
         <Text style={[styles.textName]}>Offer:</Text>
         <Text style={[styles.textName]}>
-          {productInfo.quantity} *{' '}
-          {calculateTotalSellingAmountWithGST(productInfo, 1)} ={' ₹'}
-          {calculateTotalSellingAmountWithGST(
-            productInfo,
-            productInfo.quantity,
-          )}
+          {productInfo.quantity} * {calculateTotalSellingAmountWithGST(productInfo, 1)} ={' ₹'}
+          {calculateTotalSellingAmountWithGST(productInfo, productInfo.quantity)}
         </Text>
         {/* <Text style={[styles.textName]}>+ ₹{productInfo.gst}</Text>
         <Text style={[styles.textName]}>

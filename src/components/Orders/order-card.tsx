@@ -1,10 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import {
-  IOrderCard,
-  IOrderCardState,
-  IStatusUpdateActions,
-} from '../../interfaces/orders';
+import {IOrderCard, IOrderCardState, IStatusUpdateActions} from '../../interfaces/orders';
 import {Text, Card} from 'react-native-elements';
 import {Row, Col, Grid} from 'react-native-easy-grid';
 import {IS_BIG_SCREEN} from '../../config';
@@ -17,14 +13,7 @@ import {Item} from 'react-native-picker-select';
 import {WarningToast} from '../Toast';
 import colors from '../../colors';
 
-export const OrderCard = ({
-  orderData,
-  onClick,
-  disabled = false,
-  statusUpdateButtons = [],
-  onChangeStatus,
-  deliveryPersonList,
-}: IOrderCardState) => {
+export const OrderCard = ({orderData, onClick, disabled = false, statusUpdateButtons = [], onChangeStatus, deliveryPersonList}: IOrderCardState) => {
   return IS_BIG_SCREEN ? (
     <TouchableOpacity disabled={disabled} onPress={onClick}>
       <Card>
@@ -35,11 +24,7 @@ export const OrderCard = ({
           </Col>
           <Col>
             <RenderPaymentData orderData={orderData} />
-            <RenderActionButtons
-              deliveryPersonList={deliveryPersonList}
-              onChangeStatus={onChangeStatus}
-              statusUpdateButtons={statusUpdateButtons}
-            />
+            <RenderActionButtons deliveryPersonList={deliveryPersonList} onChangeStatus={onChangeStatus} statusUpdateButtons={statusUpdateButtons} />
           </Col>
 
           {orderData.deliveryAddress ? (
@@ -58,11 +43,7 @@ export const OrderCard = ({
         <RenderProductData orderData={orderData} />
         <RenderPaymentData orderData={orderData} />
         <RenderOrderStatusData orderData={orderData} />
-        <RenderActionButtons
-          deliveryPersonList={deliveryPersonList}
-          onChangeStatus={onChangeStatus}
-          statusUpdateButtons={statusUpdateButtons}
-        />
+        <RenderActionButtons deliveryPersonList={deliveryPersonList} onChangeStatus={onChangeStatus} statusUpdateButtons={statusUpdateButtons} />
       </Card>
     </TouchableOpacity>
   );
@@ -95,9 +76,7 @@ const RenderProductData = ({orderData}: IOrderCard) => {
           Created at:
         </Text>
         <Text style={[styles.textName, styles.bold]} numberOfLines={1}>
-          {new Date(orderData.createdDate).toLocaleDateString() +
-            ' ' +
-            new Date(orderData.createdDate).toLocaleTimeString()}
+          {new Date(orderData.createdDate).toLocaleDateString() + ' ' + new Date(orderData.createdDate).toLocaleTimeString()}
         </Text>
       </Row>
       <Row>
@@ -112,13 +91,7 @@ const RenderProductData = ({orderData}: IOrderCard) => {
         <Text style={styles.textName} numberOfLines={1}>
           Order Status:
         </Text>
-        <Text
-          style={[
-            styles.textName,
-            styles.bold,
-            {color: getColorByOrderStatus(orderData.orderStatus)},
-          ]}
-          numberOfLines={2}>
+        <Text style={[styles.textName, styles.bold, {color: getColorByOrderStatus(orderData.orderStatus)}]} numberOfLines={2}>
           {orderData.orderStatus}
         </Text>
       </Row>
@@ -153,6 +126,13 @@ const RenderPaymentData = ({orderData}: IOrderCard) => {
           Delivery Charge: ₹{orderData.deliveryCharge}
         </Text>
       </Row>
+      {orderData.promoCodeInfo && orderData.promoCodeInfo?.discountAmount ? (
+        <Row>
+          <Text style={[styles.textName]} numberOfLines={1}>
+            Promo Code Discount: -₹{orderData.promoCodeInfo?.discountAmount}
+          </Text>
+        </Row>
+      ) : null}
       <Text style={[styles.textName]} numberOfLines={1}>
         Total = ₹{orderData.totalPayableAmount}
       </Text>
@@ -173,14 +153,8 @@ const RenderOrderStatusData = ({orderData}: IOrderCard) => {
   );
 };
 
-function RenderActionButtons({
-  statusUpdateButtons,
-  onChangeStatus,
-  deliveryPersonList = [],
-}: IStatusUpdateActions) {
-  const [selectedDeliveryPerson, setSelectedDeliveryPerson] = useState(
-    [] as Item[] | string[],
-  );
+function RenderActionButtons({statusUpdateButtons, onChangeStatus, deliveryPersonList = []}: IStatusUpdateActions) {
+  const [selectedDeliveryPerson, setSelectedDeliveryPerson] = useState([] as Item[] | string[]);
   const getDeliveryPersonId = (): string => {
     if (selectedDeliveryPerson && selectedDeliveryPerson[0]) {
       if (typeof selectedDeliveryPerson[0] === 'string') {
@@ -200,9 +174,7 @@ function RenderActionButtons({
           item.value === VALID_ORDER_STATUS.DELIVERY_BOY_ASSIGNED ? (
             <Grid>
               <Row style={{marginTop: IS_BIG_SCREEN ? 8 : 4}}>
-                <TouchableOpacity
-                  onPress={(e) => e.preventDefault()}
-                  style={{width: '90%'}}>
+                <TouchableOpacity onPress={(e) => e.preventDefault()} style={{width: '90%'}}>
                   <MultiSelect
                     disableLabelOnWeb={true}
                     label={'Select Delivery Person'}
@@ -242,12 +214,7 @@ function RenderActionButtons({
             </Grid>
           ) : (
             <Col>
-              <Button
-                disabled={item.disabled || false}
-                onPress={() => onChangeStatus({orderStatus: item.value})}
-                buttonStyle={item.style}
-                title={item.label}
-              />
+              <Button disabled={item.disabled || false} onPress={() => onChangeStatus({orderStatus: item.value})} buttonStyle={item.style} title={item.label} />
             </Col>
           ),
         )}

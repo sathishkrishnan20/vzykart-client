@@ -1,18 +1,12 @@
 // @ts-nocheck
 import React from 'react';
-import {
-  AppRegistry,
-  Platform,
-  TouchableOpacity,
-  StyleSheet,
-  Linking,
-} from 'react-native';
+import {AppRegistry, Platform, TouchableOpacity, StyleSheet, Linking} from 'react-native';
 import {Provider} from 'react-redux';
 import {store} from './routes/store';
 import {ThemeProvider} from 'react-native-elements';
 import Toast from 'react-native-toast-message';
 import {Routes} from './routes';
-import {WHATSAPP_NUMBER} from './config';
+import {WHATSAPP_NUMBER, IS_BIG_SCREEN} from './config';
 import {Icon} from 'react-native-elements';
 
 import AntDesign from 'react-native-vector-icons/Fonts/AntDesign.ttf';
@@ -34,9 +28,7 @@ import {ToastContainer} from 'react-toastify';
 import {IS_WEB} from './config';
 import colors from './colors';
 import {YellowBox} from 'react-native';
-YellowBox.ignoreWarnings([
-  'scrollTo(y, x, animated)` is deprecated. Use `scrollTo({x: 5, y: 5, animated: true})` instead.',
-]);
+YellowBox.ignoreWarnings(['scrollTo(y, x, animated)` is deprecated. Use `scrollTo({x: 5, y: 5, animated: true})` instead.']);
 console.disableYellowBox = true;
 
 const fonts = [
@@ -65,6 +57,9 @@ const commonTheme = {
       fontFamily: 'Helvetica-Light',
       color: colors.textGray,
     },
+  },
+  Input: {
+    style: {paddingLeft: 4},
   },
   Button: {
     buttonStyle: {
@@ -100,24 +95,13 @@ export function App() {
                 position: 'fixed',
                 bottom: 20,
                 right: 20,
-                width: 80,
-                height: 80,
+                width: IS_BIG_SCREEN ? 80 : 60,
+                height: IS_BIG_SCREEN ? 80 : 60,
                 backgroundColor: 'transparent',
                 borderRadius: 100,
               }}>
-              <a
-                style={{textDecoration: 'none'}}
-                target="_blank"
-                href={`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`}>
-                <Icon
-                  raised
-                  size={35}
-                  style={{alignSelf: 'center', justifyContent: 'center'}}
-                  reverse
-                  name="logo-whatsapp"
-                  type="ionicon"
-                  color="#23D755"
-                />
+              <a style={{textDecoration: 'none'}} target="_blank" href={`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`}>
+                <Icon raised size={IS_BIG_SCREEN ? 24 : 24} style={{alignSelf: 'center', justifyContent: 'center'}} reverse name="logo-whatsapp" type="ionicon" color="#23D755" />
               </a>
             </div>
           ) : (
@@ -128,29 +112,19 @@ export function App() {
                 borderColor: 'rgba(0,0,0,0.2)',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 65,
+                width: 35,
+                height: 35,
                 position: 'absolute',
-                bottom: 60,
-                right: 10,
-                height: 65,
+                bottom: 65,
+                left: 15,
                 backgroundColor: '#fff',
                 borderRadius: 100,
               }}>
-              <Icon
-                raised
-                reverse
-                name="logo-whatsapp"
-                type="ionicon"
-                color="#23D755"
-              />
+              <Icon raised reverse name="logo-whatsapp" type="ionicon" color="#23D755" />
             </TouchableOpacity>
           )}
 
-          {IS_WEB ? (
-            <ToastContainer containerId="toastId" />
-          ) : (
-            <Toast ref={(ref) => Toast.setRef(ref)} />
-          )}
+          {IS_WEB ? <ToastContainer containerId="toastId" /> : <Toast ref={(ref) => Toast.setRef(ref)} />}
         </ThemeProvider>
       </MenuProvider>
     </Provider>
