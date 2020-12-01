@@ -10,15 +10,12 @@ import HeaderMenu from './material-header';
 import {USER_TYPE} from '../../interfaces/enums';
 import {getLoginRouteByUserType} from '../../helpers';
 import colors from '../../colors';
+import {useSelector} from 'react-redux';
 
-export function Header({
-  hasLoggedIn,
-  title,
-  menus,
-  onLogout,
-  cartLength,
-  userType,
-}: any) {
+export function Header({hasLoggedIn, title, menus, onLogout, userType}: any) {
+  const storeSelector = useSelector((state) => state);
+  // @ts-ignore
+  const cartLength = storeSelector.cart.cartItems.length;
   const CartIcon: any = withBadge(cartLength, {
     badgeStyle: {
       backgroundColor: colors.cartBadgeColor,
@@ -28,61 +25,31 @@ export function Header({
   const history = useHistory();
   return (
     <SafeAreaView>
-      <LinearGradient
-        colors={colors.themeGradient}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}
-        style={styles.headerContainer}>
+      <LinearGradient colors={colors.themeGradient} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.headerContainer}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text
-              onPress={() => history.push(ROUTE_NAMES.home)}
-              accessibilityRole="header"
-              aria-level="3"
-              style={styles.title}>
+            <Text onPress={() => history.push(ROUTE_NAMES.home)} accessibilityRole="header" aria-level="3" style={styles.title}>
               {title}
             </Text>
-            <Text
-              accessibilityRole="header"
-              aria-level="3"
-              style={[styles.titleOrder]}>
+            <Text accessibilityRole="header" aria-level="3" style={[styles.titleOrder]}>
               {'Order at 8883334889'}
             </Text>
           </View>
 
           <View style={styles.headerRight}>
             {IS_BIG_SCREEN
-              ? menus.map(
-                  (
-                    menuItem: {title: string; navigationLink: string},
-                    index: number,
-                  ) => (
-                    <NavLink
-                      key={'' + index}
-                      exact
-                      activeClassName="active"
-                      to={menuItem.navigationLink}
-                      style={{textDecoration: 'none'}}>
-                      <Text style={styles.navText}>{menuItem.title}</Text>
-                    </NavLink>
-                  ),
-                )
+              ? menus.map((menuItem: {title: string; navigationLink: string}, index: number) => (
+                  <NavLink key={'' + index} exact activeClassName="active" to={menuItem.navigationLink} style={{textDecoration: 'none'}}>
+                    <Text style={styles.navText}>{menuItem.title}</Text>
+                  </NavLink>
+                ))
               : null}
 
             {hasLoggedIn ? (
               <>
                 {userType === USER_TYPE.USER ? (
-                  <NavLink
-                    exact
-                    to={ROUTE_NAMES.userCart}
-                    style={{textDecoration: 'none', marginLeft: 20}}>
-                    <CartIcon
-                      size={24}
-                      status="primary"
-                      color={'#FFF'}
-                      type="ionicon"
-                      name="cart"
-                    />
+                  <NavLink exact to={ROUTE_NAMES.userCart} style={{textDecoration: 'none', marginLeft: 20}}>
+                    <CartIcon size={24} status="primary" color={'#FFF'} type="ionicon" name="cart" />
                   </NavLink>
                 ) : null}
                 {/* <NavLink
@@ -114,18 +81,10 @@ export function Header({
               </>
             ) : (
               <>
-                <NavLink
-                  exact
-                  activeClassName="active"
-                  to={ROUTE_NAMES.register}
-                  style={{textDecoration: 'none'}}>
+                <NavLink exact activeClassName="active" to={ROUTE_NAMES.register} style={{textDecoration: 'none'}}>
                   <Text style={styles.navText}>Register</Text>
                 </NavLink>
-                <NavLink
-                  exact
-                  activeClassName="active"
-                  to="/user/login"
-                  style={{textDecoration: 'none'}}>
+                <NavLink exact activeClassName="active" to="/user/login" style={{textDecoration: 'none'}}>
                   <Text style={[styles.navText, {marginRight: 40}]}>Login</Text>
                 </NavLink>
               </>

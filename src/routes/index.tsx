@@ -1,9 +1,6 @@
 import './GestureHandler';
 import React, {useState} from 'react';
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-} from '@react-navigation/stack';
+import {createStackNavigator, CardStyleInterpolators} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -18,22 +15,9 @@ import {Login} from '../screens/Auth/Login';
 import {SignUp} from '../screens/Auth/Signup';
 import {ProductList} from '../screens/Products/list';
 import {store} from './store';
-import {
-  getUserId,
-  getToken,
-  getUserType,
-  getSalesUserId,
-  getSellerId,
-  removeAll,
-  getDeliveryPersonId,
-  getCartItem,
-} from '../services/storage-service';
+import {getUserId, getToken, getUserType, getSalesUserId, getSellerId, removeAll, getDeliveryPersonId, getCartItem} from '../services/storage-service';
 import ROUTE_NAMES from './name';
-import {
-  AUTH_USER_LOGIN,
-  AUTH_SELLER_LOGIN,
-  AUTH_LOGOUT,
-} from '../providers/constants';
+import {AUTH_USER_LOGIN, AUTH_SELLER_LOGIN, AUTH_LOGOUT} from '../providers/constants';
 import {USER_TYPE} from '../interfaces/enums';
 import {Checkout} from '../screens/Checkout';
 import {Profile} from '../screens/_users/Profile';
@@ -59,6 +43,7 @@ import {DeliveryPersonOrders} from '../screens/_delivery_person/orders';
 import {Home} from '../screens/Home';
 import colors from '../colors';
 import {APP_HEADER} from '../config';
+import {HeaderRight} from '../components/Header/header-native';
 
 const HEADER_HEIGHT = 70;
 
@@ -292,9 +277,7 @@ export type StackParams = {
   Details: {data: string} | undefined;
 };
 function getHeaderTitle(route: any) {
-  const routeName = route.state
-    ? route.state.routes[route.state.index].name
-    : 'Home';
+  const routeName = route.state ? route.state.routes[route.state.index].name : 'Home';
   return routeName;
 }
 const Stack = createStackNavigator();
@@ -305,10 +288,7 @@ export function Routes() {
   const [cartProductsLength, setCartProductsLength] = useState(0);
 
   const [state, dispatch] = React.useReducer(
-    (
-      prevState: any,
-      action: {type: any; token?: any; userType: USER_TYPE | null | undefined},
-    ) => {
+    (prevState: any, action: {type: any; token?: any; userType: USER_TYPE | null | undefined}) => {
       switch (action.type) {
         case 'RESTORE_TOKEN':
           return {
@@ -354,10 +334,7 @@ export function Routes() {
       try {
         userToken = await getToken();
         userType = (await getUserType()) as USER_TYPE;
-        userId =
-          (await getUserId()) ||
-          (await getSalesUserId()) ||
-          (await getDeliveryPersonId());
+        userId = (await getUserId()) || (await getSalesUserId()) || (await getDeliveryPersonId());
       } catch (e) {
         // Restoring token failed
         console.error('exception getting user Token', e);
@@ -416,11 +393,11 @@ export function Routes() {
     [],
   );
 
-  store.subscribe(() => {
-    if (store.getState().cart.cartItems.length !== cartProductsLength) {
-      setCartProductsLength(store.getState().cart.cartItems.length);
-    }
-  });
+  // store.subscribe(() => {
+  //   if (store.getState().cart.cartItems.length !== cartProductsLength) {
+  //     setCartProductsLength(store.getState().cart.cartItems.length);
+  //   }
+  // });
   const logout = async () => {
     store.dispatch({
       type: AUTH_LOGOUT,
@@ -477,59 +454,14 @@ export function Routes() {
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             headerStyle: {backgroundColor: colors.themeGradient[0]},
             headerTintColor: 'white',
-            headerRight: () => {
-              return (
-                <View
-                  style={{
-                    marginRight: 10,
-                    flexDirection: 'row',
-                  }}>
-                  <View style={{marginLeft: 4, marginRight: 4}}>
-                    <CartIcon
-                      onPress={() => navigation.navigate(ROUTE_NAMES.userCart)}
-                      style={{marginRight: 5, marginTop: 10}}
-                      size={24}
-                      status="success"
-                      color={'#FFF'}
-                      name="cart"
-                    />
-                  </View>
-                  {/* <View style={{marginLeft: 4, marginRight: 4}}>
-                    <NotificationIcon
-                      style={{marginRight: 5, marginTop: 10}}
-                      size={24}
-                      status="success"
-                      color={'#FFF'}
-                      name="notifications"
-                    />
-                  </View> */}
-                  <View style={{marginLeft: 4, marginRight: 4}}>
-                    <Icon
-                      onPress={() => logout()}
-                      style={{marginRight: 5, marginTop: 10}}
-                      name="power-sharp"
-                      color={'#FFF'}
-                      size={24}
-                    />
-                  </View>
-                </View>
-              );
-            },
+            headerRight: () => <HeaderRight navigation={navigation} logout={() => logout()} />,
           })}>
           {state.userToken == null ? (
             <>
               {/* Auth Routes */}
 
-              <Stack.Screen
-                options={{headerShown: false}}
-                name={ROUTE_NAMES.login}
-                component={Login}
-              />
-              <Stack.Screen
-                options={{headerShown: false}}
-                name={ROUTE_NAMES.register}
-                component={SignUp}
-              />
+              <Stack.Screen options={{headerShown: false}} name={ROUTE_NAMES.login} component={Login} />
+              <Stack.Screen options={{headerShown: false}} name={ROUTE_NAMES.register} component={SignUp} />
             </>
           ) : state.userType === USER_TYPE.USER ? (
             <>
@@ -542,53 +474,23 @@ export function Routes() {
               />
               {/* User Public Routes */}
               <Stack.Screen name={ROUTE_NAMES.home} component={SellersList} />
-              <Stack.Screen
-                name={ROUTE_NAMES.productListFilters}
-                component={ProductList}
-              />
+              <Stack.Screen name={ROUTE_NAMES.productListFilters} component={ProductList} />
 
               {/* User Authenticated Routes */}
-              <Stack.Screen
-                name={ROUTE_NAMES.userCheckout}
-                component={Checkout}
-              />
+              <Stack.Screen name={ROUTE_NAMES.userCheckout} component={Checkout} />
               <Stack.Screen name={ROUTE_NAMES.userCart} component={Cart} />
-              <Stack.Screen
-                name={ROUTE_NAMES.userProfile}
-                component={Profile}
-              />
-              <Stack.Screen
-                name={ROUTE_NAMES.userOrders}
-                component={MyOrders}
-              />
-              <Stack.Screen
-                name={ROUTE_NAMES.userOrderDetails}
-                component={OrderDetails}
-              />
+              <Stack.Screen name={ROUTE_NAMES.userProfile} component={Profile} />
+              <Stack.Screen name={ROUTE_NAMES.userOrders} component={MyOrders} />
+              <Stack.Screen name={ROUTE_NAMES.userOrderDetails} component={OrderDetails} />
             </>
           ) : state.userType === USER_TYPE.SALES_USER ? (
             <>
               {/* Seller Routes */}
-              <Stack.Screen
-                name={ROUTE_NAMES.sellerOrders}
-                component={SellerOrders}
-              />
-              <Stack.Screen
-                name={ROUTE_NAMES.sellerOrdersDetails}
-                component={SellerOrderDetails}
-              />
-              <Stack.Screen
-                name={ROUTE_NAMES.sellerProductAdd}
-                component={SellerAddProducts}
-              />
-              <Stack.Screen
-                name={ROUTE_NAMES.sellerProductView}
-                component={SellerViewProducts}
-              />
-              <Stack.Screen
-                name={ROUTE_NAMES.sellerProductCrudById}
-                component={SellerAddProducts}
-              />
+              <Stack.Screen name={ROUTE_NAMES.sellerOrders} component={SellerOrders} />
+              <Stack.Screen name={ROUTE_NAMES.sellerOrdersDetails} component={SellerOrderDetails} />
+              <Stack.Screen name={ROUTE_NAMES.sellerProductAdd} component={SellerAddProducts} />
+              <Stack.Screen name={ROUTE_NAMES.sellerProductView} component={SellerViewProducts} />
+              <Stack.Screen name={ROUTE_NAMES.sellerProductCrudById} component={SellerAddProducts} />
             </>
           ) : null}
         </Stack.Navigator>
@@ -614,87 +516,32 @@ export function Routes() {
               userType={state.userType}
               onLogout={() => logout()}
               hasLoggedIn={state.userToken !== null}
-              menus={
-                state.userToken !== null
-                  ? getTabNavMenus(state.userType as USER_TYPE | null)
-                  : []
-              }
+              menus={state.userToken !== null ? getTabNavMenus(state.userType as USER_TYPE | null) : []}
               cartLength={cartProductsLength}
               notificationCount={'99+'}
             />
           </div>
           <View style={{marginTop: HEADER_HEIGHT}}>
             {AUTH_ROUTES.map((route, key: number) => (
-              <RedirectHomeRouteIfLoggedIn
-                key={'auth' + key}
-                exact
-                authenticated={state.userToken !== null}
-                userType={state.userType}
-                path={route.routeName}
-                component={route.component}
-              />
+              <RedirectHomeRouteIfLoggedIn key={'auth' + key} exact authenticated={state.userToken !== null} userType={state.userType} path={route.routeName} component={route.component} />
             ))}
             {PUBLIC_ROUTES.map((route, key: number) => (
-              <Route
-                key={'public' + key}
-                exact
-                path={route.routeName}
-                component={route.component}
-              />
+              <Route key={'public' + key} exact path={route.routeName} component={route.component} />
             ))}
             {state.isTokenRestored &&
               USER_AUTHENTICATED_ROUTES.map((route, key: number) => (
-                <PrivateRoute
-                  key={'user-auth' + key}
-                  exact
-                  authenticated={
-                    state.userToken !== null &&
-                    state.userType === USER_TYPE.USER
-                  }
-                  userType={USER_TYPE.USER}
-                  path={route.routeName}
-                  component={route.component}
-                />
+                <PrivateRoute key={'user-auth' + key} exact authenticated={state.userToken !== null && state.userType === USER_TYPE.USER} userType={USER_TYPE.USER} path={route.routeName} component={route.component} />
               ))}
 
             {state.isTokenRestored &&
-              SELLER_ROUTES.map((route, key: number) => (
-                <PrivateRoute
-                  key={'seller' + key}
-                  exact
-                  authenticated={state.userToken !== null}
-                  userType={USER_TYPE.SALES_USER}
-                  path={route.routeName}
-                  component={route.component}
-                />
-              ))}
+              SELLER_ROUTES.map((route, key: number) => <PrivateRoute key={'seller' + key} exact authenticated={state.userToken !== null} userType={USER_TYPE.SALES_USER} path={route.routeName} component={route.component} />)}
 
             {state.isTokenRestored && state.userType === USER_TYPE.ADMIN
-              ? ADMIN_ROUTES.map((route, key: number) => (
-                  <PrivateRoute
-                    key={'seller' + key}
-                    exact
-                    authenticated={state.userToken !== null}
-                    userType={USER_TYPE.ADMIN}
-                    path={route.routeName}
-                    component={route.component}
-                  />
-                ))
+              ? ADMIN_ROUTES.map((route, key: number) => <PrivateRoute key={'seller' + key} exact authenticated={state.userToken !== null} userType={USER_TYPE.ADMIN} path={route.routeName} component={route.component} />)
               : null}
-            {state.isTokenRestored &&
-            state.userType === USER_TYPE.DELIVERY_PERSON
+            {state.isTokenRestored && state.userType === USER_TYPE.DELIVERY_PERSON
               ? DELIVERY_PERSON_ORDERS.map((route, key: number) => (
-                  <PrivateRoute
-                    key={'delivery' + key}
-                    exact
-                    authenticated={
-                      state.userToken !== null &&
-                      state.userType === USER_TYPE.DELIVERY_PERSON
-                    }
-                    userType={USER_TYPE.DELIVERY_PERSON}
-                    path={route.routeName}
-                    component={route.component}
-                  />
+                  <PrivateRoute key={'delivery' + key} exact authenticated={state.userToken !== null && state.userType === USER_TYPE.DELIVERY_PERSON} userType={USER_TYPE.DELIVERY_PERSON} path={route.routeName} component={route.component} />
                 ))
               : null}
           </View>
@@ -702,18 +549,15 @@ export function Routes() {
       </AuthContext.Provider>
     </>
   ) : (
-    <NavigationContainer>
-      <StackNavigator />
-    </NavigationContainer>
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>
+        <StackNavigator />
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
 
-function PrivateRoute({
-  component: Component,
-  authenticated,
-  userType,
-  ...rest
-}: any) {
+function PrivateRoute({component: Component, authenticated, userType, ...rest}: any) {
   return (
     <Route
       {...rest}
@@ -733,12 +577,7 @@ function PrivateRoute({
   );
 }
 
-function RedirectHomeRouteIfLoggedIn({
-  component: Component,
-  authenticated,
-  userType,
-  ...rest
-}: any) {
+function RedirectHomeRouteIfLoggedIn({component: Component, authenticated, userType, ...rest}: any) {
   return (
     <Route
       {...rest}

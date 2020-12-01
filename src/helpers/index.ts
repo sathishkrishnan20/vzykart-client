@@ -10,9 +10,7 @@ import ROUTE_NAMES from '../routes/name';
 import {IAddUpdate} from '../interfaces/table-component';
 import {ISlider} from '../interfaces/master';
 
-export const getCategoryValues = (
-  array: string[] | Item[],
-): ICategoryInfo[] => {
+export const getCategoryValues = (array: string[] | Item[]): ICategoryInfo[] => {
   const finalArray: ICategoryInfo[] = [];
   array.forEach((item: Item | string) => {
     if (typeof item === 'string') {
@@ -30,9 +28,7 @@ export const getCategoryValues = (
   return finalArray;
 };
 
-export const getMultiSelectCategoryValues = (
-  array: ICategoryInfo[],
-): Item[] | string[] => {
+export const getMultiSelectCategoryValues = (array: ICategoryInfo[]): Item[] | string[] => {
   return array.map((item) => {
     if (IS_WEB) {
       return {
@@ -47,9 +43,7 @@ export const getMultiSelectCategoryValues = (
 
 export const updateCartOnStorageByProductId = async (productId: string) => {
   const cartDataOnStorage = (await getCartItem()) as ICartItem[];
-  const index = cartDataOnStorage.findIndex(
-    (item) => item.productId === productId,
-  );
+  const index = cartDataOnStorage.findIndex((item) => item.productId === productId);
   if (index === -1) {
     cartDataOnStorage.push({
       productId,
@@ -68,9 +62,7 @@ export const updateCartOnStorageByProductId = async (productId: string) => {
 
 export const getCartItemCountByProductId = async (productId: string) => {
   const cartDataOnStorage = (await getCartItem()) as ICartItem[];
-  const itemData = cartDataOnStorage.find(
-    (item) => item.productId === productId,
-  );
+  const itemData = cartDataOnStorage.find((item) => item.productId === productId);
   if (!itemData) {
     return 0;
   } else {
@@ -86,19 +78,12 @@ export const updateCartDataOnStorage = async (cartItems: ICartItem[]) => {
   } as never);
 };
 
-export const calculateTotalSellingAmountWithGST = (
-  productItem: IProduct,
-  quantity: number,
-) => {
-  const gstAmount =
-    (productItem.sellingPrice * productItem.gstPercentage) / 100; // GST Amount Calculation
+export const calculateTotalSellingAmountWithGST = (productItem: IProduct, quantity: number) => {
+  const gstAmount = (productItem.sellingPrice * productItem.gstPercentage) / 100; // GST Amount Calculation
   return quantity * (productItem.sellingPrice + gstAmount || 0);
 };
 
-export const calculateTotalMRPAmountWithGST = (
-  productItem: IProduct,
-  quantity: number,
-) => {
+export const calculateTotalMRPAmountWithGST = (productItem: IProduct, quantity: number) => {
   const gstAmount = (productItem.mrp * productItem.gstPercentage) / 100;
   return quantity * (productItem.mrp + gstAmount || 0);
 };
@@ -107,11 +92,7 @@ export const getImageLink = (url?: string) => {
   if (!url) {
     return;
   }
-  if (
-    url.indexOf('http://') > 0 ||
-    url.indexOf('https://') > 0 ||
-    url.indexOf('www.') === 0
-  ) {
+  if (url.indexOf('http://') > 0 || url.indexOf('https://') > 0 || url.indexOf('www.') === 0) {
     return url;
   } else {
     // URL is relative
@@ -169,10 +150,7 @@ export const getNavigationPramsFromImageSlider = (value: ISlider) => {
     if (routeName) {
       navigationParams = value.navigationParams;
       Object.keys(navigationParams).forEach((paramKey) => {
-        routeName = routeName.replace(
-          `:${paramKey}`,
-          JSON.stringify(navigationParams[paramKey]),
-        );
+        routeName = routeName.replace(`:${paramKey}`, JSON.stringify(navigationParams[paramKey]));
       });
     }
   }
