@@ -1,42 +1,22 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-  TextInput,
-  Alert,
-} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator, TextInput, Alert} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {CardQtyIncDec} from '../../components/cart-qty-inc-dec';
 import {getCartItem} from '../../services/storage-service';
 import ProductAction from '../../actions/products';
-import {
-  ICartItem,
-  ICartScreenState,
-  ProductAndCart,
-} from '../../interfaces/classes/cart';
+import {ICartItem, ICartScreenState, ProductAndCart} from '../../interfaces/classes/cart';
 import {ComponentProp} from '../../interfaces';
 import {navigateToCheckoutPage} from '../../navigation';
-import {
-  updateCartDataOnStorage,
-  calculateTotalSellingAmountWithGST,
-  calculateTotalMRPAmountWithGST,
-  getImageLink,
-} from '../../helpers';
+import {updateCartDataOnStorage, calculateTotalSellingAmountWithGST, calculateTotalMRPAmountWithGST, getImageLink} from '../../helpers';
 import {IS_WEB, IS_BIG_SCREEN} from '../../config';
 import Image from '../../components/Image/image';
 import colors from '../../colors';
 import {Row} from 'react-native-easy-grid';
-
-export default class Cart extends React.Component<
-  ComponentProp,
-  ICartScreenState
-> {
+import {ConfirmModal} from '../../components';
+export default class Cart extends React.Component<ComponentProp, ICartScreenState> {
   productAction: ProductAction;
+  deleteIndex = -1;
   constructor(props: ComponentProp) {
     super(props);
     this.state = {
@@ -44,15 +24,14 @@ export default class Cart extends React.Component<
       cartItemsIsLoading: false,
       cartItems: [],
       refreshCount: 0,
+      visibleConfirmCartDeleteModal: false,
     };
     this.productAction = new ProductAction();
   }
   async componentDidMount() {
     const cartProducts = (await getCartItem()) as ICartItem[];
     const productObj: {[key: string]: ProductAndCart} = {};
-    const productResponse = await this.productAction.getProductsByMultipleIds(
-      cartProducts.map((item) => item.productId).join(','),
-    );
+    const productResponse = await this.productAction.getProductsByMultipleIds(cartProducts.map((item) => item.productId).join(','));
     if (productResponse.success) {
       productResponse.data.forEach((element: ProductAndCart) => {
         productObj[element._id] = element;
@@ -85,56 +64,26 @@ export default class Cart extends React.Component<
   };
 
   deleteHandler = (index: number) => {
-    if (IS_WEB) {
-      let updatedCart = this.state.cartItems; /* Clone it first */
-      updatedCart.splice(index, 1); /* Remove item from the cloned cart state */
-      this.setState({
-        cartItems: updatedCart,
-        refreshCount: this.state.refreshCount + 1,
-      }); /* Update the state */
-      updateCartDataOnStorage(updatedCart);
-    } else {
-      Alert.alert(
-        'Are you sure you want to delete this item from your cart?',
-        '',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {
-            text: 'Delete',
-            onPress: () => {
-              let updatedCart = this.state.cartItems; /* Clone it first */
-              updatedCart.splice(
-                index,
-                1,
-              ); /* Remove item from the cloned cart state */
-              this.setState({
-                cartItems: updatedCart,
-                refreshCount: this.state.refreshCount + 1,
-              }); /* Update the state */
-              updateCartDataOnStorage(updatedCart);
-            },
-          },
-        ],
-        {cancelable: false},
-      );
-    }
+    this.deleteIndex = index;
+    this.setState({visibleConfirmCartDeleteModal: !this.state.visibleConfirmCartDeleteModal});
   };
+
+  onDeleteConfirm() {
+    this.setState({visibleConfirmCartDeleteModal: false});
+    let updatedCart = this.state.cartItems; /* Clone it first */
+    updatedCart.splice(this.deleteIndex, 1); /* Remove item from the cloned cart state */
+    this.setState({
+      cartItems: updatedCart,
+      refreshCount: this.state.refreshCount + 1,
+    }); /* Update the state */
+    updateCartDataOnStorage(updatedCart);
+    this.deleteIndex = -1;
+  }
 
   subtotalPrice = () => {
     const {cartItems} = this.state;
     if (cartItems) {
-      return cartItems.reduce(
-        (sum: number, item: ProductAndCart) =>
-          sum +
-          (item.checked === 1
-            ? calculateTotalSellingAmountWithGST(item, item.quantity)
-            : 0),
-        0,
-      );
+      return cartItems.reduce((sum: number, item: ProductAndCart) => sum + (item.checked === 1 ? calculateTotalSellingAmountWithGST(item, item.quantity) : 0), 0);
     }
     return 0;
   };
@@ -149,6 +98,23 @@ export default class Cart extends React.Component<
 
     return (
       <View style={{flex: 1, backgroundColor: '#f6f6f6'}}>
+        <ConfirmModal
+          title="Delete"
+          subTitle={'Are you Sure Wants to Delete?'}
+          visible={this.state.visibleConfirmCartDeleteModal}
+          toggleModal={(value: boolean) => this.setState({visibleConfirmCartDeleteModal: value})}
+          buttons={[
+            {
+              title: 'Cancel',
+              onPress: () => this.setState({visibleConfirmCartDeleteModal: false}),
+            },
+            {
+              color: colors.red,
+              title: 'Delete',
+              onPress: () => this.onDeleteConfirm(),
+            },
+          ]}
+        />
         <View
           style={{
             flexDirection: 'row',
@@ -180,18 +146,8 @@ export default class Cart extends React.Component<
                     marginTop: 4,
                   }}>
                   <View style={[styles.centerElement, {width: 60}]}>
-                    <TouchableOpacity
-                      style={[styles.centerElement, {width: 32, height: 32}]}
-                      onPress={() => this.selectHandler(i, item.checked || 0)}>
-                      <Ionicons
-                        name={
-                          item.checked === 1
-                            ? 'ios-checkmark-circle'
-                            : 'ios-checkmark-circle-outline'
-                        }
-                        size={25}
-                        color={item.checked === 1 ? '#0faf9a' : '#aaaaaa'}
-                      />
+                    <TouchableOpacity style={[styles.centerElement, {width: 32, height: 32}]} onPress={() => this.selectHandler(i, item.checked || 0)}>
+                      <Ionicons name={item.checked === 1 ? 'ios-checkmark-circle' : 'ios-checkmark-circle-outline'} size={25} color={item.checked === 1 ? '#0faf9a' : '#aaaaaa'} />
                     </TouchableOpacity>
                   </View>
                   <View
@@ -208,12 +164,7 @@ export default class Cart extends React.Component<
                       style={{paddingRight: 10}}>
                       <Image
                         source={{
-                          uri: getImageLink(
-                            item.images &&
-                              item.images[0] &&
-                              (item.images[0]
-                                .optimizedDestinationPath as string),
-                          ),
+                          uri: getImageLink(item.images && item.images[0] && (item.images[0].optimizedDestinationPath as string)),
                         }}
                         style={[
                           styles.centerElement,
@@ -224,33 +175,17 @@ export default class Cart extends React.Component<
                         ]}
                       />
                     </TouchableOpacity>
-                    <View
-                      style={{flexGrow: 1, flexShrink: 1, alignSelf: 'center'}}>
-                      <Text
-                        numberOfLines={1}
-                        style={[
-                          styles.text,
-                          {marginTop: 4, fontSize: IS_BIG_SCREEN ? 18 : 14},
-                        ]}>
+                    <View style={{flexGrow: 1, flexShrink: 1, alignSelf: 'center'}}>
+                      <Text numberOfLines={1} style={[styles.text, {marginTop: 4, fontSize: IS_BIG_SCREEN ? 18 : 14}]}>
                         {item.productName}
                       </Text>
-                      <Text style={[styles.textLight, styles.marginTopSmall]}>
-                        {'Seller: ' + item.sellerInfo?.sellerName}
-                      </Text>
+                      <Text style={[styles.textLight, styles.marginTopSmall]}>{'Seller: ' + item.sellerInfo?.sellerName}</Text>
 
                       <Row>
-                        <Text
-                          numberOfLines={1}
-                          style={[styles.text, styles.marginTopSmall]}>
+                        <Text numberOfLines={1} style={[styles.text, styles.marginTopSmall]}>
                           Price:{' '}
                         </Text>
-                        <Text
-                          numberOfLines={1}
-                          style={[
-                            styles.textLight,
-                            styles.marginTopSmall,
-                            styles.strikeThrough,
-                          ]}>
+                        <Text numberOfLines={1} style={[styles.textLight, styles.marginTopSmall, styles.strikeThrough]}>
                           {'₹'}
                           {calculateTotalMRPAmountWithGST(item, 1)}
                         </Text>
@@ -266,9 +201,7 @@ export default class Cart extends React.Component<
                         </Text> */}
                       </Row>
                       <Row>
-                        <Text style={[styles.text, styles.marginTopSmall]}>
-                          Offer: ₹{calculateTotalSellingAmountWithGST(item, 1)}
-                        </Text>
+                        <Text style={[styles.text, styles.marginTopSmall]}>Offer: ₹{calculateTotalSellingAmountWithGST(item, 1)}</Text>
                         {/* <Text
                           numberOfLines={1}
                           style={[
@@ -281,21 +214,9 @@ export default class Cart extends React.Component<
                       </Row>
                       <Row>
                         <Text style={{color: '#333333', marginTop: 5}}>
-                          Total: {item.quantity} * ₹
-                          {calculateTotalSellingAmountWithGST(item, 1)} = ₹
-                          {calculateTotalSellingAmountWithGST(
-                            item,
-                            item.quantity,
-                          )}
+                          Total: {item.quantity} * ₹{calculateTotalSellingAmountWithGST(item, 1)} = ₹{calculateTotalSellingAmountWithGST(item, item.quantity)}
                         </Text>
-                        <Text
-                          style={[
-                            styles.textLight,
-                            styles.strikeThrough,
-                            styles.marginTopSmall,
-                          ]}>
-                          ₹{calculateTotalMRPAmountWithGST(item, item.quantity)}
-                        </Text>
+                        <Text style={[styles.textLight, styles.strikeThrough, styles.marginTopSmall]}>₹{calculateTotalMRPAmountWithGST(item, item.quantity)}</Text>
                       </Row>
 
                       <CardQtyIncDec
@@ -314,9 +235,7 @@ export default class Cart extends React.Component<
                     </View>
                   </View>
                   <View style={[styles.centerElement, {width: 60}]}>
-                    <TouchableOpacity
-                      style={[styles.centerElement, {width: 32, height: 32}]}
-                      onPress={() => this.deleteHandler(i)}>
+                    <TouchableOpacity style={[styles.centerElement, {width: 32, height: 32}]} onPress={() => this.deleteHandler(i)}>
                       <Ionicons name="md-trash" size={25} color="#ee4d2d" />
                     </TouchableOpacity>
                   </View>
@@ -336,11 +255,7 @@ export default class Cart extends React.Component<
             <View style={{flexDirection: 'row'}}>
               <View style={[styles.centerElement, {width: 60}]}>
                 <View style={[styles.centerElement, {width: 32, height: 32}]}>
-                  <MaterialCommunityIcons
-                    name="ticket"
-                    size={25}
-                    color="#f0ac12"
-                  />
+                  <MaterialCommunityIcons name="ticket" size={25} color="#f0ac12" />
                 </View>
               </View>
               <View
@@ -369,18 +284,8 @@ export default class Cart extends React.Component<
             </View>
             <View style={{flexDirection: 'row'}}>
               <View style={[styles.centerElement, {width: 60}]}>
-                <TouchableOpacity
-                  style={[styles.centerElement, {width: 32, height: 32}]}
-                  onPress={() => this.selectHandlerAll(selectAll)}>
-                  <Ionicons
-                    name={
-                      selectAll === true
-                        ? 'ios-checkmark-circle'
-                        : 'ios-checkmark-circle-outline'
-                    }
-                    size={25}
-                    color={selectAll === true ? '#0faf9a' : '#aaaaaa'}
-                  />
+                <TouchableOpacity style={[styles.centerElement, {width: 32, height: 32}]} onPress={() => this.selectHandlerAll(selectAll)}>
+                  <Ionicons name={selectAll === true ? 'ios-checkmark-circle' : 'ios-checkmark-circle-outline'} size={25} color={selectAll === true ? '#0faf9a' : '#aaaaaa'} />
                 </TouchableOpacity>
               </View>
               <View

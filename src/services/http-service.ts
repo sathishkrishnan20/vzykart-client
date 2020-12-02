@@ -17,7 +17,7 @@ export const putService = async (endPoint: string, data: any) => {
   let resp = await axios.put(fullPath, data);
   return resp;
 };
-export const deleteService = async (endPoint: string, data: any) => {
+export const deleteService = async (endPoint: string, data: any = {}) => {
   let fullPath = API_URL + endPoint;
   let resp = await axios.delete(fullPath, data);
   return resp;

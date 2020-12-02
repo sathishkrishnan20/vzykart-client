@@ -14,10 +14,8 @@ import {navigateByProp} from '../../../navigation';
 import {ComponentProp} from '../../../interfaces';
 import {Button, Loader} from '../../../components/index';
 import ROUTE_NAMES from '../../../routes/name';
-class SellerViewProducts extends Component<
-  ComponentProp,
-  SellerViewProductsState
-> {
+import colors from '../../../colors';
+class SellerViewProducts extends Component<ComponentProp, SellerViewProductsState> {
   productAction: ProductAction;
   headerData: TableHeader[] = [
     {
@@ -42,8 +40,8 @@ class SellerViewProducts extends Component<
       node: 'discount',
     },
     {
-      label: 'GST',
-      node: 'gst',
+      label: 'GST %',
+      node: 'gstPercentage',
     },
     {
       label: 'Unit of Measurement',
@@ -52,10 +50,6 @@ class SellerViewProducts extends Component<
     {
       label: 'Units',
       node: 'unit',
-    },
-    {
-      label: 'GST',
-      node: 'gst',
     },
   ];
   constructor(props: any) {
@@ -77,8 +71,19 @@ class SellerViewProducts extends Component<
       const sellerId = await getSellerId();
       const result = await this.productAction.getProductsBySellerId(sellerId);
       if (result.success) {
-        console.log(result.data);
         this.setState({isLoading: false, productData: result.data});
+      }
+    } catch (error) {
+      this.setState({isLoading: false});
+    }
+  }
+  async deleteProduct(productId: string) {
+    try {
+      this.setState({isLoading: true});
+      const result = await this.productAction.deleteProductByProductId(productId);
+      if (result.success) {
+        this.setState({isLoading: false});
+        this.getProducts();
       }
     } catch (error) {
       this.setState({isLoading: false});
@@ -91,56 +96,36 @@ class SellerViewProducts extends Component<
     return (
       <ScrollView horizontal={true}>
         <View style={styles.container}>
-          <Text
-            h4
-            style={{fontWeight: 'bold', color: '#FC7E40', marginBottom: 8}}>
+          <Text h4 style={{fontWeight: 'bold', color: colors.themePrimary, marginBottom: 8}}>
             View Product
           </Text>
           <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <Button
-              onPress={() =>
-                navigateByProp(
-                  this.props,
-                  ROUTE_NAMES.sellerProductAdd.replace(':crudType', 'add'),
-                  {crudType: 'add'},
-                )
-              }
-              title="Add Product"></Button>
+            <Button onPress={() => navigateByProp(this.props, ROUTE_NAMES.sellerProductAdd.replace(':crudType', 'add'), {crudType: 'add'})} title="Add Product"></Button>
           </View>
 
           <Loader visible={isLoading} />
 
           <ScrollView style={styles.dataWrapper}>
             <TableComponent
+              widthData={[200, 400, 140, 140, 140, 140, 140, 140, 140]}
               headerData={this.headerData}
               valueData={productData}
               showActions={true}
               uniqueIdKeyName={'_id'}
               actionButtons={[CRUD.VIEW, CRUD.UPDATE, CRUD.DELETE]}
               viewAction={(id: string) => {
-                navigateByProp(
-                  this.props,
-                  ROUTE_NAMES.sellerProductCrudById
-                    .replace(':crudType', 'view')
-                    .replace(':productId', id),
-                  {
-                    crudType: 'view',
-                    productId: id,
-                  },
-                );
+                navigateByProp(this.props, ROUTE_NAMES.sellerProductCrudById.replace(':crudType', 'view').replace(':productId', id), {
+                  crudType: 'view',
+                  productId: id,
+                });
               }}
               editAction={(id: string) =>
-                navigateByProp(
-                  this.props,
-                  ROUTE_NAMES.sellerProductCrudById
-                    .replace(':crudType', 'edit')
-                    .replace(':productId', id),
-                  {
-                    crudType: 'edit',
-                    productId: id,
-                  },
-                )
+                navigateByProp(this.props, ROUTE_NAMES.sellerProductCrudById.replace(':crudType', 'edit').replace(':productId', id), {
+                  crudType: 'edit',
+                  productId: id,
+                })
               }
+              deleteAction={(id: string) => this.deleteProduct(id)}
             />
           </ScrollView>
         </View>

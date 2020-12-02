@@ -12,4 +12,5 @@ export interface ICartScreenState {
   selectAll: boolean;
   cartItems: ProductAndCart[];
   refreshCount: number;
+  visibleConfirmCartDeleteModal: boolean;
 }
